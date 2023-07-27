@@ -66,7 +66,7 @@ const config = {
           },
           {
             href: 'https://github.com/f5/unovis',
-            label: 'Source Code',
+            className: 'header-github-link',
             position: 'right',
           },
         ],
