@@ -17,7 +17,7 @@ import { GraphNodeShape } from '../types'
 import { getNodeSize } from './node/helper'
 
 export function isCustomXml (xml: GraphNodeShape | string): boolean {
-  return /<[a-z][\s\S]*>/i.test(xml)
+  return /<\w+[^>]*>/i.test(xml)
 }
 
 export function appendShape<T> (
