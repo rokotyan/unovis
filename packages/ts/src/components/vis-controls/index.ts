@@ -13,6 +13,7 @@ import { VisControlsDefaultConfig, VisControlsConfigInterface } from './config'
 import * as s from './style'
 
 export class VisControls {
+  static selectors = s
   div: Selection<HTMLDivElement, unknown, null, undefined>
   element: HTMLDivElement
   protected _defaultConfig = VisControlsDefaultConfig as VisControlsConfigInterface
@@ -69,5 +70,9 @@ export class VisControls {
 
   _onItemClick (event: MouseEvent, item: VisControlItemInterface): void {
     item.callback?.(event)
+  }
+
+  public destroy (): void {
+    this.div.remove()
   }
 }
