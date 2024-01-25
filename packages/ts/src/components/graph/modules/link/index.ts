@@ -173,6 +173,8 @@ export function updateLinks<N extends GraphInputNode, L extends GraphInputLink> 
       const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * (180 / Math.PI)
       linkArrow
         .attr('href', `#${getLinkArrowDefId(linkArrowStyle)}`)
+
+      smartTransition(linkArrow, duration)
         .attr('fill', linkColor)
         .attr('transform', `translate(${p1.x}, ${p1.y}) rotate(${angle})`)
     } else {
