@@ -169,7 +169,7 @@ export class Graph<
   }
 
   _render (customDuration?: number): void {
-    const { config: { disableZoom, duration, layoutAutofit, panels }, datamodel } = this
+    const { config: { disableZoom, duration, layoutAutofit }, datamodel } = this
     if (!datamodel.nodes && !datamodel.links) return
     const animDuration = isNumber(customDuration) ? customDuration : duration
 
@@ -186,22 +186,16 @@ export class Graph<
     }
 
     // Apply layout and render
-    this._layoutCalculationPromise = this._calculateLayout()
+    if (this._shouldRecalculateLayout || !this._layoutCalculationPromise) {
+      this._layoutCalculationPromise = this._calculateLayout()
+    }
+
     this._layoutCalculationPromise.then((isFirstRender) => {
       // If the component has been destroyed while the layout calculation
       // was in progress, we cancel the render
       if (this.isDestroyed()) return
 
-      if (this._shouldSetPanels) {
-        smartTransition(this._panelsGroup, duration / 2)
-          .style('opacity', panels?.length ? 1 : 0)
-
-        this._panels = initPanels(panels)
-        setPanelForNodes(this._panels, datamodel.nodes, this.config)
-        this._shouldSetPanels = false
-      }
-
-      this.config.onLayoutCalculated?.(datamodel.nodes, datamodel.links)
+      this._initPanelsData()
 
       // Fit the view
       if (isFirstRender) {
@@ -274,6 +268,7 @@ export class Graph<
 
     const nodeGroupsMerged = nodeGroups.merge(nodeGroupsEnter)
     const nodeUpdateSelection = updateNodes(nodeGroupsMerged, config, duration, this._scale)
+
     this._drawPanels(nodeUpdateSelection, duration)
 
     const nodesGroupExit = nodeGroups.exit<GraphNode<N, L>>()
@@ -319,6 +314,9 @@ export class Graph<
     duration: number
   ): void {
     const { config } = this
+    smartTransition(this._panelsGroup, duration / 2)
+      .style('opacity', config.panels?.length ? 1 : 0)
+
     if (!this._panels) return
 
     const selection = ((nodeUpdateSelection as Transition<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>).duration)
@@ -354,50 +352,59 @@ export class Graph<
     const { config, datamodel } = this
 
     const firstRender = this._isFirstRender
-    if (this._shouldRecalculateLayout) {
-      switch (config.layoutType) {
-        case GraphLayoutType.Precalculated:
-          break
-        case GraphLayoutType.Parallel:
-          applyLayoutParallel(datamodel, config, this._width, this._height)
-          break
-        case GraphLayoutType.ParallelHorizontal:
-          applyLayoutParallel(datamodel, config, this._width, this._height, 'horizontal')
-          break
-        case GraphLayoutType.Dagre:
-          await applyLayoutDagre(datamodel, config, this._width)
-          break
-        case GraphLayoutType.Force:
-          await applyLayoutForce(datamodel, config, this._width)
-          break
-        case GraphLayoutType.Concentric:
-          applyLayoutConcentric(datamodel, config, this._width, this._height)
-          break
-        case GraphLayoutType.Elk:
-          await applyELKLayout(datamodel, config, this._width)
-          break
-        case GraphLayoutType.Circular:
-        default:
-          applyLayoutCircular(datamodel, config, this._width, this._height)
-          break
-      }
-
-      this._shouldRecalculateLayout = false
+    switch (config.layoutType) {
+      case GraphLayoutType.Precalculated:
+        break
+      case GraphLayoutType.Parallel:
+        applyLayoutParallel(datamodel, config, this._width, this._height)
+        break
+      case GraphLayoutType.ParallelHorizontal:
+        applyLayoutParallel(datamodel, config, this._width, this._height, 'horizontal')
+        break
+      case GraphLayoutType.Dagre:
+        await applyLayoutDagre(datamodel, config, this._width)
+        break
+      case GraphLayoutType.Force:
+        await applyLayoutForce(datamodel, config, this._width)
+        break
+      case GraphLayoutType.Concentric:
+        applyLayoutConcentric(datamodel, config, this._width, this._height)
+        break
+      case GraphLayoutType.Elk:
+        await applyELKLayout(datamodel, config, this._width)
+        break
+      case GraphLayoutType.Circular:
+      default:
+        applyLayoutCircular(datamodel, config, this._width, this._height)
+        break
     }
+
+    // We need to update the panels data right after the layout calculation
+    // because we want to have the latest coordinates before calling `onLayoutCalculated`
+    this._initPanelsData()
+    this.config.onLayoutCalculated?.(datamodel.nodes, datamodel.links)
+
+    this._shouldRecalculateLayout = false
 
     return firstRender
   }
 
+  private _initPanelsData (): void {
+    const { config, datamodel } = this
+
+    if (this._shouldSetPanels) {
+      this._panels = initPanels(config.panels)
+      setPanelForNodes(this._panels, datamodel.nodes, this.config)
+      this._shouldSetPanels = false
+    }
+  }
+
   private _fit (duration = 0): void {
     const { datamodel: { nodes } } = this
-    if (nodes?.length && this.g?.size()) {
-      const transform = this._getTransform(nodes)
-      smartTransition(this.g, duration)
-        .call(this._zoomBehavior.transform, transform)
-      this._onZoom(transform)
-    } else {
-      console.warn('Unovis | Graph: Node data is not defined. Check if the component has been initialized.')
-    }
+    const transform = this._getTransform(nodes)
+    smartTransition(this.g, duration)
+      .call(this._zoomBehavior.transform, transform)
+    this._onZoom(transform)
   }
 
   private _getTransform (nodes: GraphNode<N, L>[]): ZoomTransform {
