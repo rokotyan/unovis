@@ -403,12 +403,12 @@ export class Graph<
     const w = this._width
     const h = this._height
     const xExtent = [
-      min(nodes, d => getX(d) - maxNodeSize / 2 - (max(d._panels?.map(p => p._padding.left)) || 0)),
-      max(nodes, d => getX(d) + maxNodeSize / 2 + (max(d._panels?.map(p => p._padding.right)) || 0)),
+      min(nodes, d => getX(d) - maxNodeSize / 2 - (max((d._panels || []).map(p => p._padding.left)) || 0)),
+      max(nodes, d => getX(d) + maxNodeSize / 2 + (max((d._panels || []).map(p => p._padding.right)) || 0)),
     ]
     const yExtent = [
-      min(nodes, d => getY(d) - maxNodeSize / 2 - (max(d._panels?.map(p => p._padding.top)) || 0)),
-      max(nodes, d => getY(d) + maxNodeSize / 2 + (max(d._panels?.map(p => p._padding.bottom)) || 0)),
+      min(nodes, d => getY(d) - maxNodeSize / 2 - (max((d._panels || []).map(p => p._padding.top)) || 0)),
+      max(nodes, d => getY(d) + maxNodeSize / 2 + (max((d._panels || []).map(p => p._padding.bottom)) || 0)),
     ]
 
     const xScale = w / (xExtent[1] - xExtent[0] + left + right)
