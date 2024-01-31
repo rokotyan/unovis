@@ -85,6 +85,7 @@ export class Graph<
   private _prevWidth: number
   private _prevHeight: number
   private _shouldRecalculateLayout = false
+  private _layoutCalculationPromise: Promise<boolean> | undefined
 
   private _shouldFitLayout: boolean
   private _shouldSetPanels = false
@@ -185,7 +186,8 @@ export class Graph<
     }
 
     // Apply layout and render
-    this._calculateLayout().then((isFirstRender) => {
+    this._layoutCalculationPromise = this._calculateLayout()
+    this._layoutCalculationPromise.then((isFirstRender) => {
       // If the component has been destroyed while the layout calculation
       // was in progress, we cancel the render
       if (this.isDestroyed()) return
@@ -199,6 +201,9 @@ export class Graph<
         this._shouldSetPanels = false
       }
 
+      this.config.onLayoutCalculated?.(datamodel.nodes, datamodel.links)
+
+      // Fit the view
       if (isFirstRender) {
         this._fit()
         this._shouldFitLayout = false
@@ -402,6 +407,7 @@ export class Graph<
     const maxNodeSize = getMaxNodeSize(nodes, nodeSize)
     const w = this._width
     const h = this._height
+
     const xExtent = [
       min(nodes, d => getX(d) - maxNodeSize / 2 - (max((d._panels || []).map(p => p._padding.left)) || 0)),
       max(nodes, d => getX(d) + maxNodeSize / 2 + (max((d._panels || []).map(p => p._padding.right)) || 0)),
@@ -410,6 +416,11 @@ export class Graph<
       min(nodes, d => getY(d) - maxNodeSize / 2 - (max((d._panels || []).map(p => p._padding.top)) || 0)),
       max(nodes, d => getY(d) + maxNodeSize / 2 + (max((d._panels || []).map(p => p._padding.bottom)) || 0)),
     ]
+
+    if (xExtent.some(item => item === undefined) || yExtent.some(item => item === undefined)) {
+      console.warn('Unovis | Graph: Some of the node coordinates are undefined. This can happen if you try to fit the graph before the layout has been calculated.')
+      return zoomIdentity
+    }
 
     const xScale = w / (xExtent[1] - xExtent[0] + left + right)
     const yScale = h / (yExtent[1] - yExtent[0] + top + bottom)
@@ -758,8 +769,14 @@ export class Graph<
       .call(this._zoomBehavior.scaleTo, zoomLevel)
   }
 
+  public getZoom (): number {
+    return zoomTransform(this.g.node()).k
+  }
+
   public fitView (duration = this.config.duration): void {
-    this._fit(duration)
+    this._layoutCalculationPromise.then(() => {
+      this._fit(duration)
+    })
   }
 
   /** Enable automatic fitting to container if it was disabled due to previous zoom / pan interactions */
