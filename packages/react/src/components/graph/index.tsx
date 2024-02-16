@@ -27,11 +27,11 @@ function VisGraphFC<N extends GraphInputNode, L extends GraphInputLink> (props: 
   // On Mount
   useEffect(() => {
     const element = (ref.current as VisComponentElement<Graph<N, L>>)
-    componentRef.current = componentRef.current ?? new Graph<N, L>(props)
-    element.__component__ = componentRef.current
+    const component = componentRef.current ?? new Graph<N, L>(props)
+    element.__component__ = component
 
     return () => {
-      componentRef.current?.destroy()
+      component.destroy()
       componentRef.current = undefined
     }
   }, [])
