@@ -22,19 +22,17 @@ export const VisGraphSelectors = Graph.selectors
 // eslint-disable-next-line @typescript-eslint/naming-convention
 function VisGraphFC<N extends GraphInputNode, L extends GraphInputLink> (props: VisGraphProps<N, L>, fRef: ForwardedRef<VisGraphRef<N, L>>): JSX.Element {
   const ref = useRef<VisComponentElement<Graph<N, L>>>(null)
-  const componentRef = useRef<Graph<N, L> | undefined>(undefined)
+  const componentRef = useRef<Graph<N, L> | undefined>(new Graph<N, L>(props))
 
   // On Mount
   useEffect(() => {
     const element = (ref.current as VisComponentElement<Graph<N, L>>)
-
-    const c = new Graph<N, L>(props)
-    componentRef.current = c
-    element.__component__ = c
+    const component = componentRef.current ?? new Graph<N, L>(props)
+    element.__component__ = component
 
     return () => {
+      component.destroy()
       componentRef.current = undefined
-      c.destroy()
     }
   }, [])
 
