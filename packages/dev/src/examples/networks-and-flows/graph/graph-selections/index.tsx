@@ -18,15 +18,17 @@ export const component = (): JSX.Element => {
     setText([external, internal].join(' / '))
   }, [selectedNode])
 
+
   return (
     <>
       <div>Selected node: {text}</div>
       <VisSingleContainer data={data} height={600}>
         <VisGraph
           ref={ref}
-          forceLayoutSettings={useMemo(() => ({
+          forceLayoutSettings={{
             fixNodePositionAfterSimulation: true,
-          }), [])}
+            charge: -3000 * Math.random(),
+          }}
           linkCurvature={1}
           nodeIcon={useCallback((n: NodeDatum) => n.id, [])}
           events={useMemo(() => ({
