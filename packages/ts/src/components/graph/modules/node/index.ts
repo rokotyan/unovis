@@ -66,14 +66,26 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
       })
       .attr('opacity', 0)
 
-    const shape = getString(d, nodeShape, d._index)
-    /** Todo: The 'nodeShape' storing logic below it a temporary fix, needs a cleaner implementation */
-    element.nodeShape = shape
-    appendShape(group, shape, nodeSelectors.node, nodeSelectors.customNode, d._index)
-    appendShape(group, shape, nodeSelectors.nodeSelection, nodeSelectors.customNode, d._index)
-    group.append('path').attr('class', nodeSelectors.nodeGauge)
-    group.append('g').attr('class', nodeSelectors.nodeIcon)
+    // If there's a custom render function, use it
+    if (config.nodeEnterCustomRenderFunction) {
+      config.nodeEnterCustomRenderFunction(d, element)
+    } else { // Default node rendering
+      const shape = getString(d, nodeShape, d._index) as GraphNodeShape
+      /** Todo: The 'nodeShape' storing logic below it a temporary fix, needs a cleaner implementation */
+      element.nodeShape = shape
+      appendShape(group, shape, nodeSelectors.node, nodeSelectors.customNode, d._index)
+      appendShape(group, shape, nodeSelectors.nodeSelection, nodeSelectors.customNode, d._index)
+      group.append('path').attr('class', nodeSelectors.nodeGauge)
+      group.append('g').attr('class', nodeSelectors.nodeIcon)
 
+      group.append('g')
+        .attr('class', nodeSelectors.sideLabelsGroup)
+
+      group.append('text')
+        .attr('class', nodeSelectors.nodeBottomIcon)
+    }
+
+    // Label
     const label = group.append('g').attr('class', nodeSelectors.label)
     label.append('rect').attr('class', nodeSelectors.labelBackground)
 
@@ -85,16 +97,10 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
       .attr('class', nodeSelectors.subLabelTextContent)
       .attr('dy', '1.1em')
       .attr('x', '0')
-
-    group.append('g')
-      .attr('class', nodeSelectors.sideLabelsGroup)
-
-    group.append('text')
-      .attr('class', nodeSelectors.nodeBottomIcon)
   })
 }
 
-export function updateSelectedNodes<N extends GraphInputNode, L extends GraphInputLink> (
+export function updateNodeSelectedGreyout<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
   config: GraphConfigInterface<N, L>
 ): void {
@@ -131,7 +137,21 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
     nodeSideLabels, nodeStroke, nodeFill, nodeBottomIcon,
   } = config
 
-  // Re-create nodes to update shapes if they were changes
+  const nodeGroupsUpdate = smartTransition(selection, duration)
+    .attr('transform', d => `translate(${getX(d)}, ${getY(d)}) scale(1)`)
+    .attr('opacity', 1)
+
+  // If there's a custom render function, use it
+  if (config.nodeUpdateCustomRenderFunction) {
+    selection.each((d, i, elements) => {
+      config.nodeUpdateCustomRenderFunction(d, elements[i], duration, scale)
+    })
+
+    return nodeGroupsUpdate
+  }
+
+  // Default node rendering
+  // Re-create nodes to update shapes if they were changed
   selection.each((d, i, elements) => {
     const element = elements[i] as GraphNodeSVGGElement
     const group = select<SVGGElement, GraphNode<N, L>>(element)
@@ -305,11 +325,9 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
       .attr('transform', `translate(0, ${nodeHeight / 2})`)
   })
 
-  updateSelectedNodes(selection, config)
+  updateNodeSelectedGreyout(selection, config)
 
-  return smartTransition(selection, duration)
-    .attr('transform', d => `translate(${getX(d)}, ${getY(d)}) scale(1)`)
-    .attr('opacity', 1)
+  return nodeGroupsUpdate
 }
 
 export function removeNodes<N extends GraphInputNode, L extends GraphInputLink> (
@@ -357,7 +375,7 @@ export function zoomNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection.selectAll(`.${nodeSelectors.sideLabel}`)
     .attr('transform', `scale(${1 / Math.pow(scale, 0.45)})`)
 
-  if (scale >= ZoomLevel.Level3) selection.call(setLabelBackgroundRectThrottled, config)
+  // if (scale >= ZoomLevel.Level3) selection.call(setLabelBackgroundRectThrottled, config)
 }
 
 export const zoomNodesThrottled = throttle(zoomNodes, 500)

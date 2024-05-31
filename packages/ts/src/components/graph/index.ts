@@ -30,7 +30,7 @@ import * as linkSelectors from './modules/link/style'
 import * as panelSelectors from './modules/panel/style'
 
 // Modules
-import { createNodes, updateNodes, removeNodes, zoomNodesThrottled, zoomNodes, updateSelectedNodes } from './modules/node'
+import { createNodes, updateNodes, removeNodes, zoomNodesThrottled, zoomNodes, updateNodeSelectedGreyout } from './modules/node'
 import { getMaxNodeSize, getNodeSize, getX, getY } from './modules/node/helper'
 import { createLinks, updateLinks, removeLinks, zoomLinksThrottled, zoomLinks, animateLinkFlow, updateSelectedLinks } from './modules/link'
 import { getDoubleArrowPath, getArrowPath } from './modules/link/helper'
@@ -550,7 +550,7 @@ export class Graph<
     linkElements.call(updateSelectedLinks, config, this._scale)
 
     const nodeElements = this._nodesGroup.selectAll<SVGGElement, GraphNode<N, L>>(`.${nodeSelectors.gNode}`)
-    nodeElements.call(updateSelectedNodes, config)
+    nodeElements.call(updateNodeSelectedGreyout, config)
 
     // this._drawPanels(nodeElements, 0)
   }
