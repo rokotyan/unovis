@@ -14,7 +14,7 @@ import { GraphInputLink, GraphInputNode } from 'types/graph'
 import { Spacing } from 'types/spacing'
 
 // Utils
-import { isNumber, clamp, shallowDiff, isFunction, getBoolean, isEqual } from 'utils/data'
+import { isNumber, clamp, shallowDiff, isFunction, getBoolean, isPlainObject, isEqual } from 'utils/data'
 import { smartTransition } from 'utils/d3'
 
 // Local Types
@@ -760,6 +760,20 @@ export class Graph<
     if (prevConfig.layoutType === GraphLayoutType.Dagre) {
       const dagreSettingsDiff = shallowDiff(prevConfig.dagreLayoutSettings, config.dagreLayoutSettings)
       if (Object.keys(dagreSettingsDiff).length) return true
+    }
+
+    if (prevConfig.layoutType === GraphLayoutType.Elk) {
+      if (isPlainObject(prevConfig.layoutElkSettings) && isPlainObject(config.layoutElkSettings)) {
+        // Do a deeper comparison if `config.layoutElkSettings` is an object
+        const elkSettingsDiff = shallowDiff(
+          prevConfig.layoutElkSettings as Record<string, string>,
+          config.layoutElkSettings as Record<string, string>
+        )
+        return Boolean(Object.keys(elkSettingsDiff).length)
+      } else {
+        // Otherwise, do a simple `===` comparison
+        return prevConfig.layoutElkSettings !== config.layoutElkSettings
+      }
     }
 
     if (
