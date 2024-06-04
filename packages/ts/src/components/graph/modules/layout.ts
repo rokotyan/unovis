@@ -414,10 +414,17 @@ export async function applyLayoutForce<N extends GraphInputNode, L extends Graph
   const { nonConnectedNodes, connectedNodes, nodes, links } = datamodel
 
   // Apply fx and fy to nodes if present before running the simulation
-  nodes.forEach((d: GraphForceSimulationNode<N, L>) => {
-    d.fx = getX(d)
-    d.fy = getY(d)
-  })
+  if (forceLayoutSettings.fixNodePositionAfterSimulation) {
+    nodes.forEach((d: GraphForceSimulationNode<N, L>) => {
+      d.fx = isNil(d._state.fx) ? undefined : d._state.fx
+      d.fy = isNil(d._state.fy) ? undefined : d._state.fy
+    })
+  } else {
+    nodes.forEach((d: GraphForceSimulationNode<N, L>) => {
+      delete d._state.fx
+      delete d._state.fy
+    })
+  }
 
   const simulation = forceSimulation(layoutNonConnectedAside ? connectedNodes : nodes)
     .force('link', forceLink(links)
