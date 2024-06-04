@@ -68,7 +68,7 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
 
     // If there's a custom render function, use it
     if (config.nodeEnterCustomRenderFunction) {
-      config.nodeEnterCustomRenderFunction(d, element)
+      config.nodeEnterCustomRenderFunction(d, element, config)
     } else { // Default node rendering
       const shape = getString(d, nodeShape, d._index) as GraphNodeShape
       /** Todo: The 'nodeShape' storing logic below it a temporary fix, needs a cleaner implementation */
@@ -144,7 +144,7 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
   // If there's a custom render function, use it
   if (config.nodeUpdateCustomRenderFunction) {
     selection.each((d, i, elements) => {
-      config.nodeUpdateCustomRenderFunction(d, elements[i], duration, scale)
+      config.nodeUpdateCustomRenderFunction(d, elements[i], config, duration, scale)
     })
 
     return nodeGroupsUpdate
