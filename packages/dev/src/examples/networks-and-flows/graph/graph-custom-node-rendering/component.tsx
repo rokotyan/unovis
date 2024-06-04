@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react'
 import { cx } from '@emotion/css';
 import { VisSingleContainer, VisGraph, VisGraphRef, type VisSingleContainerProps, type VisGraphProps } from '@unovis/react'
-import { select } from 'd3-selection'
-import { Graph, type GraphNode } from '@unovis/ts'
-import { generateNodeLinkData, NodeDatum, LinkDatum } from '@src/utils/data'
 import { nodeEnterCustomRenderFunction, nodeSvgDefs, nodeUpdateCustomRenderFunction } from './node-rendering'
 import { DEFAULT_NODE_SIZE, nodeTypeColorMap, nodeTypeIconMap } from './constants'
 import type { ExaforceGraphNodeType } from './enums'

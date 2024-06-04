@@ -18,7 +18,7 @@ export type ExaforceGraphNode<Datum = unknown> = {
   subLabel?: string;
   type?: ExaforceGraphNodeType;
   aggregation?: ExaforceGraphNode<Datum>[];
-  numAlerts?: {
+  numFindings?: {
     low: number;
     medium: number;
     high: number;
@@ -27,7 +27,7 @@ export type ExaforceGraphNode<Datum = unknown> = {
   numSessions?: number;
   starred?: boolean;
   highlighted?: boolean;
-  status?: ('admin' |'crown' |'public' |'high-data-access' |'eof' |'egress' |'ingress')[];
+  status?: ('admin' | 'crown' | 'public' | 'high-data-access' | 'eof' | 'egress' | 'ingress')[];
 };
 
 export type ExaforceGraphLink<Datum = unknown> = {

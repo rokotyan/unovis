@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { VisSingleContainer, VisGraph, VisGraphRef } from '@unovis/react'
 import { select, Selection } from 'd3-selection'
-import { Graph, getNumber, getColor, getString, type ColorAccessor, type GraphConfigInterface, type GraphNode, type StringAccessor } from '@unovis/ts'
+import { Graph, getNumber, getColor, getString, type ColorAccessor, type GraphConfigInterface, type GraphNode, type StringAccessor, trimString } from '@unovis/ts'
 
 import identityIcon from './icons/identity-user.svg?raw';
 import networkIcon from './icons/network-interface.svg?raw';
@@ -9,10 +9,13 @@ import resourceIcon from './icons/resource-file.svg?raw';
 import computeIcon from './icons/compute.svg?raw';
 import secretIcon from './icons/secret-key.svg?raw';
 import starIcon from './icons/star.svg?raw';
+import adminIcon from './icons/enrichment-admin.svg?raw';
+import highDataAccessIcon from './icons/enrichment-db.svg?raw';
 
 import * as s from './styles'
-import { DEFAULT_CIRCLE_LABEL_SIZE, DEFAULT_NODE_SIZE, NODE_STAR_ICON_ID } from './constants'
+import { DEFAULT_CIRCLE_LABEL_SIZE, DEFAULT_NODE_SIZE, NODE_STAR_ICON_ID, nodeStatusIconMap } from './constants'
 import type { ExaforceGraphLink, ExaforceGraphNode } from './types'
+import { ExaforceGraphNodeStatus } from './enums';
 
 export const nodeSvgDefs = `
   ${identityIcon}
@@ -21,6 +24,8 @@ export const nodeSvgDefs = `
   ${computeIcon}
   ${secretIcon}
   ${starIcon}
+  ${adminIcon}
+  ${highDataAccessIcon}
 `;
 
 export const nodeEnterCustomRenderFunction = <
@@ -56,11 +61,9 @@ g.append('text').attr('class', s.nodeSessionCountText)
     .classed(s.nodeCircleLabelBackground, true)
   g.append('use').attr('class', s.nodeWatchlistIcon)
 
-  // Node Alerts
-  // g.append('g').attr('class', s.nodeAlerts)
-
-  // Node Enrichments
-  g.append('g').attr('class', s.nodeEnrichments)
+  // Node Labels
+  g.append('text').attr('class', s.nodeLabel)
+  g.append('text').attr('class', s.nodeSubLabel)
 }
 
 export const nodeUpdateCustomRenderFunction = <
@@ -74,15 +77,15 @@ export const nodeUpdateCustomRenderFunction = <
   const nodeSize = getNumber(d, config.nodeSize, d._index) ?? DEFAULT_NODE_SIZE
   const nodeIconSize = getNumber(d, config.nodeIconSize, d._index) ?? 2.5 * Math.sqrt(nodeSize)
   const nodeIconColor = getColor(d, config.nodeFill, d._index) ?? 'black'
-  const nodeCircleLabelPlacementDistance = 1.2 * nodeSize
-
+  const nodeCircleLabelPlacementDistance = 1.15 * nodeSize
   const g = select<SVGGElement, GraphNode<N, L>>(nodeGroupElement)
-  console.log('d', d)
-  const circle = g.select<SVGCircleElement>('circle')
+
+  // Update Node Circle and Icon
+  g.select<SVGCircleElement>(`.${s.nodeCircle}`)
     .attr('r', nodeSize)
     .attr('fill', getColor(d, config.nodeFill, d._index))
 
-  const icon = g.select<SVGUseElement>('use')
+  g.select<SVGUseElement>(`.${s.nodeIcon}`)
     .attr('href', getString(d, config.nodeIcon as StringAccessor<N>, d._index) as string)
     .attr('x', -nodeIconSize / 2)
     .attr('y', -nodeIconSize / 2)
@@ -90,17 +93,18 @@ export const nodeUpdateCustomRenderFunction = <
     .attr('height', nodeIconSize)
     .style('fill', nodeIconColor)
 
-  // Node Aggregation
+  // Update Node Aggregation Count
   const aggregationPos = [nodeCircleLabelPlacementDistance * Math.cos(Math.PI/4), -nodeCircleLabelPlacementDistance * Math.sin(Math.PI/4)]
-  const aggregationText = g.select<SVGTextElement>(`.${s.nodeAggregationText}`)
+  const aggregationCountVisibility = (d.aggregation?.length ? null : 'hidden') as string
+  g.select<SVGTextElement>(`.${s.nodeAggregationText}`)
     .attr('x', aggregationPos[0])
     .attr('y', aggregationPos[1])
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'central')
     .text(d.aggregation?.length ?? '')
-    .attr('visibility', d.aggregation?.length ? null : 'hidden')
+    .attr('visibility', aggregationCountVisibility)
 
-  const aggregationBackground = g.select<SVGRectElement>(`.${s.nodeAggregationBackground}`)
+  g.select<SVGRectElement>(`.${s.nodeAggregationBackground}`)
     .attr('width', DEFAULT_CIRCLE_LABEL_SIZE * 2)
     .attr('height', DEFAULT_CIRCLE_LABEL_SIZE * 2)
     .attr('rx', DEFAULT_CIRCLE_LABEL_SIZE)
@@ -108,21 +112,22 @@ export const nodeUpdateCustomRenderFunction = <
     .attr('x', aggregationPos[0])
     .attr('y', aggregationPos[1])
     .attr('transform', `translate(${-DEFAULT_CIRCLE_LABEL_SIZE}, ${-DEFAULT_CIRCLE_LABEL_SIZE})`)
-    .attr('visibility', d.aggregation?.length ? null : 'hidden')
+    .attr('visibility', aggregationCountVisibility)
 
-  // Node Session Count
+  // Update Node Session Count
   const sessionCountPos = [nodeCircleLabelPlacementDistance, 0]
   const numSessionsText = d.numSessions?.toString() ?? ''
+  const sessionCountVisibility = (d.numSessions ? null : 'hidden') as string
   const sessionCountBackgroundWidth = Math.max(numSessionsText.length * 7.5, DEFAULT_CIRCLE_LABEL_SIZE * 2)
-  const sessionCountText = g.select<SVGTextElement>(`.${s.nodeSessionCountText}`)
+  g.select<SVGTextElement>(`.${s.nodeSessionCountText}`)
     .attr('x', sessionCountPos[0] + sessionCountBackgroundWidth / 2 - DEFAULT_CIRCLE_LABEL_SIZE)
     .attr('y', sessionCountPos[1])
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'central')
     .text(d.numSessions ?? '')
-    .attr('visibility', d.numSessions ? null : 'hidden')
+    .attr('visibility', sessionCountVisibility)
 
-  const sessionCountBackground = g.select<SVGRectElement>(`.${s.nodeSessionCountBackground}`)
+  g.select<SVGRectElement>(`.${s.nodeSessionCountBackground}`)
     .attr('width', sessionCountBackgroundWidth)
     .attr('height', DEFAULT_CIRCLE_LABEL_SIZE * 2)
     .attr('rx', DEFAULT_CIRCLE_LABEL_SIZE)
@@ -130,33 +135,33 @@ export const nodeUpdateCustomRenderFunction = <
     .attr('x', sessionCountPos[0])
     .attr('y', sessionCountPos[1])
     .attr('transform', `translate(${-DEFAULT_CIRCLE_LABEL_SIZE}, ${-DEFAULT_CIRCLE_LABEL_SIZE})`)
-    .attr('visibility', d.numSessions ? null : 'hidden')
+    .attr('visibility', sessionCountVisibility)
 
 
-  // Node Watchlist
+  // Update Node Watchlist
   const watchlistPos = [nodeCircleLabelPlacementDistance * Math.cos(-Math.PI/4), -nodeCircleLabelPlacementDistance * Math.sin(-Math.PI/4)]
-  const watchlistIcon = g.select<SVGUseElement>(`.${s.nodeWatchlistIcon}`)
+  const watchlistVisibility = (d.starred ? null : 'hidden') as string
+  g.select<SVGUseElement>(`.${s.nodeWatchlistIcon}`)
     .attr('href', '#' + NODE_STAR_ICON_ID)
     .attr('x', watchlistPos[0] - DEFAULT_CIRCLE_LABEL_SIZE / 2)
     .attr('y', watchlistPos[1] - DEFAULT_CIRCLE_LABEL_SIZE / 2)
     .attr('width', DEFAULT_CIRCLE_LABEL_SIZE)
     .attr('height', DEFAULT_CIRCLE_LABEL_SIZE)
-    .attr('visibility', d.starred ? null : 'hidden')
+    .attr('visibility', watchlistVisibility)
 
-  const watchlistBackground = g.select<SVGCircleElement>(`.${s.nodeWatchlistBackground}`)
+  g.select<SVGCircleElement>(`.${s.nodeWatchlistBackground}`)
     .attr('r', DEFAULT_CIRCLE_LABEL_SIZE)
     .attr('cx', watchlistPos[0])
     .attr('cy', watchlistPos[1])
-    .attr('visibility', d.starred ? null : 'hidden')
+    .attr('visibility', watchlistVisibility)
 
+  // Update Node Findings
+  const alertsData = Object.entries(d.numFindings ?? {}).filter(([_, v]) => v > 0)
+  const alerts = g.selectAll<SVGGElement, [string, number]>(`.${s.nodeFinding}`).data(alertsData)
 
-  // Node Alerts
-  const alertsData = Object.entries(d.numAlerts ?? {}).filter(([_, v]) => v > 0)
-  const alerts = g.selectAll<SVGGElement, [string, number]>(`.${s.nodeAlert}`).data(alertsData)
-
-  const alertsEnter = alerts.enter().append('g').attr('class', s.nodeAlert)
+  const alertsEnter = alerts.enter().append('g').attr('class', s.nodeFinding)
   alertsEnter.append('circle')
-    .attr('class', s.nodeAlertBackground)
+    .attr('class', s.nodeFindingBackground)
     .classed(s.nodeCircleLabelBackground, true)
     .attr('r', DEFAULT_CIRCLE_LABEL_SIZE)
     .style('fill', ([severity]) => {
@@ -172,27 +177,72 @@ export const nodeUpdateCustomRenderFunction = <
     alertsEnter
     .append('text')
     .attr('dy', '0.35em')
-    .attr('class', s.nodeAlertText)
+    .attr('class', s.nodeFindingText)
     .classed(s.nodeCircleLabelText, true)
 
     alertsEnter.merge(alerts)
-    .attr('transform', (l, j) => {
+    .attr('transform', (_, i) => {
       const r = nodeCircleLabelPlacementDistance
-      const i = alertsData.length - j - 1
-      const angle =  - Math.PI / 1.4 - i * 1.15 * 2 * Math.atan2(DEFAULT_CIRCLE_LABEL_SIZE, r)
+      const index = alertsData.length - i - 1
+      const angle = - Math.PI / 1.33 - index * 2.66 * Math.atan2(DEFAULT_CIRCLE_LABEL_SIZE, r)
       return `translate(${r * Math.cos(angle)}, ${r * Math.sin(angle)})`
     })
     .select('text').text(([,count]) => count)
 
-    alerts.exit().remove()
+    // Node Enrichments
+  const enrichmentsData = (d.status ?? []) as ExaforceGraphNodeStatus[]
+  const enrichments = g
+    .selectAll<SVGGElement, ExaforceGraphNodeStatus>(`.${s.nodeEnrichment}`).data(enrichmentsData)
+
+  const enrichmentsEnter = enrichments.enter()
+    .append('g')
+    .attr('class', s.nodeEnrichment)
+
+  enrichmentsEnter.append('circle')
+    .attr('class', s.nodeEnrichmentBackground)
+    .attr('r', DEFAULT_CIRCLE_LABEL_SIZE)
+
+  enrichmentsEnter.append('use')
+    .attr('class', s.nodeEnrichmentIcon)
+
+  const enrichmentsUpdate = enrichmentsEnter.merge(enrichments)
+  enrichmentsUpdate
+    .attr('transform', (_, i) => {
+      const r = nodeSize * 1.75
+      const dx = - (enrichmentsData.length -1) * DEFAULT_CIRCLE_LABEL_SIZE + i * 2 * DEFAULT_CIRCLE_LABEL_SIZE
+      return `translate(${dx}, ${-r})`
+    })
+
+    const enrichmentIconSize = 1.5 * DEFAULT_CIRCLE_LABEL_SIZE
+    enrichmentsUpdate.select('use')
+      .attr('x', - enrichmentIconSize / 2)
+      .attr('y', - enrichmentIconSize / 2)
+      .attr('width', enrichmentIconSize)
+      .attr('height', enrichmentIconSize)
+      .attr('href', d => nodeStatusIconMap.get(d) as string)
+  enrichments.exit().remove()
+
+  // Node Labels
+  const labelPlacementDistance = 1.8 * nodeSize
+  const nodeLabel = g.select<SVGTextElement>(`.${s.nodeLabel}`)
+    .attr('y', labelPlacementDistance)
+    .text(trimString(d.label))
+
+  const nodeSubLabel = g.select<SVGTextElement>(`.${s.nodeSubLabel}`)
+    .attr('y', labelPlacementDistance)
+    .attr('dy', '1.25em')
+    .text(trimString(d.subLabel))
+
+  // Misc
+  g.on('mouseenter', () => {
+    nodeLabel.text(d.label ?? '')
+    nodeSubLabel.text(d.subLabel ?? '')
+    g.raise()
+  })
+  .on('mouseleave', () => {
+    nodeLabel.text(trimString(d.label))
+    nodeSubLabel.text(trimString(d.subLabel))
+  })
 }
 
-// export const updateNodeCircle = (
-//   circle: Selection<SVGCircleElement, GraphNode<N, L>, null, unknown>,
-//   config: GraphConfigInterface<N, L>,
-// ) => {
-//   circle
-//     .attr('r', d => getNumber(d, config.nodeSize, d._index) ?? 15)
-//     .attr('fill', 'blue')
-// }
 

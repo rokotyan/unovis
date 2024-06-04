@@ -26,6 +26,12 @@ export const exaforceGraph = css`
   --exf-graph-circle-label-fill: #fff;
   --exf-graph-circle-label-background-fill: #52525A;
   --exf-graph-circle-label-background-stroke: #fff;
+  --exf-graph-enrichment-background-fill: #fff;
+
+  --exf-graph-node-label-font-size: 9px;
+  --exf-graph-node-label-color: var(--exf-text-primary);
+  --exf-graph-node-sublabel-font-size: 8px;
+  --exf-graph-node-sublabel-color: var(--exf-text-secondary);
 
   --exf-severity-critical: #ae2a3f;
   --exf-severity-high: #e14f62;
@@ -56,15 +62,33 @@ export const nodeWatchlistIcon = css`label: node-watchlist-icon;`
 export const nodeSessionCountBackground = css`label: node-session-count-background;`
 export const nodeSessionCountText = css`label: node-session-count-text;`
 
-// Alerts
-export const nodeAlert = css`label: node-alert;`
-export const nodeAlertBackground = css`label: node-alert-background;`
-export const nodeAlertText = css`label: node-alert-text;`
+// Findings
+export const nodeFinding = css`label: node-finding;`
+export const nodeFindingBackground = css`label: node-finding-background;`
+export const nodeFindingText = css`label: node-finding-text;`
 
 // Enrichment
 export const nodeEnrichments = css`label: node-enrichments;`
-export const nodeEnrichmentBackground = css`label: node-enrichment-background;`
+export const nodeEnrichment = css`label: node-enrichment;`
+export const nodeEnrichmentBackground = css`
+  label: node-enrichment-background;
+  fill: var(--exf-graph-enrichment-background-fill);
+`
 export const nodeEnrichmentIcon = css`label: node-enrichment-icon;`
+
+// Node Labels
+export const nodeLabel = css`
+  label: node-label;
+  text-anchor: middle;
+  font-size: var(--exf-graph-node-label-font-size);
+  fill: var(--exf-graph-node-label-color);
+`
+export const nodeSubLabel = css`
+  label: node-sub-label;
+  text-anchor: middle;
+  font-size: var(--exf-graph-node-sublabel-font-size);
+  fill: var(--exf-graph-node-sublabel-color);
+`
 
 // Shared Circle Label Styles
 export const nodeCircleLabelBackground = css`

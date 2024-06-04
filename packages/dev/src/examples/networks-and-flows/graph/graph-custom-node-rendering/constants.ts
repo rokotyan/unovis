@@ -1,8 +1,8 @@
-import { ExaforceGraphNodeType } from './enums'
+import { ExaforceGraphNodeType, ExaforceGraphNodeStatus } from './enums'
 
 export const DEFAULT_NODE_SIZE = 20
 export const DEFAULT_CIRCLE_LABEL_SIZE = 7
-export const NODE_STAR_ICON_ID = 'starIcon' // TODO: Find a way to set it dimamically
+export const NODE_STAR_ICON_ID = 'starIcon' // TODO: Find a way to set it dynamically
 
 export const nodeTypeIconMap = new Map<ExaforceGraphNodeType, string>([
   [ExaforceGraphNodeType.Identity, '#identityIcon'], /* The icon ids come from SVG icon files */
@@ -24,3 +24,9 @@ export const nodeTypeColorMap = new Map<ExaforceGraphNodeType, string>([
   [ExaforceGraphNodeType.ThreatActor, 'var(--exf-graph-node-threat-actor)'],
 ])
 
+export const nodeStatusIconMap = new Map<ExaforceGraphNodeStatus, string>([
+  [ExaforceGraphNodeStatus.Admin, '#adminIcon'], /* The icon ids come from SVG icon files */
+  [ExaforceGraphNodeStatus.Crown, '#crownIcon'],
+  [ExaforceGraphNodeStatus.Public, '#publicIcon'],
+  [ExaforceGraphNodeStatus.HighDataAccess, '#highDataAccessIcon'],
+])

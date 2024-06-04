@@ -7,3 +7,10 @@ export enum ExaforceGraphNodeType {
   Finding = 'finding',
   ThreatActor = 'threat-actor',
 }
+
+export enum ExaforceGraphNodeStatus {
+  Admin = 'admin',
+  Crown = 'crown',
+  Public = 'public',
+  HighDataAccess = 'high-data-access',
+}

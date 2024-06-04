@@ -10,29 +10,31 @@ export const subTitle = 'User provided rendering functions'
 export const component = (): JSX.Element => {
   const nodes: ExaforceGraphNode[] = [
     {
-      id: 'jdoe@acme.com',
+      id: '0',
       type: ExaforceGraphNodeType.Identity,
-      label: 'External User',
-      subLabel: 'jdoe@acme.com',
+      subLabel: 'External User',
+      label: 'jdoe@acme.com',
       aggregation: [{}, {}],
-      numAlerts: { low: 5, medium: 12, high: 3, critical: 1 },
+      numFindings: { medium: 12, high: 3, critical: 1 },
       starred: true,
       numSessions: 150,
+      status: ['admin', 'high-data-access'],
     },
-    // { id: 'AWSReservedSSO_Something', type: ExaforceGraphNodeType.Identity, label: 'Role', subLabel: 'AWSReservedSSO_Something' },
-    { id: 'i-0a1b2c3d4e5f6g7h8', type: ExaforceGraphNodeType.Network, label: 'EC2 Instance', subLabel: 'i-0a1b2c3d4e5f6g7h8' },
-    { id: 'i-1a1b2c3d4e5f6g7h8', type: ExaforceGraphNodeType.Network, label: 'EC2 Instance', subLabel: 'i-1a1b2c3d4e5f6g7h8' },
-    { id: 'my-file', type: ExaforceGraphNodeType.Resource, label: 'File', subLabel: 'my-file' },
-    { id: 'tests-ansible-ssm-file-transfer', type: ExaforceGraphNodeType.Secret, label: 'Secret', subLabel: 'tests-ansible-ssm-file-transfer' },
+    { id: '1', type: ExaforceGraphNodeType.Identity, subLabel: 'Role', label: 'AWSReservedSSO_Something' },
+    { id: '2', type: ExaforceGraphNodeType.Network, subLabel: 'EC2 Instance', label: 'i-0a1b2c3d4e5f6g7h8' },
+    { id: '3', type: ExaforceGraphNodeType.Network, subLabel: 'EC2 Instance', label: 'i-1a1b2c3d4e5f6g7h8' },
+    { id: '4', type: ExaforceGraphNodeType.Resource, subLabel: 'File', label: 'my-file' },
+    { id: '5', type: ExaforceGraphNodeType.Secret, subLabel: 'Secret', label: 'tests-ansible-ssm-file-transfer' },
   ]
 
   const links: ExaforceGraphLink[] = [
-    { source: 0, target: 1 },
-    { source: 0, target: 2 },
-    { source: 0, target: 3 },
-    { source: 0, target: 4 },
-    // { source: 1, target: 5 },
+    { source: '0', target: '1' },
+    { source: '0', target: '2' },
+    { source: '0', target: '3' },
+    { source: '0', target: '4' },
+    { source: '1', target: '5' },
   ]
+
   return (
     <ExaforceGraph nodes={nodes} links={links} zoomScaleExtent={[0.25, 2]} height={'80vh'}/>
   )
