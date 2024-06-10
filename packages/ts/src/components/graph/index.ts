@@ -248,8 +248,10 @@ export class Graph<
       // calculation and they were not set up properly (see the render function of `ComponentCore`)
       this._setUpComponentEventsThrottled()
       this._setCustomAttributesThrottled()
-    })
 
+      // On render complete callback
+      this.config.onRenderComplete?.(this.g, datamodel.nodes, datamodel.links, this.config, animDuration, this._scale)
+    })
 
     this._isFirstRender = false
   }
@@ -264,7 +266,7 @@ export class Graph<
 
     const nodeGroupsEnter = nodeGroups.enter().append('g')
       .attr('class', nodeSelectors.gNode)
-      .call(createNodes, config, duration)
+      .call(createNodes, config, duration, this._scale)
 
     const nodeGroupsMerged = nodeGroups.merge(nodeGroupsEnter)
     const nodeUpdateSelection = updateNodes(nodeGroupsMerged, config, duration, this._scale)
@@ -274,7 +276,7 @@ export class Graph<
     const nodesGroupExit = nodeGroups.exit<GraphNode<N, L>>()
     nodesGroupExit
       .classed(nodeSelectors.gNodeExit, true)
-      .call(removeNodes, config, duration)
+      .call(removeNodes, config, duration, this._scale)
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const thisRef = this

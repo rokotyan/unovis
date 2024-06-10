@@ -49,7 +49,9 @@ export interface GraphNodeSVGGElement extends SVGGElement {
 
 export function createNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>
+  config: GraphConfigInterface<N, L>,
+  duration: number,
+  scale = 1
 ): void {
   const { nodeShape } = config
 
@@ -68,7 +70,7 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
 
     // If there's a custom render function, use it
     if (config.nodeEnterCustomRenderFunction) {
-      config.nodeEnterCustomRenderFunction(d, element, config)
+      config.nodeEnterCustomRenderFunction(d, element, config, duration, scale)
     } else { // Default node rendering
       const shape = getString(d, nodeShape, d._index) as GraphNodeShape
       /** Todo: The 'nodeShape' storing logic below it a temporary fix, needs a cleaner implementation */
@@ -333,7 +335,8 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
 export function removeNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
   config: GraphConfigInterface<N, L>,
-  duration: number
+  duration: number,
+  scale = 1
 ): void {
   smartTransition(selection, duration / 2)
     .attr('opacity', 0)
@@ -345,6 +348,13 @@ export function removeNodes<N extends GraphInputNode, L extends GraphInputLink> 
       return `translate(${x}, ${y}) scale(${scale})`
     })
     .remove()
+
+  // If there's a custom render function, use it
+  if (config.nodeExitCustomRenderFunction) {
+    selection.each((d, i, elements) => {
+      config.nodeExitCustomRenderFunction(d, elements[i], config, duration, scale)
+    })
+  }
 }
 
 function setLabelBackgroundRect<N extends GraphInputNode, L extends GraphInputLink> (

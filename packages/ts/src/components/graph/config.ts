@@ -1,5 +1,6 @@
 import { D3DragEvent } from 'd3-drag'
 import { D3ZoomEvent } from 'd3-zoom'
+import { Selection } from 'd3-selection'
 
 // Config
 import { ComponentConfigInterface, ComponentDefaultConfig } from 'core/component/config'
@@ -192,11 +193,11 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
   /** Specify the destination scale for exiting nodes in the range [0,1]. Default: `0.75` */
   nodeExitScale?: NumericAccessor<N> | undefined;
   /** Custom "enter" function for node rendering. Default: `undefined` */
-  nodeEnterCustomRenderFunction?: (datum: GraphNode<N, L>, nodeGroupElement: SVGGElement, config: GraphConfigInterface<N, L>) => void;
+  nodeEnterCustomRenderFunction?: (datum: GraphNode<N, L>, nodeGroupElement: SVGGElement, config: GraphConfigInterface<N, L>, duration: number, zoomLevel: number) => void;
   /** Custom "update" function for node rendering. Default: `undefined` */
-  nodeUpdateCustomRenderFunction?: (datum: GraphNode<N, L>, nodeGroupElement: SVGGElement, config: GraphConfigInterface<N, L>, duration: number, scale: number) => void;
+  nodeUpdateCustomRenderFunction?: (datum: GraphNode<N, L>, nodeGroupElement: SVGGElement, config: GraphConfigInterface<N, L>, duration: number, zoomLevel: number) => void;
   /** Custom "exit" function for node rendering. Default: `undefined` */
-  // nodeExitCustomRenderFunction?: (datum: GraphNode<N, L>, nodeGroupElement: SVGGElement, duration: number) => void;
+  nodeExitCustomRenderFunction?: (datum: GraphNode<N, L>, nodeGroupElement: SVGGElement, config: GraphConfigInterface<N, L>, duration: number, zoomLevel: number) => void;
   /** Set selected node by unique id. Default: `undefined` */
   selectedNodeId?: number | string;
 
@@ -214,6 +215,15 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
   onZoom?: (zoomScale: number, zoomScaleExtent: [number, number], event: D3ZoomEvent<SVGGElement, unknown> | undefined) => void;
   /** Callback function to be called when the graph layout is calculated. Default: `undefined` */
   onLayoutCalculated?: (n: GraphNode<N, L>[], links: GraphLink<N, L>[]) => void;
+  /** Callback function to be called when the graph rendering is complete. Default: `undefined` */
+  onRenderComplete?: (
+    g: Selection<SVGGElement, unknown, null, undefined>,
+    nodes: GraphNode<N, L>[],
+    links: GraphLink<N, L>[],
+    config: GraphConfigInterface<N, L>,
+    duration: number,
+    zoomLevel: number
+  ) => void;
 }
 
 export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInputLink> = {
@@ -304,4 +314,5 @@ export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInput
   onNodeDragEnd: undefined,
   onZoom: undefined,
   onLayoutCalculated: undefined,
+  onRenderComplete: undefined,
 }
