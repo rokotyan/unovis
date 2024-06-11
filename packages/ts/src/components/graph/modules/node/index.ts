@@ -385,7 +385,7 @@ export function zoomNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection.selectAll(`.${nodeSelectors.sideLabel}`)
     .attr('transform', `scale(${1 / Math.pow(scale, 0.45)})`)
 
-  // if (scale >= ZoomLevel.Level3) selection.call(setLabelBackgroundRectThrottled, config)
+  if (scale >= ZoomLevel.Level3 && !config.nodeEnterCustomRenderFunction) selection.call(setLabelBackgroundRectThrottled, config)
 }
 
 export const zoomNodesThrottled = throttle(zoomNodes, 500)

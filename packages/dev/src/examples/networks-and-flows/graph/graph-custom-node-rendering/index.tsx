@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
-import { generateNodeLinkData } from '@src/utils/data'
 import { ExaforceGraph } from './component'
 import { ExaforceGraphNodeType } from './enums'
 import type { ExaforceGraphLink, ExaforceGraphNode } from './types'
+
 
 export const title = 'Graph: Custom Nodes'
 export const subTitle = 'User provided rendering functions'
@@ -36,7 +36,7 @@ export const component = (): JSX.Element => {
   ]
 
   return (
-    <ExaforceGraph nodes={nodes} links={links} zoomScaleExtent={[0.25, 2]} height={'80vh'}/>
+    <ExaforceGraph nodes={nodes} links={links} zoomScaleExtent={[0.25, 2]} height={'100vh'} />
   )
 }
 

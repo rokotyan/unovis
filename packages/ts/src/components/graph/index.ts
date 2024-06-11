@@ -47,6 +47,7 @@ export class Graph<
   > {
   static selectors = {
     root: generalSelectors.root,
+    graphGroup: generalSelectors.graphGroup,
     background: generalSelectors.background,
     node: nodeSelectors.gNode,
     nodeShape: nodeSelectors.node,
@@ -75,10 +76,10 @@ export class Graph<
   private _selectedNode: GraphNode<N, L>
   private _selectedLink: GraphLink<N, L>
 
-  private _graphGroup: Selection<SVGGElement, unknown, SVGGElement, undefined>
-  private _panelsGroup: Selection<SVGGElement, unknown, SVGGElement, undefined>
-  private _linksGroup: Selection<SVGGElement, unknown, SVGGElement, undefined>
-  private _nodesGroup: Selection<SVGGElement, unknown, SVGGElement, undefined>
+  private _graphGroup: Selection<SVGGElement, unknown, null, undefined>
+  private _panelsGroup: Selection<SVGGElement, unknown, null, undefined>
+  private _linksGroup: Selection<SVGGElement, unknown, null, undefined>
+  private _nodesGroup: Selection<SVGGElement, unknown, null, undefined>
   private _timer: Timer
 
   private _isFirstRender = true

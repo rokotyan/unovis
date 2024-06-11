@@ -32,6 +32,8 @@ export const exaforceGraph = css`
   --exf-graph-node-label-color: var(--exf-text-primary);
   --exf-graph-node-sublabel-font-size: 8px;
   --exf-graph-node-sublabel-color: var(--exf-text-secondary);
+  --exf-graph-swimlane-label-font-size: 9pt;
+  --exf-graph-swimlane-label-text-color: var(--exf-text-secondary);
 
   --exf-severity-critical: #ae2a3f;
   --exf-severity-high: #e14f62;
@@ -104,5 +106,15 @@ export const nodeCircleLabelText = css`
   font-size: var(--exf-graph-circle-label-font-size);
   font-weight: var(--exf-graph-circle-label-font-weight);
   fill: var(--exf-graph-circle-label-fill);
+  text-anchor: middle;
+`
+
+// Swimlanes
+export const swimlane = css`label: swimlane;`
+export const swimlaneRect = css`label: swimlane-rect;`
+export const swimlaneLabel = css`
+  label: swimlane-label;
+  font-size: var(--exf-graph-swimlane-label-font-size);
+  fill: var(--exf-graph-swimlane-label-color);
   text-anchor: middle;
 `
