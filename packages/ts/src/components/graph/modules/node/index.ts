@@ -237,12 +237,13 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
     updateShape(nodeSelectionOutline, nodeShape, nodeSize, d._index)
 
     // Update Node Icon
+    const prevNodeIconValue = groupElement.nodeIcon
     const nodeIconValue = getString(d, nodeIcon, d._index)
     const nodeIconSizeValue = getNumber(d, nodeIconSize, d._index) ?? 2.5 * Math.sqrt(nodeSizeValue)
     const nodeIconColor = getNodeIconColor(d, nodeFill, d._index, selection.node())
     const shouldRenderUseElement = isInternalHref(nodeIconValue)
 
-    if (groupElement.nodeIcon !== nodeIconValue) {
+    if (prevNodeIconValue !== nodeIconValue) {
       // If the icon has changed, we remove all children and re-render
       icon.selectAll('*').remove()
       // If the icon is a href, we need to append a <use> element. If it's a text we append the `<text>` element.
