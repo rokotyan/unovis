@@ -189,6 +189,12 @@ export class Graph<
     // Apply layout and render
     if (this._shouldRecalculateLayout || !this._layoutCalculationPromise) {
       this._layoutCalculationPromise = this._calculateLayout()
+
+      // Call `onLayoutCalculated` after the layout calculation is done and the `this._layoutCalculationPromise`
+      // variable is set because the `fitView` function relies on the promise to be initialized
+      this._layoutCalculationPromise.then(() => {
+        this.config.onLayoutCalculated?.(datamodel.nodes, datamodel.links)
+      })
     }
 
     this._layoutCalculationPromise.then((isFirstRender) => {
@@ -393,7 +399,6 @@ export class Graph<
     // We need to update the panels data right after the layout calculation
     // because we want to have the latest coordinates before calling `onLayoutCalculated`
     this._initPanelsData()
-    this.config.onLayoutCalculated?.(datamodel.nodes, datamodel.links)
 
     this._shouldRecalculateLayout = false
 

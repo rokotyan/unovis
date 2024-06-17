@@ -45,6 +45,7 @@ const SIDE_LABEL_DEFAULT_RADIUS = 10
 
 export interface GraphNodeSVGGElement extends SVGGElement {
   nodeShape?: string;
+  nodeIcon?: string;
 }
 
 export function createNodes<N extends GraphInputNode, L extends GraphInputLink> (
@@ -53,8 +54,6 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
   duration: number,
   scale = 1
 ): void {
-  const { nodeShape } = config
-
   selection.each((d, i, elements) => {
     const element = elements[i] as GraphNodeSVGGElement
     const group = select<SVGGElement, GraphNode<N, L>>(element)
@@ -72,8 +71,9 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
     if (config.nodeEnterCustomRenderFunction) {
       config.nodeEnterCustomRenderFunction(d, element, config, duration, scale)
     } else { // Default node rendering
-      const shape = getString(d, nodeShape, d._index) as GraphNodeShape
-      /** Todo: The 'nodeShape' storing logic below it a temporary fix, needs a cleaner implementation */
+      const shape = getString(d, config.nodeShape, d._index) as GraphNodeShape
+      // Todo: The 'nodeShape'  and `nodeIcon` storing logic below it a temporary solution,
+      // we need a cleaner implementation
       element.nodeShape = shape
       appendShape(group, shape, nodeSelectors.node, nodeSelectors.customNode, d._index)
       appendShape(group, shape, nodeSelectors.nodeSelection, nodeSelectors.customNode, d._index)
@@ -170,7 +170,7 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
 
   // Update nodes themselves
   selection.each((d, i, elements) => {
-    const groupElement = elements[i]
+    const groupElement = elements[i] as GraphNodeSVGGElement
     const group: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = select(groupElement)
     const node: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = group.select(`.${nodeSelectors.node}`)
     const nodeArc = group.select<GraphNodeAnimatedElement<SVGElement>>(`.${nodeSelectors.nodeGauge}`)
@@ -237,25 +237,33 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
     updateShape(nodeSelectionOutline, nodeShape, nodeSize, d._index)
 
     // Update Node Icon
-    const nodeIconContent = getString(d, nodeIcon, d._index)
+    const nodeIconValue = getString(d, nodeIcon, d._index)
     const nodeIconSizeValue = getNumber(d, nodeIconSize, d._index) ?? 2.5 * Math.sqrt(nodeSizeValue)
     const nodeIconColor = getNodeIconColor(d, nodeFill, d._index, selection.node())
-    icon.selectAll('*').remove() // Removing all children first
-    if (isInternalHref(nodeIconContent)) { // If the icon is a href, we need to append a <use> element and render the icon with it
-      icon.append('use')
-        .attr('href', nodeIconContent)
+    const shouldRenderUseElement = isInternalHref(nodeIconValue)
+
+    if (groupElement.nodeIcon !== nodeIconValue) {
+      // If the icon has changed, we remove all children and re-render
+      icon.selectAll('*').remove()
+      // If the icon is a href, we need to append a <use> element. If it's a text we append the `<text>` element.
+      icon.append(shouldRenderUseElement ? 'use' : 'text')
+      groupElement.nodeIcon = nodeIconValue
+    }
+
+    if (shouldRenderUseElement) {
+      icon.select('use')
+        .attr('href', nodeIconValue)
         .attr('x', -nodeIconSizeValue / 2)
         .attr('y', -nodeIconSizeValue / 2)
         .attr('width', nodeIconSizeValue)
         .attr('height', nodeIconSizeValue)
         .style('fill', nodeIconColor)
-    } else { // If the icon is a text, we need to append a <text> element and render the icon as text
-      icon
-        .append('text')
+    } else {
+      icon.select('text')
         .style('font-size', `${nodeIconSizeValue}px`)
         .attr('dy', '0.1em')
         .style('fill', nodeIconColor)
-        .html(nodeIconContent)
+        .html(nodeIconValue)
     }
 
     // Side Labels
