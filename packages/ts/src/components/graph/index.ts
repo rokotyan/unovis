@@ -85,6 +85,7 @@ export class Graph<
   private _prevWidth: number
   private _prevHeight: number
   private _shouldRecalculateLayout = false
+  private _currentLayoutType: GraphLayoutType | undefined
   private _layoutCalculationPromise: Promise<boolean> | undefined
 
   private _shouldFitLayout: boolean
@@ -351,8 +352,16 @@ export class Graph<
 
   private async _calculateLayout (): Promise<boolean> {
     const { config, datamodel } = this
-
     const firstRender = this._isFirstRender
+
+    // If the layout type has changed, we need to reset the node positions if they were fixed before
+    if (this._currentLayoutType !== config.layoutType) {
+      for (const node of datamodel.nodes) {
+        delete node._state.fx
+        delete node._state.fy
+      }
+    }
+
     switch (config.layoutType) {
       case GraphLayoutType.Precalculated:
         break
@@ -386,6 +395,7 @@ export class Graph<
     this.config.onLayoutCalculated?.(datamodel.nodes, datamodel.links)
 
     this._shouldRecalculateLayout = false
+    this._currentLayoutType = config.layoutType as GraphLayoutType
 
     return firstRender
   }
