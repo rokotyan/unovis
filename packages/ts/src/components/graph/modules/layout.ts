@@ -7,7 +7,7 @@ import type { graphlib, Node } from 'dagre'
 import { GraphDataModel } from 'data-models/graph'
 
 // Utils
-import { without, clamp, groupBy, unique, sortBy, getString, getNumber, getValue, merge, isFunction } from 'utils/data'
+import { without, clamp, groupBy, unique, sortBy, getString, getNumber, getValue, merge, isFunction, isNil } from 'utils/data'
 
 // Types
 import { GraphInputLink, GraphInputNode } from 'types/graph'
@@ -19,7 +19,7 @@ import { GraphNode, GraphLink, GraphForceSimulationNode } from '../types'
 import { GraphConfigInterface } from '../config'
 
 // Helpers
-import { getMaxNodeSize, configuredNodeSize, getNodeSize, getAverageNodeSize, getX, getY } from './node/helper'
+import { getMaxNodeSize, configuredNodeSize, getNodeSize, getAverageNodeSize } from './node/helper'
 import {
   DEFAULT_ELK_SETTINGS,
   adjustElkHierarchyCoordinates,
