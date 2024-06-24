@@ -96,7 +96,7 @@ export class Tooltip {
 
   /** Show the tooltip by providing content and position */
   public show (html: string | HTMLElement | null | void, pos: { x: number; y: number }): void {
-    this._render(html)
+    this.render(html)
     this.place(pos)
   }
 
@@ -123,10 +123,13 @@ export class Tooltip {
   }
 
   public place (pos: { x: number; y: number }): void {
+    this._position = [pos.x, pos.y]
+
     if (!this.hasContainer()) {
       console.warn('Unovis | Tooltip: Container was not set or is not initialized yet')
       return
     }
+
     const { config } = this
     const tooltipWidth = this.element.offsetWidth
     const tooltipHeight = this.element.offsetHeight
@@ -155,6 +158,12 @@ export class Tooltip {
 
   public placeByElement (hoveredElement: SVGElement | HTMLElement): void {
     const { config } = this
+
+    // Store the hovered element and the event for future reference,
+    // i.e. to re-position the tooltip if the content has been changed
+    // by something else and it was captured by the MutationObserver
+    this._hoveredElement = hoveredElement
+
     const margin = 5
     const tooltipWidth = this.element.offsetWidth
     const tooltipHeight = this.element.offsetHeight
@@ -217,7 +226,7 @@ export class Tooltip {
     return this._container === document.body
   }
 
-  private _render (html: string | HTMLElement | null | void): void {
+  public render (html: string | HTMLElement | null | void): void {
     const { config } = this
     if (html instanceof HTMLElement) {
       const node = this.div.select(':first-child').node()
@@ -308,16 +317,10 @@ export class Tooltip {
                 } else {
                   // Otherwise we show the tooltip, but don't render the content if it's `undefined` or
                   // an empty string. This way we can allow it to work with things like `createPortal` in React
-                  this._render(content)
+                  this.render(content)
                   if (config.followCursor) this.place({ x, y })
                   else this.placeByElement(el)
                 }
-
-                // Store the hovered element and the event for future reference,
-                // i.e. to re-position the tooltip if the content has been changed
-                // by something else and it was captured by the MutationObserver
-                this._hoveredElement = el
-                this._position = this.isContainerBody() ? [e.clientX, e.clientY] : pointer(e, this._container)
 
                 // Stop propagation to prevent other interfering events from being triggered, e.g. Crosshair
                 e.stopPropagation()
