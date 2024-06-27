@@ -443,7 +443,7 @@ export async function applyLayoutForce<N extends GraphInputNode, L extends Graph
     }))
     .force('x', forceX().strength(forceLayoutSettings.forceXStrength))
     .force('y', forceY().strength(forceLayoutSettings.forceYStrength))
-    .force('collide', forceCollide<SimulationNodeDatum & N>().radius((d, i) => getNodeSize(d, nodeSize, i)).iterations(1))
+    .force('collide', forceCollide<SimulationNodeDatum & GraphNode<N, L>>().radius((d, i) => getNodeSize(d, nodeSize, i)).iterations(1))
     .stop()
 
   // See https://bl.ocks.org/mbostock/1667139, https://github.com/d3/d3-force/blob/master/README.md#simulation_tick

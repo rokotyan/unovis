@@ -110,19 +110,19 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
 
   // Links
   /** Link width accessor function ot constant value. Default: `1` */
-  linkWidth?: NumericAccessor<L>;
+  linkWidth?: NumericAccessor<GraphLink<N, L>>;
   /** Link style accessor function or constant value. Default: `GraphLinkStyle.Solid`  */
   linkStyle?: GenericAccessor<GraphLinkStyle, L>;
   /** Link band width accessor function or constant value. Default: `0` */
-  linkBandWidth?: NumericAccessor<L>;
+  linkBandWidth?: NumericAccessor<GraphLink<N, L>>;
   /** Link arrow accessor function or constant value. Default: `undefined` */
   linkArrow?: GenericAccessor<GraphLinkArrowStyle | string | boolean, L> | undefined;
   /** Link stroke color accessor function or constant value. Default: `undefined` */
-  linkStroke?: ColorAccessor<L>;
+  linkStroke?: ColorAccessor<GraphLink<N, L>>;
   /** Link disabled state accessor function or constant value. Default: `false` */
-  linkDisabled?: BooleanAccessor<L>;
+  linkDisabled?: BooleanAccessor<GraphLink<N, L>>;
   /** Link flow animation accessor function or constant value. Default: `false` */
-  linkFlow?: BooleanAccessor<L>;
+  linkFlow?: BooleanAccessor<GraphLink<N, L>>;
   /** Animation duration of the flow (traffic) circles. Default: `20000` */
   linkFlowAnimDuration?: number;
   /** Size of the moving particles that represent traffic flow. Default: `2` */
@@ -130,7 +130,7 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
   /** Link label accessor function or constant value. Default: `undefined` */
   linkLabel?: GenericAccessor<GraphCircleLabel, L> | undefined;
   /** Shift label along the link center a little bit to avoid overlap with the link arrow. Default: `true` */
-  linkLabelShiftFromCenter?: BooleanAccessor<L>;
+  linkLabelShiftFromCenter?: BooleanAccessor<GraphLink<N, L>>;
   /** Spacing between neighboring links. Default: `8` */
   linkNeighborSpacing?: number;
   /** Curvature of the link. Recommended value range: [0:1.5].
@@ -138,63 +138,63 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
    * `1` - nice curvature,
    * `1.5` - very curve.
    * Default: `0` */
-  linkCurvature?: NumericAccessor<L>;
+  linkCurvature?: NumericAccessor<GraphLink<N, L>>;
   /** Set selected link by its unique id. Default: `undefined` */
   selectedLinkId?: number | string;
 
   // Nodes
   /** Node size accessor function or constant value. Default: `30` */
-  nodeSize?: NumericAccessor<N>;
+  nodeSize?: NumericAccessor<GraphNode<N, L>>;
   /** Node stroke width accessor function or constant value. Default: `3` */
-  nodeStrokeWidth?: NumericAccessor<N>;
+  nodeStrokeWidth?: NumericAccessor<GraphNode<N, L>>;
   /** Node shape accessor function or constant value. Default: `GraphNodeShape.Circle` */
   nodeShape?: GenericAccessor<GraphNodeShape | string, N>;
   /** Node gauge outline accessor function or constant value in the range [0,100]. Default: `0` */
-  nodeGaugeValue?: NumericAccessor<N>;
+  nodeGaugeValue?: NumericAccessor<GraphNode<N, L>>;
   /** Node gauge outline fill color accessor function or constant value. Default: `undefined` */
-  nodeGaugeFill?: ColorAccessor<N>;
+  nodeGaugeFill?: ColorAccessor<GraphNode<N, L>>;
   /** Animation duration of the node gauge outline. Default: `1500` */
   nodeGaugeAnimDuration?: number;
   /** Node central icon accessor function or constant value. Default: `node => node.icon` */
-  nodeIcon?: StringAccessor<N>;
+  nodeIcon?: StringAccessor<GraphNode<N, L>>;
   /** Node central icon size accessor function or constant value. Default: `undefined` */
-  nodeIconSize?: NumericAccessor<N>;
+  nodeIconSize?: NumericAccessor<GraphNode<N, L>>;
   /** Node label accessor function or constant value. Default: `node => node.label` */
-  nodeLabel?: StringAccessor<N>;
+  nodeLabel?: StringAccessor<GraphNode<N, L>>;
   /** Defines whether to trim the node labels or not. Default: `true` */
-  nodeLabelTrim?: BooleanAccessor<N>;
+  nodeLabelTrim?: BooleanAccessor<GraphNode<N, L>>;
   /** Node label trimming mode. Default: `TrimMode.Middle` */
   nodeLabelTrimMode?: GenericAccessor<TrimMode | string, N>;
   /** Node label maximum allowed text length above which the label will be trimmed. Default: `15` */
-  nodeLabelTrimLength?: NumericAccessor<N>;
+  nodeLabelTrimLength?: NumericAccessor<GraphNode<N, L>>;
   /** Node sub-label accessor function or constant value: Default: `''` */
-  nodeSubLabel?: StringAccessor<N>;
+  nodeSubLabel?: StringAccessor<GraphNode<N, L>>;
   /** Defines whether to trim the node sub-labels or not. Default: `true` */
-  nodeSubLabelTrim?: BooleanAccessor<N>;
+  nodeSubLabelTrim?: BooleanAccessor<GraphNode<N, L>>;
   /** Node sub-label trimming mode. Default: `TrimMode.Middle` */
   nodeSubLabelTrimMode?: GenericAccessor<TrimMode | string, N>;
   /** Node sub-label maximum allowed text length above which the label will be trimmed. Default: `15` */
-  nodeSubLabelTrimLength?: NumericAccessor<N>;
+  nodeSubLabelTrimLength?: NumericAccessor<GraphNode<N, L>>;
   /** Node circular side labels accessor function. The function should return an array of GraphCircleLabel objects. Default: `undefined` */
   nodeSideLabels?: GenericAccessor<GraphCircleLabel[], N>;
   /** Node bottom icon accessor function. Default: `undefined` */
-  nodeBottomIcon?: StringAccessor<N>;
+  nodeBottomIcon?: StringAccessor<GraphNode<N, L>>;
   /** Node disabled state accessor function or constant value. Default: `false` */
-  nodeDisabled?: BooleanAccessor<N>;
+  nodeDisabled?: BooleanAccessor<GraphNode<N, L>>;
   /** Node fill color accessor function or constant value. Default: `node => node.fill` */
-  nodeFill?: ColorAccessor<N>;
+  nodeFill?: ColorAccessor<GraphNode<N, L>>;
   /** Node stroke color accessor function or constant value. Default: `node => node.stroke` */
-  nodeStroke?: ColorAccessor<N>;
+  nodeStroke?: ColorAccessor<GraphNode<N, L>>;
   /** Sorting function to determine node placement. Default: `undefined` */
   nodeSort?: ((a: N, b: N) => number);
   /** Specify the initial position for entering nodes as [x, y]. Default: `undefined` */
-  nodeEnterPosition?: GenericAccessor<[number, number], N> | undefined;
+  nodeEnterPosition?: GenericAccessor<[number, number], GraphNode<N, L>> | undefined;
   /** Specify the initial scale for entering nodes in the range [0,1]. Default: `0.75` */
-  nodeEnterScale?: NumericAccessor<N> | undefined;
+  nodeEnterScale?: NumericAccessor<GraphNode<N, L>> | undefined;
   /** Specify the destination position for exiting nodes as [x, y]. Default: `undefined` */
-  nodeExitPosition?: GenericAccessor<[number, number], N> | undefined;
+  nodeExitPosition?: GenericAccessor<[number, number], GraphNode<N, L>> | undefined;
   /** Specify the destination scale for exiting nodes in the range [0,1]. Default: `0.75` */
-  nodeExitScale?: NumericAccessor<N> | undefined;
+  nodeExitScale?: NumericAccessor<GraphNode<N, L>> | undefined;
   /** Set selected node by unique id. Default: `undefined` */
   selectedNodeId?: number | string;
   /** Set selected nodes by unique id. Default: `undefined` */
