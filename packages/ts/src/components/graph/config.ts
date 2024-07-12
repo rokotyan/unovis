@@ -229,7 +229,9 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
     links: GraphLink<N, L>[],
     config: GraphConfigInterface<N, L>,
     duration: number,
-    zoomLevel: number
+    zoomLevel: number,
+    width: number,
+    height: number
   ) => void;
 }
 

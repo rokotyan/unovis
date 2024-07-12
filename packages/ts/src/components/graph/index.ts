@@ -272,7 +272,7 @@ export class Graph<
       this._setCustomAttributesThrottled()
 
       // On render complete callback
-      this.config.onRenderComplete?.(this.g, datamodel.nodes, datamodel.links, this.config, animDuration, this._scale)
+      this.config.onRenderComplete?.(this.g, datamodel.nodes, datamodel.links, this.config, animDuration, this._scale, this._width, this._height)
     })
 
     this._isFirstRender = false
