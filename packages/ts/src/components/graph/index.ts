@@ -239,7 +239,7 @@ export class Graph<
 
       // Call `onLayoutCalculated` after the layout calculation is done and the `this._layoutCalculationPromise`
       // variable is set because the `fitView` function relies on the promise to be initialized
-      this._layoutCalculationPromise.then(() => {
+      this._layoutCalculationPromise = this._layoutCalculationPromise.then(() => {
         this.config.onLayoutCalculated?.(datamodel.nodes, datamodel.links)
       })
     }
