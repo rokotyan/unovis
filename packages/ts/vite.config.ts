@@ -5,9 +5,8 @@ import pkg from './package.json'
 
 
 const external = [
-  ...Object.keys(pkg.dependencies || {}),
+  ...Object.keys(pkg.dependencies || {}).map((dep) => new RegExp(`^${dep}(/.*)?$`)),
   /d3-/,
-  /node_modules/,
 ]
 
 export default defineConfig({
@@ -30,7 +29,7 @@ export default defineConfig({
         preserveModules: true,
         chunkFileNames: '[name].js',
         entryFileNames: '[name].js',
-        preserveModulesRoot: './src',
+        preserveModulesRoot: 'src',
       },
     },
   },
