@@ -5,16 +5,19 @@ import { throttle as _throttle } from 'throttle-debounce'
 import { NumericAccessor, StringAccessor, BooleanAccessor, ColorAccessor, GenericAccessor } from 'types/accessor'
 import { StackValuesRecord } from 'types/data'
 
-export const isNumber = <T>(a: T): a is T extends number ? T : never => typeof a === 'number'
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const isFunction = <T>(a: T): a is T extends Function ? T : never => typeof a === 'function'
-export const isUndefined = <T>(a: T): a is T extends undefined ? T : never => a === undefined
-export const isNil = <T>(a: T): a is null | undefined => a == null
-export const isString = <T>(a: T): a is T extends string ? T : never => typeof a === 'string'
-export const isArray = <T>(a: T): a is T extends any[] ? T : never => Array.isArray(a)
-export const isObject = <T>(a: T): boolean => (a instanceof Object)
-export const isAClassInstance = <T>(a: T): boolean => a.constructor.name !== 'Function' && a.constructor.name !== 'Object'
-export const isPlainObject = <T>(a: T): boolean => isObject(a) && !isArray(a) && !isFunction(a) && !isAClassInstance(a)
+export const isNumber = (a: unknown): a is number => typeof a === 'number'
+export const isFunction = (a: unknown): a is (...args: unknown[]) => unknown => typeof a === 'function'
+export const isUndefined = (a: unknown): a is undefined => a === undefined
+export const isNil = (a: unknown): a is null | undefined => a == null
+export const isString = (a: unknown): a is string => typeof a === 'string'
+export const isArray = Array.isArray as (arg: unknown) => arg is unknown[]
+export const isObject = (a: unknown): a is Record<string, unknown> => a instanceof Object
+export const isAClassInstance = (a: unknown): boolean => {
+  return Boolean((a as { constructor?: { name: string } })?.constructor &&
+    (a as { constructor: { name: string } }).constructor.name !== 'Function' &&
+    (a as { constructor: { name: string } }).constructor.name !== 'Object')
+}
+export const isPlainObject = (a: unknown): boolean => isObject(a) && !isArray(a) && !isFunction(a) && !isAClassInstance(a)
 
 export const isEmpty = <T>(obj: T): boolean => {
   return [Object, Array].includes((obj || {}).constructor as ArrayConstructor | ObjectConstructor) &&
@@ -49,8 +52,8 @@ export const isEqual = (
     if (!(typeof b === 'object')) return false
     if (a === b) return true
 
-    const keysA = Object.keys(a).filter(key => !skipKeys.includes(key))
-    const keysB = Object.keys(b).filter(key => !skipKeys.includes(key))
+    const keysA = Object.keys(a as Record<string, unknown>).filter(key => !skipKeys.includes(key))
+    const keysB = Object.keys(b as Record<string, unknown>).filter(key => !skipKeys.includes(key))
 
     if (keysA.length !== keysB.length) return false
 
@@ -172,7 +175,7 @@ export function getValue<T, ReturnType> (
   d: T,
   accessor: NumericAccessor<T> | StringAccessor<T> | BooleanAccessor<T> | ColorAccessor<T> | GenericAccessor<ReturnType, T>,
   index?: number
-): ReturnType {
+): ReturnType | null | undefined {
   // eslint-disable-next-line @typescript-eslint/ban-types
   if (isFunction(accessor)) return (accessor as Function)(d, index) as (ReturnType | null | undefined)
   else return accessor as unknown as (ReturnType | null | undefined)
@@ -190,8 +193,8 @@ export function getBoolean<T> (d: T, accessor: BooleanAccessor<T>, i?: number): 
   return getValue<T, boolean>(d, accessor, i)
 }
 
-export function clean<T> (data: T[]): T[] {
-  return data.filter(d => d && !isNumber(d))
+export function clean<T> (data: Array<T | null | undefined>): T[] {
+  return data.filter((d): d is T => Boolean(d) && !isNumber(d))
 }
 
 export function clamp (d: number, min: number, max: number): number {
@@ -222,23 +225,21 @@ export function shallowDiff (o1: Record<string, unknown> = {}, o2: Record<string
 
 export function getStackedExtent<Datum> (data: Datum[], ...acs: NumericAccessor<Datum>[]): (number | undefined)[] {
   if (!data) return [undefined, undefined]
-  if (isArray(acs)) {
-    let minValue = 0
-    let maxValue = 0
-    data.forEach((d, i) => {
-      let positiveStack = 0
-      let negativeStack = 0
-      for (const a of acs as NumericAccessor<Datum>[]) {
-        const value = getNumber(d, a, i) || 0
-        if (value >= 0) positiveStack += value
-        else negativeStack += value
-      }
+  let minValue = 0
+  let maxValue = 0
+  data.forEach((d, i) => {
+    let positiveStack = 0
+    let negativeStack = 0
+    for (const a of acs as NumericAccessor<Datum>[]) {
+      const value = getNumber(d, a, i) || 0
+      if (value >= 0) positiveStack += value
+      else negativeStack += value
+    }
 
-      if (positiveStack > maxValue) maxValue = positiveStack
-      if (negativeStack < minValue) minValue = negativeStack
-    })
-    return [minValue, maxValue]
-  }
+    if (positiveStack > maxValue) maxValue = positiveStack
+    if (negativeStack < minValue) minValue = negativeStack
+  })
+  return [minValue, maxValue]
 }
 
 export function getStackedValues<Datum> (d: Datum, index: number, ...acs: NumericAccessor<Datum>[]): (number | undefined)[] {
@@ -266,11 +267,12 @@ export function getStackedData<Datum> (
 ): StackValuesRecord[] {
   const baselineValues = data.map((d, i) => getNumber(d, baseline, i) || 0)
   const isNegativeStack = acs.map((a, j) => {
-    const average = mean(data, (d, i) => getNumber(d, a, i) || 0)
-    return (average === 0 && Array.isArray(prevNegative)) ? prevNegative[j] : average < 0
+    const average = mean(data, (d, i) => getNumber(d, a, i) || 0) ?? 0
+    const prev = Array.isArray(prevNegative) ? prevNegative[j] : undefined
+    return average === 0 ? (prev ?? false) : average < 0
   })
 
-  const stackedData = acs.map(() => [] as StackValuesRecord)
+  const stackedData: StackValuesRecord[] = acs.map(() => [] as unknown as StackValuesRecord)
   data.forEach((d, i) => {
     let positiveStack = baselineValues[i]
     let negativeStack = baselineValues[i]
@@ -311,18 +313,18 @@ export function getExtent<Datum> (data: Datum[], ...acs: NumericAccessor<Datum>[
 export function getNearest<Datum> (data: Datum[], value: number, accessor: NumericAccessor<Datum>): Datum {
   if (data.length <= 1) return data[0]
 
-  const values = data.map((d, i) => getNumber(d, accessor, i))
+  const values = data.map((d, i) => getNumber(d, accessor, i) ?? 0)
   values.sort((a, b) => a - b)
 
   const xBisector = bisector(d => d).left
   const index = xBisector(values, value, 1, data.length - 1)
-  return value - values[index - 1] > values[index] - value ? data[index] : data[index - 1]
+  return value - values[index - 1]! > values[index]! - value ? data[index] : data[index - 1]
 }
 
 export function filterDataByRange<Datum> (data: Datum[], range: [number, number], accessor: NumericAccessor<Datum>): Datum[] {
   const filteredData = data.filter((d, i) => {
     const value = getNumber(d, accessor, i)
-    return (value >= range[0]) && (value <= range[1])
+    return value != null && (value >= range[0]) && (value <= range[1])
   })
 
   return filteredData

@@ -22,7 +22,7 @@ export class ComponentCore<
   CoreDatum,
   ConfigInterface extends ComponentConfigInterface = ComponentConfigInterface,
 > {
-  public element: SVGGElement | HTMLElement
+  public element: SVGGElement | HTMLElement | undefined
   public type: ComponentType = ComponentType.SVG
   public g: Selection<SVGGElement, unknown, null, undefined> | Selection<HTMLElement, unknown, null, undefined>
   public config: ConfigInterface
@@ -113,6 +113,7 @@ export class ComponentCore<
 
   private _setCustomAttributes (): void {
     const attributeMap = this.config.attributes
+    if (!attributeMap) return
 
     Object.keys(attributeMap).forEach(className => {
       Object.keys(attributeMap[className]).forEach(attr => {

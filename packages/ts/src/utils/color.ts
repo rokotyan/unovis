@@ -17,10 +17,13 @@ export function getColor<T> (
   index?: number,
   dontFallbackToCssVar?: boolean
 ): string | null {
-  if (Array.isArray(accessor) && isFinite(index)) return accessor[index % accessor.length]
+  if (Array.isArray(accessor) && isNumber(index)) {
+    return accessor[index % accessor.length]
+  }
 
   const value = getString(d, accessor as StringAccessor<T>, index)
-  return (value || ((isNumber(index) && !dontFallbackToCssVar) ? `var(${getCSSColorVariable(index)})` : null))
+  if (value) return value
+  return isNumber(index) && !dontFallbackToCssVar ? `var(${getCSSColorVariable(index)})` : null
 }
 
 export function hexToRgb (hex: string): RGBColor {
@@ -43,14 +46,14 @@ export function hexToBrightness (hex: string): number {
 
 export function getHexValue (s: string, context: HTMLElement | SVGElement): string {
   const hex = isStringCSSVariable(s) ? getCSSVariableValue(s, context) : s
-  return color(hex)?.formatHex()
+  return color(hex)?.formatHex() ?? ''
 }
 
-export function rgbaToRgb (rgba: string, backgroundColor?: string): RGBColor {
+export function rgbaToRgb (rgba: string, backgroundColor?: string): RGBColor | undefined {
   const rgb = color(rgba)?.rgb()
-  if (!rgb || rgb.opacity === 1) return rgb
+  if (!rgb || rgb.opacity === 1) return rgb ?? undefined
   const alpha = 1 - rgb.opacity
-  const bg = color(backgroundColor ?? '#fff').rgb()
+  const bg = color(backgroundColor ?? '#fff')?.rgb() ?? { r: 255, g: 255, b: 255, opacity: 1 }
   return {
     r: Math.round((rgb.opacity * (rgb.r / 255) + (alpha * (bg.r / 255))) * 255),
     g: Math.round((rgb.opacity * (rgb.g / 255) + (alpha * (bg.g / 255))) * 255),

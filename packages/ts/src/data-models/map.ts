@@ -13,6 +13,6 @@ export class MapDataModel<PointDatum> extends CoreDataModel<PointDatum[]> {
     pointLongitude: NumericAccessor<PointDatum>,
     paddingDegrees = 1
   ): [[number, number], [number, number]] {
-    return getDataLatLngBounds(this.data, pointLatitude, pointLongitude, paddingDegrees)
+    return getDataLatLngBounds(this.data ?? [], pointLatitude, pointLongitude, paddingDegrees)
   }
 }

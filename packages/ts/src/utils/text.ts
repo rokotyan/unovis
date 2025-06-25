@@ -37,8 +37,8 @@ export function kebabCaseToCamel (str: string): string {
  * @returns {string} - The kebab-cased string.
  */
 export function kebabCase (str: string): string {
-  return str.match(/[A-Z]{2,}(?=[A-Z][a-z0-9]*|\b)|[A-Z]?[a-z0-9]*|[A-Z]|[0-9]+/g)
-    ?.filter(Boolean)
+  return (str.match(/[A-Z]{2,}(?=[A-Z][a-z0-9]*|\b)|[A-Z]?[a-z0-9]*|[A-Z]|[0-9]+/g) || [])
+    .filter(Boolean)
     .map(x => x.toLowerCase())
     .join('-')
 }
@@ -157,7 +157,8 @@ export function wrapSVGText (
 
     const tspanText = `${tspanContent}${word}`
     tspan.text(tspanText)
-    const tspanWidth = tspan.node().getComputedTextLength()
+    const tspanNode = tspan.node()
+    const tspanWidth = tspanNode ? tspanNode.getComputedTextLength() : 0
     if (tspanWidth > width) {
       tspan.text(tspanContent.trim())
 
@@ -186,13 +187,14 @@ export function trimSVGText (
   maxWidth = 50,
   trimType = TrimMode.Middle,
   fastMode = true,
-  fontSize = +window.getComputedStyle(svgTextSelection.node())?.fontSize || 0,
+  fontSize = +(svgTextSelection.node() ? window.getComputedStyle(svgTextSelection.node() as SVGTextElement).fontSize : 0) || 0,
   fontWidthToHeightRatio = getFontWidthToHeightRatio()
 ): boolean {
   const text = svgTextSelection.text()
   const textLength = text.length
 
-  const textWidth = fastMode ? fontSize * textLength * fontWidthToHeightRatio : svgTextSelection.node().getComputedTextLength()
+  const node = svgTextSelection.node()
+  const textWidth = fastMode ? fontSize * textLength * fontWidthToHeightRatio : node ? node.getComputedTextLength() : 0
   const tolerance = 1.1
   const maxCharacters = Math.ceil(textLength * maxWidth / (tolerance * textWidth))
   if (maxCharacters < textLength) {
@@ -232,7 +234,7 @@ export function getPreciseStringLengthPx (str: string, fontFamily?: string, font
 
   text.textContent = str
   text.setAttribute('font-size', `${fontSize}`)
-  text.setAttribute('font-family', fontFamily)
+  text.setAttribute('font-family', fontFamily || '')
 
   svg.appendChild(text)
   document.body.appendChild(svg)
@@ -269,11 +271,13 @@ export function estimateTextSize (
   let width = 0
   if (tspanSelection.empty()) {
     const textLength = svgTextSelection.text().length
-    width = fastMode ? fontSize * textLength * fontWidthToHeightRatio : svgTextSelection.node().getComputedTextLength()
+    const nodeForWidth = svgTextSelection.node()
+    width = fastMode ? fontSize * textLength * fontWidthToHeightRatio : nodeForWidth ? nodeForWidth.getComputedTextLength() : 0
   } else {
     for (const tspan of tspanSelection.nodes()) {
-      const tspanTextLength = (tspan as SVGTSpanElement).textContent.length
-      const w = fastMode ? fontSize * tspanTextLength * fontWidthToHeightRatio : (tspan as SVGTSpanElement).getComputedTextLength()
+      const tspanEl = tspan as SVGTSpanElement
+      const tspanTextLength = tspanEl.textContent ? tspanEl.textContent.length : 0
+      const w = fastMode ? fontSize * tspanTextLength * fontWidthToHeightRatio : tspanEl.getComputedTextLength()
       if (w > width) width = w
     }
   }
@@ -383,8 +387,8 @@ export function getWrappedText (
   // Break input text into lines based on width and separator
   const textWrapped: Array<string[]> = textArrays.map(block => breakTextIntoLines(block, width, fastMode, separator, wordBreak))
 
-  const firstBlock = textArrays[0]
-  let h = -firstBlock.fontSize * (firstBlock.lineHeight - 1)
+  const firstBlock = textArrays[0]!
+  let h = -firstBlock.fontSize * ((firstBlock.lineHeight ?? 1) - 1)
   const blocks: UnovisWrappedText[] = []
 
   // Process each text block and its lines based on height limit
@@ -392,12 +396,12 @@ export function getWrappedText (
     let lines = textWrapped[i]
 
     const prevBlock = i > 0 ? blocks[i - 1] : undefined
-    const prevBlockMarginBottomPx = prevBlock ? prevBlock.marginBottom : 0
-    const marginTopPx = text.marginTop
+    const prevBlockMarginBottomPx = prevBlock ? prevBlock.marginBottom ?? 0 : 0
+    const marginTopPx = text.marginTop ?? 0
     const effectiveMarginPx = Math.max(prevBlockMarginBottomPx, marginTopPx)
 
     h += effectiveMarginPx
-    const dh = text.fontSize * text.lineHeight
+    const dh = text.fontSize * (text.lineHeight ?? 1)
     let maxWidth = 0
     // Iterate over lines and handle text overflow based on the height limit if provided
     for (let k = 0; k < lines.length; k += 1) {
@@ -417,7 +421,7 @@ export function getWrappedText (
           line = line.substr(0, lines[k].length - 1)
         }
 
-        if (textLengthPx < width) {
+        if (width !== undefined && textLengthPx < width) {
           lines[k] = lineWithEllipsis
         } else {
           lines[k] = `${lines[k].substr(0, lines[k].length - 2)}…`
@@ -447,27 +451,27 @@ export function getWrappedText (
 function renderTextToTspanStrings (blocks: UnovisWrappedText[], x = 0, y?: number): string[] {
   return blocks.map((b, i) => {
     const prevBlock = i > 0 ? blocks[i - 1] : undefined
-    const prevBlockMarginBottomEm = prevBlock ? prevBlock.marginBottom / prevBlock.fontSize : 0
-    const marginTopEm = b.marginTop / b.fontSize
+    const prevBlockMarginBottomEm = prevBlock ? (prevBlock.marginBottom ?? 0) / prevBlock.fontSize : 0
+    const marginTopEm = (b.marginTop ?? 0) / b.fontSize
     const marginEm = Math.max(prevBlockMarginBottomEm, marginTopEm)
     const attributes = {
       fontSize: b.fontSize,
       fontFamily: b.fontFamily,
       fontWeight: b.fontWeight,
       fill: b.color,
-      y: (i === 0) && y,
+      y: i === 0 ? y : undefined,
     }
 
     const attributesString = Object.entries(attributes)
-      .filter(([_, value]) => value)
-      .map(([key, value]) => `${kebabCase(key)}="${escapeStringKeepHash(value.toString())}"`)
+      .filter(([, value]) => value !== undefined)
+      .map(([key, value]) => `${kebabCase(key)}="${escapeStringKeepHash(String(value))}"`)
       .join(' ')
 
     return `<tspan xmlns="http://www.w3.org/2000/svg" ${attributesString}>${b._lines.map((line, k) => {
       let dy: number
       if (i === 0 && k === 0) dy = 0.8 + marginEm
-      else if (k === 0) dy = marginEm + b.lineHeight
-      else dy = b.lineHeight
+      else if (k === 0) dy = marginEm + (b.lineHeight ?? 1)
+      else dy = b.lineHeight ?? 1
 
       return `<tspan x="${x}" dy="${dy}em">${line.length ? line : ' '}</tspan>`
     }).join('')}</tspan>`
@@ -503,12 +507,14 @@ export function renderTextToSvgTextElement (
   trimmed?: boolean
 ): void {
   const wrappedText = getWrappedText(text, options.width, undefined, options.fastMode, options.separator, options.wordBreak)
-  const textElementX = options.x ?? +textElement.getAttribute('x')
-  const textElementY = options.y ?? +textElement.getAttribute('y')
+  const textElementX = options.x ?? +(textElement.getAttribute('x') ?? 0)
+  const textElementY = options.y ?? +(textElement.getAttribute('y') ?? 0)
   const x = textElementX ?? 0
   let y = textElementY ?? 0
   if (options.textAlign) {
     textElement.setAttribute('text-anchor', getTextAnchorFromTextAlign(options.textAlign))
+  } else {
+    textElement.setAttribute('text-anchor', getTextAnchorFromTextAlign(TextAlign.Left))
   }
 
   if (options.verticalAlign && options.verticalAlign !== VerticalAlign.Top) {
@@ -531,7 +537,9 @@ export function renderTextToSvgTextElement (
       const svgCode = renderTextToTspanStrings([block], x, y).join('')
       const svgCodeSanitized = striptags(svgCode, allowedSvgTextTags)
       const parsedSvgCode = parser.parseFromString(svgCodeSanitized, 'image/svg+xml').firstChild
-      textElement.appendChild(parsedSvgCode)
+      if (parsedSvgCode) {
+        textElement.appendChild(parsedSvgCode)
+      }
     })
   }
 }
@@ -552,15 +560,15 @@ export function renderTextIntoFrame (
 ): void {
   const wrappedText = getWrappedText(text, frameOptions.width, frameOptions.height, frameOptions.fastMode, frameOptions.separator, frameOptions.wordBreak)
 
-  const x = frameOptions.textAlign === TextAlign.Center ? frameOptions.width / 2
-    : frameOptions.textAlign === TextAlign.Right ? frameOptions.width : 0
+  const x = frameOptions.textAlign === TextAlign.Center ? (frameOptions.width ?? 0) / 2
+    : frameOptions.textAlign === TextAlign.Right ? (frameOptions.width ?? 0) : 0
 
   let y = 0
   const height = estimateWrappedTextHeight(wrappedText)
 
   // If the frame has height, the text will be vertically aligned within the frame.
   // If not, the text will be aligned against the `y` position of the frame.
-  const dh = frameOptions.height - height
+  const dh = (frameOptions.height ?? 0) - height
   y = frameOptions.verticalAlign === VerticalAlign.Middle ? dh / 2
     : frameOptions.verticalAlign === VerticalAlign.Bottom ? dh : 0
 
@@ -570,11 +578,11 @@ export function renderTextIntoFrame (
     : ''
 
   const svgCode =
-  `<text
-    xmlns="http://www.w3.org/2000/svg"
-    text-anchor="${getTextAnchorFromTextAlign(frameOptions.textAlign)}"
-    ${translate}
-  >
+    `<text
+      xmlns="http://www.w3.org/2000/svg"
+      text-anchor="${getTextAnchorFromTextAlign(frameOptions.textAlign ?? TextAlign.Left)}"
+      ${translate}
+    >
     ${renderTextToTspanStrings(wrappedText, x, y).join('')}
   </text>`
 
@@ -583,6 +591,8 @@ export function renderTextIntoFrame (
   const parsedSvgCode = parser.parseFromString(svgCodeSanitized, 'image/svg+xml').firstChild
 
   group.textContent = ''
-  group.appendChild(parsedSvgCode)
+  if (parsedSvgCode) {
+    group.appendChild(parsedSvgCode)
+  }
 }
 

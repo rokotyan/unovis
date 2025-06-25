@@ -376,7 +376,9 @@ export class XYContainer<Datum> extends ContainerCore {
     const { config: { xAxis, yAxis } } = this
     const margin = this._getMargin()
 
-    const axes = clean([xAxis, yAxis])
+    const axes = clean<Axis<Datum>>(
+      [xAxis, yAxis] as Array<Axis<Datum> | null | undefined>
+    )
     axes.forEach(axis => {
       const offset = axis.getOffset(margin)
       axis.g.attr('transform', `translate(${offset.left},${offset.top})`)
@@ -388,7 +390,9 @@ export class XYContainer<Datum> extends ContainerCore {
     const { config: { xAxis, yAxis } } = this
 
     // At first we need to set the domain to the scales
-    const components = clean([...this.components, xAxis, yAxis])
+    const components = clean<XYComponentCore<Datum>>(
+      [...this.components, xAxis, yAxis] as Array<XYComponentCore<Datum> | null | undefined>
+    )
     this._setScales(...components)
     this._updateScalesDomain(...components)
 
@@ -405,10 +409,10 @@ export class XYContainer<Datum> extends ContainerCore {
         axis.preRender()
 
         const m = axis.getRequiredMargin()
-        if (axisMargin.top < m.top) axisMargin.top = m.top
-        if (axisMargin.bottom < m.bottom) axisMargin.bottom = m.bottom
-        if (axisMargin.left < m.left) axisMargin.left = m.left
-        if (axisMargin.right < m.right) axisMargin.right = m.right
+        if (axisMargin.top < (m.top ?? 0)) axisMargin.top = m.top ?? 0
+        if (axisMargin.bottom < (m.bottom ?? 0)) axisMargin.bottom = m.bottom ?? 0
+        if (axisMargin.left < (m.left ?? 0)) axisMargin.left = m.left ?? 0
+        if (axisMargin.right < (m.right ?? 0)) axisMargin.right = m.right ?? 0
       })
       this._axisMargin = axisMargin
     }
@@ -418,10 +422,10 @@ export class XYContainer<Datum> extends ContainerCore {
     const { config: { margin } } = this
 
     return {
-      top: margin.top + this._axisMargin.top,
-      bottom: margin.bottom + this._axisMargin.bottom,
-      left: margin.left + this._axisMargin.left,
-      right: margin.right + this._axisMargin.right,
+      top: (margin.top ?? 0) + this._axisMargin.top,
+      bottom: (margin.bottom ?? 0) + this._axisMargin.bottom,
+      left: (margin.left ?? 0) + this._axisMargin.left,
+      right: (margin.right ?? 0) + this._axisMargin.right,
     }
   }
 

@@ -16,12 +16,17 @@
     "noImplicitAny": true,
     "alwaysStrict": true,
     // To be enabled:
-    // "strictNullChecks": true,
+    "strictNullChecks": true,
     // "strictPropertyInitialization": true,
     "strictFunctionTypes": true,
     "noImplicitThis": true,
     "strictBindCallApply": true
+    ,"skipLibCheck": true
   },
+  "include": [
+    "src/utils/**/*",
+    "src/types/**/*"
+  ],
   "exclude": [
     "index.ts",
     "maps.ts"

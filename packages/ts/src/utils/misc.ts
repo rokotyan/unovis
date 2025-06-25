@@ -26,7 +26,7 @@ export function getCSSVariableValue (s: string, context: HTMLElement | SVGElemen
   return getComputedStyle(context).getPropertyValue(variableName)
 }
 
-export function getCSSVariableValueInPixels (s: string, context: HTMLElement | SVGElement): number {
+export function getCSSVariableValueInPixels (s: string, context: HTMLElement | SVGElement): number | null {
   const val = getCSSVariableValue(s, context)
   return toPx(val)
 }
@@ -52,7 +52,7 @@ export function rectIntersect (rect1: Rect, rect2: Rect, tolerancePx = 0): boole
   return !(top1 < bottom2 || top2 < bottom1 || right1 < left2 || right2 < left1)
 }
 
-export function getHref<T> (d: T, identifier: StringAccessor<T>): string {
+export function getHref<T> (d: T, identifier: StringAccessor<T>): string | null {
   const id = getString(d, identifier)
   return id ? `url(#${id})` : null
 }
