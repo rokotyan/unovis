@@ -194,7 +194,7 @@ export function getBoolean<T> (d: T, accessor: BooleanAccessor<T>, i?: number): 
 }
 
 export function clean<T> (data: Array<T | null | undefined>): T[] {
-  return data.filter((d): d is T => Boolean(d) && !isNumber(d))
+  return data.filter((d): d is T => d != null)
 }
 
 export function clamp (d: number, min: number, max: number): number {
