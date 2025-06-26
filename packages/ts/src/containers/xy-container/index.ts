@@ -16,6 +16,7 @@ import { CoreDataModel } from 'data-models/core'
 // Types
 import { Spacing } from 'types/spacing'
 import { AxisType } from 'components/axis/types'
+import { Axis } from 'components/axis'
 import { ScaleDimension } from 'types/scale'
 import { Direction } from 'types/direction'
 
