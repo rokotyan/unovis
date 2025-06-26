@@ -29,12 +29,12 @@ export class GraphDataModel<
   public linkId: ((n: L) => string | undefined) = l => (isString(l.id) || isFinite(l.id as number)) ? `${l.id}` : undefined
   public nodeSort: ((a: N, b: N) => number)
 
-  public getNodeById (id: string | number): OutNode {
+  public getNodeById (id: string | number): OutNode | undefined {
     return this._nodesMap.get(id)
   }
 
   get data (): GraphData<N, L> {
-    return this._data
+    return this._data ?? { nodes: [] }
   }
 
   set data (inputData: GraphData<N, L>) {
@@ -47,13 +47,13 @@ export class GraphDataModel<
     this._nodesMap.clear()
 
     // Todo: Figure out why TypeScript complains about types
-    const nodes = cloneDeep(inputData?.nodes ?? []) as undefined as OutNode[]
-    const links = cloneDeep(inputData?.links ?? []) as undefined as OutLink[]
+    const nodes = cloneDeep(inputData.nodes ?? []) as unknown as OutNode[]
+    const links = cloneDeep(inputData.links ?? []) as unknown as OutLink[]
 
     // Every node or link can have a private state used for rendering needs
     // On data update we transfer state between objects with same ids
-    this.transferState(nodes, prevNodes, this.nodeId)
-    this.transferState(links, prevLinks, this.linkId)
+    this.transferState(nodes, prevNodes, n => this.nodeId(n) ?? '')
+    this.transferState(links, prevLinks, l => this.linkId(l) ?? '')
 
     // Set node `_id` and `_index`
     nodes.forEach((node, i) => {
@@ -69,8 +69,8 @@ export class GraphDataModel<
     // Fill link source and target
     links.forEach((link, i) => {
       link._indexGlobal = i
-      link.source = this.findNode(nodes, link.source)
-      link.target = this.findNode(nodes, link.target)
+      link.source = this.findNode(nodes, link.source)!
+      link.target = this.findNode(nodes, link.target)!
     })
 
     // Set link index for multiple link rendering

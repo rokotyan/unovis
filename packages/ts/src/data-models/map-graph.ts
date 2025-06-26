@@ -24,7 +24,7 @@ export class MapGraphDataModel<AreaDatum, PointDatum, LinkDatum> extends CoreDat
   public linkTarget: ((l: LinkDatum) => number | string | PointDatum) = l => (l as unknown as {target: string}).target
 
   get data (): MapGraphData<AreaDatum, PointDatum, LinkDatum> {
-    return this._data
+    return this._data ?? {}
   }
 
   set data (data: MapGraphData<AreaDatum, PointDatum, LinkDatum>) {
@@ -34,10 +34,12 @@ export class MapGraphDataModel<AreaDatum, PointDatum, LinkDatum> extends CoreDat
     this._areas = cloneDeep(data?.areas ?? [])
     this._points = cloneDeep(data?.points ?? [])
 
-    this._links = cloneDeep(data?.links ?? []).reduce((arr, link) => {
+    this._links = cloneDeep(data?.links ?? []).reduce<MapLink<PointDatum, LinkDatum>[]>((arr, link) => {
       const source = this.findPoint(this.points, this.linkSource(link))
       const target = this.findPoint(this.points, this.linkTarget(link))
-      if (source && target) arr.push({ source, target })
+      if (source && target) {
+        arr.push({ ...(link as LinkDatum), source, target } as MapLink<PointDatum, LinkDatum>)
+      }
       return arr
     }, [])
   }

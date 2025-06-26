@@ -12,13 +12,13 @@ import { ContainerDefaultConfig, ContainerConfigInterface } from './config'
 
 export class ContainerCore {
   public svg: Selection<SVGSVGElement, unknown, null, undefined>
-  public element: SVGSVGElement
+  public element: SVGSVGElement | null
   public prevConfig: ContainerConfigInterface
   public config: ContainerConfigInterface
 
   protected _defaultConfig: ContainerConfigInterface = ContainerDefaultConfig
   protected _container: HTMLElement
-  protected _renderAnimationFrameId: number
+  protected _renderAnimationFrameId: number | null
   protected _isFirstRender = true
   protected _resizeObserver: ResizeObserver | undefined
   protected _resizeObserverAnimationFrameId: number
@@ -59,7 +59,8 @@ export class ContainerCore {
     // Add `svgDefs` if provided in the config
     if (config?.svgDefs !== this.prevConfig?.svgDefs) {
       this._svgDefsExternal.selectAll('*').remove()
-      this._svgDefsExternal.html(config.svgDefs)
+      if (config.svgDefs != null) this._svgDefsExternal.html(config.svgDefs)
+      else this._svgDefsExternal.html(null)
     }
   }
 
@@ -73,8 +74,9 @@ export class ContainerCore {
     const { config } = this
 
     // Apply the `aria-label` attribute
-    select(this._container)
-      .attr('aria-label', config.ariaLabel)
+    const aria = config.ariaLabel
+    if (aria == null) select(this._container).attr('aria-label', null)
+    else select(this._container).attr('aria-label', aria)
 
     this._isFirstRender = false
   }
@@ -97,7 +99,7 @@ export class ContainerCore {
     if (!this._resizeObserver) this._setUpResizeObserver()
 
     // Schedule the actual rendering in the next frame
-    cancelAnimationFrame(this._renderAnimationFrameId)
+    if (this._renderAnimationFrameId !== null) cancelAnimationFrame(this._renderAnimationFrameId)
     this._renderAnimationFrameId = requestAnimationFrame(() => {
       this._preRender()
       this._render(duration)
@@ -106,26 +108,28 @@ export class ContainerCore {
 
   get containerWidth (): number {
     return this.config.width
-      ? this.element.clientWidth
+      ? (this.element ? this.element.clientWidth : 0)
       : (this._container.clientWidth || this._container.getBoundingClientRect().width)
   }
 
   get containerHeight (): number {
     return this.config.height
-      ? this.element.clientHeight
+      ? (this.element ? this.element.clientHeight : 0)
       : (this._container.clientHeight || this._container.getBoundingClientRect().height || ContainerCore.DEFAULT_CONTAINER_HEIGHT)
   }
 
   get width (): number {
-    return clamp(this.containerWidth - this.config.margin.left - this.config.margin.right, 0, Number.POSITIVE_INFINITY)
+    const margin = this.config.margin ?? {}
+    return clamp(this.containerWidth - (margin.left ?? 0) - (margin.right ?? 0), 0, Number.POSITIVE_INFINITY)
   }
 
   get height (): number {
-    return clamp(this.containerHeight - this.config.margin.top - this.config.margin.bottom, 0, Number.POSITIVE_INFINITY)
+    const margin = this.config.margin ?? {}
+    return clamp(this.containerHeight - (margin.top ?? 0) - (margin.bottom ?? 0), 0, Number.POSITIVE_INFINITY)
   }
 
   protected _removeAllChildren (): void {
-    while (this.element.firstChild) {
+    while (this.element && this.element.firstChild) {
       this.element.removeChild(this.element.firstChild)
     }
   }
@@ -162,7 +166,7 @@ export class ContainerCore {
   }
 
   public destroy (): void {
-    cancelAnimationFrame(this._renderAnimationFrameId)
+    if (this._renderAnimationFrameId !== null) cancelAnimationFrame(this._renderAnimationFrameId)
     cancelAnimationFrame(this._resizeObserverAnimationFrameId)
     this._resizeObserver?.disconnect()
     this.svg.remove()

@@ -41,7 +41,7 @@ export class Annotations extends ComponentCore<unknown[], AnnotationsConfigInter
     const duration = isNumber(customDuration) ? customDuration : config.duration
 
     const annotations = this.g.selectAll<SVGGElement, AnnotationItem[]>(`.${s.annotation}`)
-      .data(config.items, d => JSON.stringify(d))
+      .data(config.items ?? [], d => JSON.stringify(d))
 
     const annotationsEnter = annotations.enter().append('g')
       .attr('class', s.annotation)
@@ -58,18 +58,21 @@ export class Annotations extends ComponentCore<unknown[], AnnotationsConfigInter
     subject.append('line')
 
     const annotationsMerged = annotationsEnter.merge(annotations)
-      .attr('cursor', d => d?.cursor)
+      .attr('cursor', d => d.cursor ?? null)
       .each((annotation, i, elements) => {
         if (annotation.content) {
           const content = typeof annotation.content === 'string' ? { ...UNOVIS_TEXT_DEFAULT, text: annotation.content } : annotation.content
-          const x = parseUnit(annotation.x, this._width)
-          const y = parseUnit(annotation.y, this._height)
-          const width = parseUnit(annotation.width, this._width)
-          const height = parseUnit(annotation.height, this._height)
+          const x = parseUnit(annotation.x ?? 0, this._width)
+          const y = parseUnit(annotation.y ?? 0, this._height)
+          const width = parseUnit(annotation.width ?? 0, this._width)
+          const height = parseUnit(annotation.height ?? 0, this._height)
           const options = { ...annotation, x, y, width, height }
 
           const contentGroupElement = select(elements[i]).select<SVGGElement>(`.${s.annotationContent}`)
-          renderTextIntoFrame(contentGroupElement.node(), content, options)
+          const node = contentGroupElement.node()
+          if (node) {
+            renderTextIntoFrame(node, content, options)
+          }
         }
 
         if (annotation.subject) {
@@ -93,18 +96,32 @@ export class Annotations extends ComponentCore<unknown[], AnnotationsConfigInter
     const contentGroup = select(annotationGroupElement).select<SVGGElement>(`.${s.annotationContent}`)
     const subjectGroup = select(annotationGroupElement).select<SVGGElement>(`.${s.annotationSubject}`)
 
-    const subjectX: number | null = parseUnit(typeof subject?.x === 'function' ? subject.x() : subject?.x, this._width) ?? null
-    const subjectY: number | null = parseUnit(typeof subject?.y === 'function' ? subject.y() : subject?.y, this._height) ?? null
+    if (!subject) {
+      subjectGroup.select('circle').attr('visibility', 'hidden')
+      subjectGroup.select('line').attr('visibility', 'hidden')
+      return
+    }
 
-    const subjectStrokeColor: string | null = subject?.strokeColor ?? null
-    const subjectFillColor: string | null = subject?.fillColor ?? null
-    const subjectStrokeDasharray: string | null = subject?.strokeDasharray ?? null
-    const connectorLineColor: string | null = subject?.connectorLineColor ?? null
-    const connectorLineStrokeDasharray: string | null = subject?.connectorLineStrokeDasharray ?? null
-    const subjectRadius: number | null = subject?.radius ?? 0
-    const padding = subject?.padding ?? 5
+    const subjectX = parseUnit(
+      typeof subject.x === 'function' ? subject.x() : subject.x,
+      this._width
+    )
+    const subjectY = parseUnit(
+      typeof subject.y === 'function' ? subject.y() : subject.y,
+      this._height
+    )
 
-    const contentBbox = contentGroup.node().getBBox()
+    const subjectStrokeColor = subject.strokeColor ?? null
+    const subjectFillColor = subject.fillColor ?? null
+    const subjectStrokeDasharray = subject.strokeDasharray ?? null
+    const connectorLineColor = subject.connectorLineColor ?? null
+    const connectorLineStrokeDasharray = subject.connectorLineStrokeDasharray ?? null
+    const subjectRadius = subject.radius ?? 0
+    const padding = subject.padding ?? 5
+
+    const contentNode = contentGroup.node()
+    if (!contentNode) return
+    const contentBbox = contentNode.getBBox()
     const dy = Math.abs(subjectY - (contentBbox.y + contentBbox.height / 2))
     const dx = Math.abs(subjectX - (contentBbox.x + contentBbox.width / 2))
     const annotationPadding = 5
@@ -120,24 +137,32 @@ export class Annotations extends ComponentCore<unknown[], AnnotationsConfigInter
     const x1 = subjectX + Math.cos(angle * Math.PI / 180) * (subjectRadius + padding)
     const y1 = subjectY + Math.sin(angle * Math.PI / 180) * (subjectRadius + padding)
 
-    subjectGroup.select('circle')
-      .attr('visibility', subject ? null : 'hidden')
+    const circle = subjectGroup.select('circle')
+      .attr('visibility', null)
       .attr('cx', subjectX)
       .attr('cy', subjectY)
       .attr('r', subjectRadius)
-      .style('stroke', subjectStrokeColor)
-      .style('fill', subjectFillColor)
-      .style('stroke-dasharray', subjectStrokeDasharray)
 
-    subjectGroup.select('line')
-      .attr('visibility', subject ? null : 'hidden')
+    if (subjectStrokeColor === null) circle.style('stroke', null)
+    else circle.style('stroke', subjectStrokeColor)
+
+    if (subjectFillColor === null) circle.style('fill', null)
+    else circle.style('fill', subjectFillColor)
+
+    if (subjectStrokeDasharray === null) circle.style('stroke-dasharray', null)
+    else circle.style('stroke-dasharray', subjectStrokeDasharray)
+
+    const line = subjectGroup.select('line')
+      .attr('visibility', null)
       .attr('x1', x1)
       .attr('y1', y1)
-      .attr('x2', x1)
-      .attr('y2', y1)
       .attr('x2', x2)
       .attr('y2', y2)
-      .style('stroke', connectorLineColor)
-      .style('stroke-dasharray', connectorLineStrokeDasharray)
+
+    if (connectorLineColor === null) line.style('stroke', null)
+    else line.style('stroke', connectorLineColor)
+
+    if (connectorLineStrokeDasharray === null) line.style('stroke-dasharray', null)
+    else line.style('stroke-dasharray', connectorLineStrokeDasharray)
   }
 }

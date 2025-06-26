@@ -124,7 +124,7 @@ export function polygon (size: number, n = 6, endAngle = 2 * Math.PI, open = fal
     .y(d => d['y'])
     .curve((open ? curveCardinal : curveCardinalClosed).tension(0.95))
 
-  return path(data)
+  return path(data) || ''
 }
 
 export function circlePath (cx: number, cy: number, r: number): string {

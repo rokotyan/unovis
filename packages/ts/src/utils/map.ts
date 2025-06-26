@@ -13,13 +13,13 @@ export function getDataLatLngBounds<D> (
   paddingDegrees = 1
 ): [[number, number], [number, number]] {
   const northWest = {
-    lat: max(data ?? [], d => getNumber(d, pointLatitude)),
-    lng: min(data ?? [], d => getNumber(d, pointLongitude)),
+    lat: max(data ?? [], d => getNumber(d, pointLatitude)) ?? 0,
+    lng: min(data ?? [], d => getNumber(d, pointLongitude)) ?? 0,
   }
 
   const southEast = {
-    lat: min(data ?? [], d => getNumber(d, pointLatitude)),
-    lng: max(data ?? [], d => getNumber(d, pointLongitude)),
+    lat: min(data ?? [], d => getNumber(d, pointLatitude)) ?? 0,
+    lng: max(data ?? [], d => getNumber(d, pointLongitude)) ?? 0,
   }
 
   return [
