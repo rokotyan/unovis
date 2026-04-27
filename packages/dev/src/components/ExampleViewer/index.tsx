@@ -43,7 +43,7 @@ export async function loadExampleFiles (exampleGroup: ExampleGroup, exampleTitle
 
   for (const file of sortedFiles) {
     if (file.endsWith('.svg')) continue
-    const response = await fetch(`/examples/${file}`)
+    const response = await fetch(new URL(`${file}`, document.baseURI).toString())
     const content = await response.text()
     files[file.replace(/.*\//, '')] = { code: content }
   }

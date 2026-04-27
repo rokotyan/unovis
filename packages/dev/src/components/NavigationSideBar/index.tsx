@@ -47,7 +47,7 @@ export function NavigationSideBar (props: NavigationSideBarProps): React.ReactNo
   const [searchParams, setSearchParams] = useSearchParams()
   const preservedSearch = searchParams.toString()
   const [groups, setGroups] = useState(() => filterExampleGroups(props.exampleGroups, readInitialSearchQuery()))
-  const exampleMatch = useMatch({ path: '/examples/:group/:title', end: true })
+  const exampleMatch = useMatch({ path: ':group/:title', end: true })
 
   const filterExamples = (): void => {
     const searchTerm = inputRef.current?.value ?? ''

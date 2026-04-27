@@ -4,13 +4,14 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const darkCodeTheme = require('prism-react-renderer/themes/dracula')
+const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Unovis',
   tagline: 'A modular data visualization framework for React, Angular, Svelte, Vue, Solid and vanilla TypeScript or JavaScript',
   url: 'https://unovis.dev',
-  baseUrl: '/',
+  baseUrl,
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/unovis-pictogram-square.svg',

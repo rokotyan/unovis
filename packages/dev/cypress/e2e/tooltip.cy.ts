@@ -3,7 +3,7 @@ const scopeSelector = '.exampleViewer'
 describe('Tooltip Tests', () => {
   describe('Tooltip Component', () => {
     before(() => {
-      cy.visit('/examples/Tooltip/Tooltip:%20Empty%20Content')
+      cy.visit('/Tooltip/Tooltip:%20Empty%20Content')
       cy.wait(300)
       cy.get('[visScatterPointE2eTestId]')
         .should('have.length.at.least', 1)
@@ -84,7 +84,7 @@ describe('Tooltip Tests', () => {
   describe('Graph Component Tooltips', () => {
     before(() => {
       cy.visit(
-        '/examples/Graph/Graph:%20Custom%20Node%20Fills%20with%20Tooltip'
+        '/Graph/Graph:%20Custom%20Node%20Fills%20with%20Tooltip'
       )
       cy.wait(300)
     })
@@ -192,7 +192,7 @@ describe('Tooltip Tests', () => {
             req.continue()
           }
         ).as('tile')
-        cy.visit('/examples/Leaflet/Color%20Map')
+        cy.visit('/Leaflet/Color%20Map')
         cy.wait(['@tilesJson', '@tile'])
         cy.wait(1000)
       })
