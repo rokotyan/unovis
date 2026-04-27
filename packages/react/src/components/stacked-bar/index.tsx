@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { StackedBar, StackedBarConfigInterface } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisStackedBarProps<Datum> = StackedBarConfigInterface<Datum> & {
   ref?: Ref<VisStackedBarRef<Datum>>;
 }
 
+export const VisStackedBarSelectors = StackedBar.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisStackedBarFC<Datum> (props: VisStackedBarProps<Datum>, fRef: ForwardedRef<VisStackedBarRef<Datum>>): JSX.Element {
+function VisStackedBarFC<Datum> (props: VisStackedBarProps<Datum>, fRef: ForwardedRef<VisStackedBarRef<Datum>>): ReactElement {
   const ref = useRef<VisComponentElement<StackedBar<Datum>>>(null)
   const componentRef = useRef<StackedBar<Datum> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisStackedBarFC<Datum> (props: VisStackedBarProps<Datum>, fRef: Forward
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-component ref={ref} />
 }
 

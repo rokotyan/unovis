@@ -6,7 +6,7 @@ import { arePropsEqual, useForwardProps } from '../../utils/props'
 
 
 // data and required props 
-interface Props extends  LeafletFlowMapConfigInterface<PointDatum, FlowDatum> { }
+type Props = LeafletFlowMapConfigInterface<PointDatum, FlowDatum>
 const props = defineProps<Props & { data?: { points: PointDatum[]; flows?: FlowDatum[] } }>()
 
 const data = computed(() => props.data)
@@ -37,10 +37,17 @@ watch(config, (curr, prev) => {
   }
 })
 
+watch(data, () => {
+  component.value?.setData(data.value)
+})
 
 defineExpose({
   component
 })
+</script>
+
+<script lang="ts">
+export const VisLeafletFlowMapSelectors = LeafletFlowMap.selectors
 </script>
 
 <template>

@@ -20,7 +20,7 @@ import { ScaleDimension } from 'types/scale'
 import { Direction } from 'types/direction'
 
 // Utils
-import { clamp, clean, flatten } from 'utils/data'
+import { clamp, clean, flatten, isEqual } from 'utils/data'
 import { guid } from 'utils/misc'
 
 // Config
@@ -43,10 +43,10 @@ export type XYConfigInterface<Datum> = XYComponentConfigInterface<Datum>
 | AreaConfigInterface<Datum>
 
 export class XYContainer<Datum> extends ContainerCore {
-  public datamodel: CoreDataModel<Datum[]> = new CoreDataModel()
-  public config: XYContainerConfigInterface<Datum>
   protected _defaultConfig = XYContainerDefaultConfig as XYContainerConfigInterface<Datum>
   protected _svgDefs: Selection<SVGDefsElement, unknown, null, undefined>
+  public datamodel: CoreDataModel<Datum[]> = new CoreDataModel()
+  public config: XYContainerConfigInterface<Datum> = this._defaultConfig
   private _clipPath: Selection<SVGClipPathElement, unknown, null, undefined>
   private _clipPathId = guid()
   private _axisMargin: Spacing = { top: 0, bottom: 0, left: 0, right: 0 }
@@ -116,6 +116,7 @@ export class XYContainer<Datum> extends ContainerCore {
   public setData (data: Datum[], preventRender?: boolean): void {
     const { components, config } = this
     if (!data) return
+
     this.datamodel.data = data
 
     components.forEach((c) => {
@@ -125,7 +126,16 @@ export class XYContainer<Datum> extends ContainerCore {
     config.crosshair?.setData(data)
     config.xAxis?.setData(data)
     config.yAxis?.setData(data)
-    config.tooltip?.hide()
+
+    // Hide tooltip and crosshair if the data has changed
+    // Important: We still want to do `setData` for the components above even if the data hasn't changed
+    // because calling `updateContainer` may add new components and we need to pass them the data
+    const hasDataUpdated = !isEqual(this.datamodel.data, data)
+    if (hasDataUpdated) {
+      config.tooltip?.hide()
+      config.crosshair?.hide()
+    }
+
     if (!preventRender) this.render()
   }
 
@@ -167,11 +177,18 @@ export class XYContainer<Datum> extends ContainerCore {
       this.element.appendChild(crosshair.element)
     }
 
+    // Set up annotations
+    const annotations = containerConfig.annotations
+    if (annotations) {
+      this.element.appendChild(annotations.element)
+    }
+
     // Clipping path
     this.element.appendChild(this._clipPath.node())
 
     // Defs
     this.element.appendChild(this._svgDefs.node())
+    this.element.appendChild(this._svgDefsExternal.node())
 
     // Rendering
     if (!preventRender) this.render()
@@ -207,6 +224,14 @@ export class XYContainer<Datum> extends ContainerCore {
       this._setAutoMargin()
     }
 
+    // Pass size and margin to the components
+    const components = clean([...this.components, config.xAxis, config.yAxis, config.crosshair, config.annotations])
+    const margin = this._getMargin()
+    for (const c of components) {
+      c.setSize(this.width, this.height, this.containerWidth, this.containerHeight)
+      c.setContainerMargin(margin)
+    }
+
     // Update Scales of all the components at once to calculate required paddings and sync them
     this._updateScales(...this.components, config.xAxis, config.yAxis, config.crosshair)
   }
@@ -231,7 +256,7 @@ export class XYContainer<Datum> extends ContainerCore {
 
     // Clip Rect
     // Extending the clipping path to allow small overflow (e.g. Line will looks better that way when it touches the edges)
-    const clipPathExtension = 2
+    const clipPathExtension = config.clipPathExtend
     this._clipPath.select('rect')
       .attr('x', -clipPathExtension)
       .attr('y', -clipPathExtension)
@@ -250,6 +275,7 @@ export class XYContainer<Datum> extends ContainerCore {
       const baselineComponentConfig = this.components.find(c => (c.config as AreaConfigInterface<Datum>).baseline)?.config as AreaConfigInterface<Datum>
       const baselineAccessor = baselineComponentConfig?.baseline
 
+      // Setting up fallback accessors for the crosshair to be used if they are not configured explicitly
       crosshair.accessors = {
         x: this.components[0]?.config.x,
         y: flatten(yAccessors),
@@ -260,10 +286,14 @@ export class XYContainer<Datum> extends ContainerCore {
       crosshair.g.attr('transform', `translate(${margin.left},${margin.top})`)
         .style('clip-path', `url(#${this._clipPathId})`)
         .style('-webkit-clip-path', `url(#${this._clipPathId})`)
-      crosshair.hide()
+      crosshair.render()
     }
 
+    config.annotations?.g.attr('transform', `translate(${margin.left},${margin.top})`)
+    config.annotations?.render()
+
     this._firstRender = false
+    config.onRenderComplete?.(this.svg.node(), margin, this._getBleed(this.components), this.containerWidth, this.containerHeight, this.width, this.height)
   }
 
   private _updateScales<T extends XYComponentCore<Datum>> (...components: T[]): void {
@@ -325,8 +355,8 @@ export class XYContainer<Datum> extends ContainerCore {
 
     // Set initial scale range
     const isYDirectionSouth = config.yDirection === Direction.South
-    const xRange: [number, number] = [config.padding.left ?? 0, this.width - config.padding.right ?? 0]
-    const yRange: [number, number] = [this.height - config.padding.bottom ?? 0, config.padding.top ?? 0]
+    const xRange: [number, number] = [config.padding.left ?? 0, this.width - (config.padding.right ?? 0)]
+    const yRange: [number, number] = [this.height - (config.padding.bottom ?? 0), config.padding.top ?? 0]
     if (isYDirectionSouth) yRange.reverse()
 
     for (const c of components) {
@@ -336,13 +366,7 @@ export class XYContainer<Datum> extends ContainerCore {
     }
 
     // Get and combine bleed
-    const bleed = components.map(c => c.bleed).reduce((bleed, b) => {
-      for (const key of Object.keys(bleed)) {
-        const k = key as keyof Spacing
-        if (bleed[k] < b[k]) bleed[k] = b[k]
-      }
-      return bleed
-    }, { top: 0, bottom: 0, left: 0, right: 0 })
+    const bleed = this._getBleed(components)
 
     // Update scale range
     for (const c of components) {
@@ -373,6 +397,7 @@ export class XYContainer<Datum> extends ContainerCore {
 
     // At first we need to set the domain to the scales
     const components = clean([...this.components, xAxis, yAxis])
+    this._setScales(...components)
     this._updateScalesDomain(...components)
 
     // Calculate margin required by the axes
@@ -393,7 +418,6 @@ export class XYContainer<Datum> extends ContainerCore {
         if (axisMargin.left < m.left) axisMargin.left = m.left
         if (axisMargin.right < m.right) axisMargin.right = m.right
       })
-
       this._axisMargin = axisMargin
     }
   }
@@ -409,13 +433,24 @@ export class XYContainer<Datum> extends ContainerCore {
     }
   }
 
+  private _getBleed<T extends XYComponentCore<Datum>> (components: T[]): Spacing {
+    return components.map(c => c.bleed).reduce((bleed, b) => {
+      for (const key of Object.keys(bleed)) {
+        const k = key as keyof Spacing
+        if (bleed[k] < b[k]) bleed[k] = b[k]
+      }
+      return bleed
+    }, { top: 0, bottom: 0, left: 0, right: 0 })
+  }
+
   public destroy (): void {
-    const { components, config: { tooltip, crosshair, xAxis, yAxis } } = this
+    const { components, config: { tooltip, crosshair, annotations, xAxis, yAxis } } = this
     super.destroy()
 
     for (const c of components) c?.destroy()
     tooltip?.destroy()
     crosshair?.destroy()
+    annotations?.destroy()
     xAxis?.destroy()
     yAxis?.destroy()
   }

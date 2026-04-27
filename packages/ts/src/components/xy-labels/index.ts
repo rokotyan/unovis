@@ -59,7 +59,7 @@ export class XYLabels<Datum> extends XYComponentCore<Datum, XYLabelsConfigInterf
     const { config, datamodel } = this
 
     const xRange = this.xScale.range() as [number, number]
-    const yRange = this.xScale.range() as [number, number]
+    const yRange = this.yScale.range() as [number, number]
 
     const labels = datamodel.data?.reduce<XYLabel<Datum>[]>((acc, d) => {
       const xPositioning = getValue<Datum, XYLabelPositioning>(d, config.xPositioning)
@@ -76,7 +76,7 @@ export class XYLabels<Datum> extends XYComponentCore<Datum, XYLabelsConfigInterf
       return acc
     }, []) ?? []
 
-    return this._getClusteredLabels(labels)
+    return config.clustering ? this._getClusteredLabels(labels) : labels
   }
 
   private _getClusteredLabels (labels: XYLabel<Datum>[]): (XYLabel<Datum> | XYLabelCluster<Datum>)[] {

@@ -18,17 +18,19 @@ export class ContainerCore {
 
   protected _defaultConfig: ContainerConfigInterface = ContainerDefaultConfig
   protected _container: HTMLElement
-  protected _requestedAnimationFrame: number
+  protected _renderAnimationFrameId: number
   protected _isFirstRender = true
   protected _resizeObserver: ResizeObserver | undefined
+  protected _resizeObserverAnimationFrameId: number
   protected _svgDefs: Selection<SVGDefsElement, unknown, null, undefined>
+  protected _svgDefsExternal: Selection<SVGDefsElement, unknown, null, undefined>
   private _containerSize: { width: number; height: number }
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   static DEFAULT_CONTAINER_HEIGHT = 300
 
   constructor (element: HTMLElement) {
-    this._requestedAnimationFrame = null
+    this._renderAnimationFrameId = null
     this._container = element
 
     // Setting `role` attribute to `image` to make the container accessible
@@ -45,6 +47,7 @@ export class ContainerCore {
       .attr('aria-hidden', true)
 
     this._svgDefs = this.svg.append('defs')
+    this._svgDefsExternal = this.svg.append('defs')
     this.element = this.svg.node()
   }
 
@@ -52,6 +55,12 @@ export class ContainerCore {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     this.prevConfig = this.config
     this.config = merge(this._defaultConfig, config)
+
+    // Add `svgDefs` if provided in the config
+    if (config?.svgDefs !== this.prevConfig?.svgDefs) {
+      this._svgDefsExternal.selectAll('*').remove()
+      this._svgDefsExternal.html(config.svgDefs)
+    }
   }
 
   // The `_preRender` step should be used to perform some actions before rendering.
@@ -62,12 +71,6 @@ export class ContainerCore {
   // The `_render` step should be used to perform the actual rendering
   protected _render (duration?: number): void {
     const { config } = this
-
-    // Add `svgDefs` if provided in the config
-    if (config.svgDefs) {
-      this.svg.select('.svgDefs').remove()
-      this.svg.append('defs').attr('class', 'svgDefs').html(config.svgDefs)
-    }
 
     // Apply the `aria-label` attribute
     select(this._container)
@@ -94,8 +97,8 @@ export class ContainerCore {
     if (!this._resizeObserver) this._setUpResizeObserver()
 
     // Schedule the actual rendering in the next frame
-    cancelAnimationFrame(this._requestedAnimationFrame)
-    this._requestedAnimationFrame = requestAnimationFrame(() => {
+    cancelAnimationFrame(this._renderAnimationFrameId)
+    this._renderAnimationFrameId = requestAnimationFrame(() => {
       this._preRender()
       this._render(duration)
     })
@@ -135,25 +138,32 @@ export class ContainerCore {
 
   protected _setUpResizeObserver (): void {
     if (this._resizeObserver) return
+
     const containerRect = this._container.getBoundingClientRect()
     this._containerSize = { width: containerRect.width, height: containerRect.height }
 
     this._resizeObserver = new ResizeObserver((entries, observer) => {
-      const resizedContainerRect = this._container.getBoundingClientRect()
-      const resizedContainerSize = { width: resizedContainerRect.width, height: resizedContainerRect.height }
-      const hasSizeChanged = !isEqual(this._containerSize, resizedContainerSize)
-      // Do resize only if element is attached to the DOM
-      // will come in useful when some ancestor of container becomes detached
-      if (hasSizeChanged && resizedContainerSize.width && resizedContainerSize.height) {
-        this._containerSize = resizedContainerSize
-        this._onResize()
-      }
+      // Using request animation frame to avoid multiple resize events when scrollbars appear/disappear
+      // See more: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors
+      cancelAnimationFrame(this._resizeObserverAnimationFrameId)
+      this._resizeObserverAnimationFrameId = requestAnimationFrame(() => {
+        const resizedContainerRect = this._container.getBoundingClientRect()
+        const resizedContainerSize = { width: resizedContainerRect.width, height: resizedContainerRect.height }
+        const hasSizeChanged = !isEqual(this._containerSize, resizedContainerSize)
+        // Do resize only if element is attached to the DOM
+        // will come in useful when some ancestor of container becomes detached
+        if (hasSizeChanged && resizedContainerSize.width && resizedContainerSize.height) {
+          this._containerSize = resizedContainerSize
+          this._onResize()
+        }
+      })
     })
     this._resizeObserver.observe(this._container)
   }
 
   public destroy (): void {
-    cancelAnimationFrame(this._requestedAnimationFrame)
+    cancelAnimationFrame(this._renderAnimationFrameId)
+    cancelAnimationFrame(this._resizeObserverAnimationFrameId)
     this._resizeObserver?.disconnect()
     this.svg.remove()
   }

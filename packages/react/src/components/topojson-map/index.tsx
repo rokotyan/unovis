@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { TopoJSONMap, TopoJSONMapConfigInterface } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisTopoJSONMapProps<AreaDatum, PointDatum, LinkDatum> = TopoJSONMapC
   ref?: Ref<VisTopoJSONMapRef<AreaDatum, PointDatum, LinkDatum>>;
 }
 
+export const VisTopoJSONMapSelectors = TopoJSONMap.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisTopoJSONMapFC<AreaDatum, PointDatum, LinkDatum> (props: VisTopoJSONMapProps<AreaDatum, PointDatum, LinkDatum>, fRef: ForwardedRef<VisTopoJSONMapRef<AreaDatum, PointDatum, LinkDatum>>): JSX.Element {
+function VisTopoJSONMapFC<AreaDatum, PointDatum, LinkDatum> (props: VisTopoJSONMapProps<AreaDatum, PointDatum, LinkDatum>, fRef: ForwardedRef<VisTopoJSONMapRef<AreaDatum, PointDatum, LinkDatum>>): ReactElement {
   const ref = useRef<VisComponentElement<TopoJSONMap<AreaDatum, PointDatum, LinkDatum>>>(null)
   const componentRef = useRef<TopoJSONMap<AreaDatum, PointDatum, LinkDatum> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisTopoJSONMapFC<AreaDatum, PointDatum, LinkDatum> (props: VisTopoJSONM
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-component ref={ref} />
 }
 

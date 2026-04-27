@@ -1,57 +1,55 @@
-import React, { ForwardedRef, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { LeafletFlowMap, LeafletFlowMapConfigInterface } from '@unovis/ts'
-import { arePropsEqual } from '../../utils/react'
+// !!! This code was automatically generated. You should not change it !!!
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import { LeafletFlowMap, LeafletFlowMapConfigInterface, GenericDataRecord } from '@unovis/ts'
 
-export type VisLeafletFlowMapProps<
-  PointDatum extends Record<string, unknown>,
-  FlowDatum extends Record<string, unknown>,
-> = LeafletFlowMapConfigInterface<PointDatum, FlowDatum> & {
-  data?: { points: PointDatum[]; flows: FlowDatum[] };
+// Utils
+import { arePropsEqual } from 'src/utils/react'
+
+// Types
+import { VisComponentElement } from 'src/types/dom'
+
+export type VisLeafletFlowMapRef<PointDatum extends GenericDataRecord, FlowDatum extends GenericDataRecord> = {
+  component?: LeafletFlowMap<PointDatum, FlowDatum>;
+}
+
+export type VisLeafletFlowMapProps<PointDatum extends GenericDataRecord, FlowDatum extends GenericDataRecord> = LeafletFlowMapConfigInterface<PointDatum, FlowDatum> & {
+  data?: { points: PointDatum[]; flows?: FlowDatum[] };
   ref?: Ref<VisLeafletFlowMapRef<PointDatum, FlowDatum>>;
   className?: string;
 }
 
-export type VisLeafletFlowMapRef<
-  PointDatum extends Record<string, unknown>,
-  FlowDatum extends Record<string, unknown>,
-> = {
-  component: LeafletFlowMap<PointDatum, FlowDatum> | undefined;
-}
+export const VisLeafletFlowMapSelectors = LeafletFlowMap.selectors
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function VisLeafletFlowMapFC<
-  PointDatum extends Record<string, unknown>,
-  FlowDatum extends Record<string, unknown>,
-> (
-  props: VisLeafletFlowMapProps<PointDatum, FlowDatum>,
-  ref: ForwardedRef<VisLeafletFlowMapRef<PointDatum, FlowDatum>>
-): JSX.Element {
-  const container = useRef<HTMLDivElement>(null)
-  const [component, setComponent] = useState<LeafletFlowMap<PointDatum, FlowDatum>>()
+function VisLeafletFlowMapFC<PointDatum extends GenericDataRecord, FlowDatum extends GenericDataRecord> (props: VisLeafletFlowMapProps<PointDatum, FlowDatum>, fRef: ForwardedRef<VisLeafletFlowMapRef<PointDatum, FlowDatum>>): ReactElement {
+  const ref = useRef<VisComponentElement<LeafletFlowMap<PointDatum, FlowDatum>, HTMLDivElement>>(null)
+  const componentRef = useRef<LeafletFlowMap<PointDatum, FlowDatum> | undefined>(undefined)
 
   // On Mount
   useEffect(() => {
-    const c = new LeafletFlowMap(container.current as HTMLDivElement, props, props.data)
-    setComponent(c)
+    const element = (ref.current as VisComponentElement<LeafletFlowMap<PointDatum, FlowDatum>, HTMLDivElement>)
 
-    return () => c?.destroy()
+    const c = new LeafletFlowMap<PointDatum, FlowDatum>(ref.current as VisComponentElement<LeafletFlowMap<PointDatum, FlowDatum>, HTMLDivElement>, props, props.data)
+    componentRef.current = c
+    element.__component__ = c
+
+    return () => {
+      componentRef.current = undefined
+      c.destroy()
+    }
   }, [])
 
   // On Props Update
   useEffect(() => {
+    const component = componentRef.current
     if (props.data) component?.setData(props.data)
-
     component?.setConfig(props)
   })
 
-  useImperativeHandle(ref, () => ({ component }))
-  return <div ref={container} className={props.className} />
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
+  return <div className={props.className} ref={ref} />
 }
 
 // We export a memoized component to avoid unnecessary re-renders
 //  and define its type explicitly to help react-docgen-typescript to extract information about props
-export const VisLeafletFlowMap: (<
-  PointDatum extends Record<string, unknown>,
-  FlowDatum extends Record<string, unknown>,
->(props: VisLeafletFlowMapProps<PointDatum, FlowDatum>) => JSX.Element | null) =
-  React.memo(React.forwardRef(VisLeafletFlowMapFC), arePropsEqual)
+export const VisLeafletFlowMap: (<PointDatum extends GenericDataRecord, FlowDatum extends GenericDataRecord>(props: VisLeafletFlowMapProps<PointDatum, FlowDatum>) => JSX.Element | null) = React.memo(React.forwardRef(VisLeafletFlowMapFC), arePropsEqual)

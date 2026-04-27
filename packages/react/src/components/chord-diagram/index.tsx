@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { ChordDiagram, ChordDiagramConfigInterface, ChordInputNode, ChordInputLink } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisChordDiagramProps<N extends ChordInputNode, L extends ChordInputL
   ref?: Ref<VisChordDiagramRef<N, L>>;
 }
 
+export const VisChordDiagramSelectors = ChordDiagram.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisChordDiagramFC<N extends ChordInputNode, L extends ChordInputLink> (props: VisChordDiagramProps<N, L>, fRef: ForwardedRef<VisChordDiagramRef<N, L>>): JSX.Element {
+function VisChordDiagramFC<N extends ChordInputNode, L extends ChordInputLink> (props: VisChordDiagramProps<N, L>, fRef: ForwardedRef<VisChordDiagramRef<N, L>>): ReactElement {
   const ref = useRef<VisComponentElement<ChordDiagram<N, L>>>(null)
   const componentRef = useRef<ChordDiagram<N, L> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisChordDiagramFC<N extends ChordInputNode, L extends ChordInputLink> (
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-component ref={ref} />
 }
 

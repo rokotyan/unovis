@@ -13,6 +13,7 @@ const templates: Record<Framework, ProjectTemplate> = {
   [Framework.React]: 'create-react-app',
   [Framework.Svelte]: 'node',
   [Framework.Vue]: 'node',
+  [Framework.Solid]: 'node',
   [Framework.TypeScript]: 'typescript',
 }
 
@@ -26,6 +27,8 @@ function getOpenFiles (framework: Framework, files: ProjectFiles): OpenFileOptio
       return 'src/App.svelte'
     case Framework.Vue:
       return 'src/App.vue'
+    case Framework.Solid:
+      return 'src/App.tsx'
     default:
       return 'src/App.ts'
   }
@@ -37,25 +40,20 @@ function getStarterFiles (framework: Framework, e: Example): ProjectFiles {
       return {
         'src/index.html': '<app-component></app-component>',
         'src/main.ts': trimMultiline(`
-          import 'zone.js/dist/zone'
-          import { NgModule, Component } from '@angular/core'
-          import { platformBrowserDynamic } from '@angular/platform-browser-dynamic'
-          import { BrowserModule } from '@angular/platform-browser'
+          import 'zone.js'
+          import { Component } from '@angular/core'
+          import { bootstrapApplication } from '@angular/platform-browser'
           import { ${e.codeAngular.module.match(/export class\s*(?<name>\S+)/).groups.name} as ComponentModule } from './${e.pathname}/${e.pathname}.module'
 
           @Component({
             selector: 'app-component',
+            imports: [ ComponentModule ],
+            standalone: true,
             template: '<${e.pathname}></${e.pathname}>'
-          }) export class AppComponent { }
+          }) 
+          export class AppModule {}
 
-          @NgModule({
-            imports:      [ BrowserModule, ComponentModule ],
-            declarations: [ AppComponent ],
-            bootstrap:    [ AppComponent ]
-          })
-          export class AppModule { }
-
-          platformBrowserDynamic().bootstrapModule(AppModule)
+          bootstrapApplication(AppModule)
         `),
         [`src/${e.pathname}/${e.pathname}.component.ts`]: e.codeAngular.component,
         [`src/${e.pathname}/${e.pathname}.component.html`]: e.codeAngular.html,
@@ -180,6 +178,91 @@ function getStarterFiles (framework: Framework, e: Example): ProjectFiles {
         'src/App.vue': e.codeVue,
         ...(e.constants ? { 'src/constants.ts': e.constants } : {}),
       }
+    case Framework.Solid:
+      return {
+        'index.html': trimMultiline(`<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="shortcut icon" type="image/ico" href="/src/assets/favicon.ico" />
+    <title>Solid App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+
+    <script src="/src/index.tsx" type="module"></script>
+  </body>
+</html>`),
+        'src/index.tsx': trimMultiline(`/* @refresh reload */
+import { render } from 'solid-js/web';
+
+import App from './App';
+
+const root = document.getElementById('root');
+
+if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
+  throw new Error(
+    'Root element not found. Did you forget to add it to your index.html? Or maybe the id attribute got misspelled?',
+  );
+}
+
+render(() => <App />, root!);`),
+        'src/App.tsx': e.codeSolid,
+        'src/data.ts': e.data,
+        'package.json': trimMultiline(`{
+          "name": "unovis-demo",
+          "private": true,
+          "version": "0.0.0",
+          "type": "module",
+          "scripts": {
+            "start": "vite",
+            "dev": "vite",
+            "build": "vite build",
+            "serve": "vite preview"
+          },
+          "dependencies": {
+            "@unovis/ts": "${ver}",
+            "@unovis/solid": "${ver}",
+            "solid-js": "^1.9.5"
+          },
+          "devDependencies": {
+            "vite-plugin-solid": "^2.11.6",
+            "typescript": "^5.7.2",
+            "vite": "^6.0.0"
+          }}`),
+        'vite.config.ts': trimMultiline(`import { defineConfig } from 'vite';
+import solidPlugin from 'vite-plugin-solid';
+
+export default defineConfig({
+  plugins: [solidPlugin()],
+  server: {
+    port: 3000,
+  },
+  build: {
+    target: 'esnext',
+  },
+});`),
+        'tsconfig.json': `{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "types": ["vite/client"],
+    "noEmit": true,
+    "isolatedModules": true
+  }
+}`,
+        ...(e.constants ? { 'src/constants.ts': e.constants } : {}),
+        ...(e.styles ? { 'src/styles.css': e.styles } : {}),
+      }
     default:
       return {
         'index.html': '<div id="vis-container"></div>',
@@ -194,12 +277,14 @@ function getStarterFiles (framework: Framework, e: Example): ProjectFiles {
 
 export function launchStackBlitz (framework: Framework, example: Example): void {
   const project: Project = {
-    title: 'Unovis Demo',
+    title: `Unovis Demo (${framework})`,
     description: example.title,
     template: templates[framework],
     files: getStarterFiles(framework, example),
     dependencies: {
+      'web-worker': '^1.3.0',
       '@unovis/ts': ver,
+      ...(example.dependencies || {}),
     },
   }
 

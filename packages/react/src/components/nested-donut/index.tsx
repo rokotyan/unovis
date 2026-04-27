@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { NestedDonut, NestedDonutConfigInterface } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisNestedDonutProps<Datum> = NestedDonutConfigInterface<Datum> & {
   ref?: Ref<VisNestedDonutRef<Datum>>;
 }
 
+export const VisNestedDonutSelectors = NestedDonut.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisNestedDonutFC<Datum> (props: VisNestedDonutProps<Datum>, fRef: ForwardedRef<VisNestedDonutRef<Datum>>): JSX.Element {
+function VisNestedDonutFC<Datum> (props: VisNestedDonutProps<Datum>, fRef: ForwardedRef<VisNestedDonutRef<Datum>>): ReactElement {
   const ref = useRef<VisComponentElement<NestedDonut<Datum>>>(null)
   const componentRef = useRef<NestedDonut<Datum> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisNestedDonutFC<Datum> (props: VisNestedDonutProps<Datum>, fRef: Forwa
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-component ref={ref} />
 }
 

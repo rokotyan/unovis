@@ -1,9 +1,9 @@
-import { max, min, mean, bisector } from 'd3-array'
+import { max, min, mean, bisectLeft, bisectRight } from 'd3-array'
 import { throttle as _throttle } from 'throttle-debounce'
 
 // Types
 import { NumericAccessor, StringAccessor, BooleanAccessor, ColorAccessor, GenericAccessor } from 'types/accessor'
-import { StackValuesRecord } from 'types/data'
+import { FindNearestDirection, StackValuesRecord } from 'types/data'
 
 export const isNumber = <T>(a: T): a is T extends number ? T : never => typeof a === 'number'
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -22,7 +22,12 @@ export const isEmpty = <T>(obj: T): boolean => {
 }
 
 // Based on https://github.com/maplibre/maplibre-gl-js/blob/e78ad7944ef768e67416daa4af86b0464bd0f617/src/style-spec/util/deep_equal.ts, 3-Clause BSD license
-export const isEqual = (a?: unknown | null, b?: unknown | null, visited: Set<any> = new Set()): boolean => {
+export const isEqual = (
+  a: unknown | null | undefined,
+  b: unknown | null | undefined,
+  skipKeys: string[] = [],
+  visited: Set<any> = new Set()
+): boolean => {
   if (Array.isArray(a)) {
     if (!Array.isArray(b) || a.length !== b.length) return false
 
@@ -30,7 +35,7 @@ export const isEqual = (a?: unknown | null, b?: unknown | null, visited: Set<any
     else visited.add(a)
 
     for (let i = 0; i < a.length; i++) {
-      if (!isEqual(a[i], b[i], visited)) return false
+      if (!isEqual(a[i], b[i], skipKeys, visited)) return false
     }
 
     return true
@@ -44,14 +49,16 @@ export const isEqual = (a?: unknown | null, b?: unknown | null, visited: Set<any
     if (!(typeof b === 'object')) return false
     if (a === b) return true
 
-    const keys = Object.keys(a)
-    if (keys.length !== Object.keys(b).length) return false
+    const keysA = Object.keys(a).filter(key => !skipKeys.includes(key))
+    const keysB = Object.keys(b).filter(key => !skipKeys.includes(key))
+
+    if (keysA.length !== keysB.length) return false
 
     if (visited.has(a)) return true
     else visited.add(a)
 
-    for (const key in a) {
-      if (!isEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key], visited)) return false
+    for (const key of keysA) {
+      if (!isEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key], skipKeys, visited)) return false
     }
 
     return true
@@ -137,9 +144,9 @@ export const omit = <T extends Record<string | number | symbol, unknown>>(obj: T
   return obj
 }
 
-export const groupBy = <T extends Record<string | number, any>> (arr: T[], accessor: (a: T) => string | number): Record<string | number, T[]> => {
+export const groupBy = <T extends Record<string | number, any>> (arr: T[], accessor: (a: T, index: number) => string | number): Record<string | number, T[]> => {
   return arr.reduce(
-    (grouped, v, i, a, k = accessor(v)) => (((grouped[k] || (grouped[k] = [])).push(v), grouped)),
+    (grouped, v, i, a, k = accessor(v, i)) => (((grouped[k] || (grouped[k] = [])).push(v), grouped)),
     {} as Record<string | number, T[]>
   )
 }
@@ -263,13 +270,13 @@ export function getStackedData<Datum> (
     return (average === 0 && Array.isArray(prevNegative)) ? prevNegative[j] : average < 0
   })
 
-  const stackedData: StackValuesRecord[] = acs.map(() => [])
+  const stackedData = acs.map(() => [] as StackValuesRecord)
   data.forEach((d, i) => {
     let positiveStack = baselineValues[i]
     let negativeStack = baselineValues[i]
     acs.forEach((a, j) => {
       const value = getNumber(d, a, i) || 0
-      if (!isNegativeStack[j]) {
+      if (value >= 0) {
         stackedData[j].push([positiveStack, positiveStack += value])
       } else {
         stackedData[j].push([negativeStack, negativeStack += value])
@@ -279,18 +286,8 @@ export function getStackedData<Datum> (
 
   // Fill in additional stack information
   stackedData.forEach((stack, i) => {
-    stack.negative = isNegativeStack[i]
+    stack.isMostlyNegative = isNegativeStack[i]
   })
-
-  stackedData.filter(s => s.negative)
-    .forEach((s, i, arr) => {
-      s.ending = i === arr.length - 1
-    })
-
-  stackedData.filter(s => !s.negative)
-    .forEach((s, i, arr) => {
-      s.ending = i === arr.length - 1
-    })
 
   return stackedData
 }
@@ -311,26 +308,83 @@ export function getExtent<Datum> (data: Datum[], ...acs: NumericAccessor<Datum>[
   return [getMin(data, ...acs), getMax(data, ...acs)]
 }
 
-export function getNearest<Datum> (data: Datum[], value: number, accessor: NumericAccessor<Datum>): Datum {
+export function getNearest<Datum> (
+  data: Datum[],
+  value: number,
+  accessor: NumericAccessor<Datum>,
+  direction: FindNearestDirection = FindNearestDirection.Auto
+): Datum {
   if (data.length <= 1) return data[0]
 
-  const values = data.map((d, i) => getNumber(d, accessor, i))
-  values.sort((a, b) => a - b)
+  const dataWithIndex = data.map((d, i) => ([d, i])) as [Datum, number][]
+  const dataWithIndexSorted = dataWithIndex
+    .sort(([a, i], [b, j]) => getNumber(a, accessor, i) - getNumber(b, accessor, j))
+  const values = dataWithIndexSorted.map(([d, i]) => getNumber(d, accessor, i))
 
-  const xBisector = bisector(d => d).left
-  const index = xBisector(values, value, 1, data.length - 1)
-  return value - values[index - 1] > values[index] - value ? data[index] : data[index - 1]
+  const index = direction === FindNearestDirection.Right
+    ? bisectLeft(values, value, 0, data.length - 1)
+    : bisectRight(values, value, 1, data.length)
+
+  if (direction === FindNearestDirection.Right) {
+    return dataWithIndexSorted[index][0]
+  } else if (direction === FindNearestDirection.Left) {
+    return dataWithIndexSorted[index - 1][0]
+  }
+
+  // By default (`FindNearestDirection.Auto`) return the nearest value
+  return value - values[index - 1] > values[index] - value ? dataWithIndexSorted[index][0] : dataWithIndexSorted[index - 1][0]
 }
 
-export function filterDataByRange<Datum> (data: Datum[], range: [number, number], accessor: NumericAccessor<Datum>): Datum[] {
+export function filterDataByRange<Datum> (
+  data: Datum[],
+  range: [number, number],
+  accessor: NumericAccessor<Datum>,
+  includeNeighbors = false
+): Datum[] {
+  if (!accessor) return []
+
   const filteredData = data.filter((d, i) => {
     const value = getNumber(d, accessor, i)
-    return (value >= range[0]) && (value < range[1])
+    return (value >= range[0]) && (value <= range[1])
   })
 
+  if (includeNeighbors) {
+    // If `filteredData` is empty and `includeNeighbors` is true, try to find nearest points
+    if (filteredData.length === 0) {
+      const nearestLeft = getNearest(data, range[0], accessor, FindNearestDirection.Left)
+      const nearestRight = getNearest(data, range[1], accessor, FindNearestDirection.Right)
+      return [nearestLeft, nearestRight].filter(Boolean)
+    }
+
+    // Find indices of first and last filtered points in original data
+    const firstFilteredItem = filteredData[0]
+    const lastFilteredItem = filteredData[filteredData.length - 1]
+
+    const firstFilteredIndex = data.findIndex((d: Datum) => d === firstFilteredItem)
+    const lastFilteredIndex = data.findIndex((d: Datum) => d === lastFilteredItem)
+
+    // Include neighbors (if they exist)
+    const startIndex = Math.max(0, firstFilteredIndex - 1)
+    const endIndex = Math.min(data.length - 1, lastFilteredIndex + 1)
+
+    // Return data from startIndex to endIndex (inclusive)
+    return data.slice(startIndex, endIndex + 1)
+  }
   return filteredData
 }
 
 export function isNumberWithinRange (value: number, range: [number, number]): boolean {
-  return (value >= range[0]) && (value <= range[1])
+  return (value >= range[0] && value <= range[1]) || (value >= range[1] && value <= range[0])
+}
+
+export const ensureArray = <T>(value: T | T[] | null): T[] => {
+  if (value === null || value === undefined) {
+    return []
+  }
+
+  if (Array.isArray(value)) {
+    return value
+  }
+
+  return [value]
 }

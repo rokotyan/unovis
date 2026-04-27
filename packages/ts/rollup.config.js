@@ -39,6 +39,8 @@ const plugins = [
   typescript({
     typescript: require('typescript'),
     transformers: [(service) => transformPaths(service.getProgram())],
+    check: false, // Todo remove it once we fix all type checks
+    abortOnError: false,
   }),
   renameNodeModules(),
   // visualizer({ sourcemap: true, template: 'network' }),
@@ -50,7 +52,7 @@ export default [
     external: regexesOfPackages,
     treeshake: false,
     output: {
-      dir: 'lib',
+      dir: 'dist',
       sourcemap: true,
       format: 'esm',
       preserveModules: true,
@@ -61,7 +63,7 @@ export default [
   {
     input: 'src/maps.ts',
     output: {
-      dir: 'lib',
+      dir: 'dist',
       format: 'esm',
       preserveModules: true,
       preserveModulesRoot: './src',

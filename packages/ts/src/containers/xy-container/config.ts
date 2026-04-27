@@ -1,15 +1,17 @@
 // Core
 import { XYComponentCore } from 'core/xy-component'
 import { ContainerDefaultConfig, ContainerConfigInterface } from 'core/container/config'
-import { Tooltip } from 'components/tooltip'
 
 // Components
+import { Annotations } from 'components/annotations'
+import { Tooltip } from 'components/tooltip'
 import { Axis } from 'components/axis'
 import { Crosshair } from 'components/crosshair'
 
 // Types
 import { ContinuousScale } from 'types/scale'
 import { Direction } from 'types/direction'
+import { Spacing } from 'types/spacing'
 
 export interface XYContainerConfigInterface<Datum> extends ContainerConfigInterface {
   /** An array of visualization components. Default: `[]` */
@@ -86,6 +88,20 @@ export interface XYContainerConfigInterface<Datum> extends ContainerConfigInterf
   preventEmptyDomain?: boolean | null;
   /** Sets the Y scale domain based on the current X scale domain (not the whole dataset). Default: `false` */
   scaleByDomain?: boolean;
+  /** Annotations component. Default: `undefined` */
+  annotations?: Annotations | undefined;
+  /** Extend the clip path by the specified number of pixels. Default: `2` */
+  clipPathExtend?: number;
+  /** Callback function to be called when the chart rendering is complete. Default: `undefined` */
+  onRenderComplete?: (
+    svgNode: SVGSVGElement,
+    margin: Spacing,
+    bleed: Spacing,
+    containerWidth: number,
+    containerHeight: number,
+    componentWidth: number,
+    componentHeight: number,
+  ) => void;
 }
 
 
@@ -94,6 +110,7 @@ export const XYContainerDefaultConfig: XYContainerConfigInterface<unknown> = {
   components: [],
   tooltip: undefined,
   crosshair: undefined,
+  annotations: undefined,
   xAxis: undefined,
   yAxis: undefined,
   autoMargin: true,
@@ -113,5 +130,7 @@ export const XYContainerDefaultConfig: XYContainerConfigInterface<unknown> = {
 
   preventEmptyDomain: null,
   scaleByDomain: false,
+
+  clipPathExtend: 2,
 }
 

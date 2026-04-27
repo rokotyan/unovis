@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { Crosshair, CrosshairConfigInterface } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisCrosshairProps<Datum> = CrosshairConfigInterface<Datum> & {
   ref?: Ref<VisCrosshairRef<Datum>>;
 }
 
+export const VisCrosshairSelectors = Crosshair.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisCrosshairFC<Datum> (props: VisCrosshairProps<Datum>, fRef: ForwardedRef<VisCrosshairRef<Datum>>): JSX.Element {
+function VisCrosshairFC<Datum> (props: VisCrosshairProps<Datum>, fRef: ForwardedRef<VisCrosshairRef<Datum>>): ReactElement {
   const ref = useRef<VisComponentElement<Crosshair<Datum>>>(null)
   const componentRef = useRef<Crosshair<Datum> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisCrosshairFC<Datum> (props: VisCrosshairProps<Datum>, fRef: Forwarded
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-crosshair ref={ref} />
 }
 

@@ -18,9 +18,10 @@ const example: Example = {
     <div style={{ paddingLeft: '10px' }}> • Use events to set up map interactions.</div>
     <br/>
 
-    Read more in the <a href="/unovis/docs/maps/LeafletMap">Leaflet Map component documentation</a>.
+    Read more in the <a href="/docs/maps/LeafletMap">Leaflet Map component documentation</a>.
   </div>,
   codeReact: require(`!!raw-loader!./${pathname}.tsx`).default,
+  codeSolid: require(`!!raw-loader!./${pathname}-solid.tsx`).default,
   codeTs: require(`!!raw-loader!./${pathname}.ts`).default,
   codeAngular: {
     html: require(`!!raw-loader!./${pathname}.component.html`).default,

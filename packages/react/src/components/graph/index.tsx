@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { Graph, GraphConfigInterface, GraphInputNode, GraphInputLink } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisGraphProps<N extends GraphInputNode, L extends GraphInputLink> = 
   ref?: Ref<VisGraphRef<N, L>>;
 }
 
+export const VisGraphSelectors = Graph.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisGraphFC<N extends GraphInputNode, L extends GraphInputLink> (props: VisGraphProps<N, L>, fRef: ForwardedRef<VisGraphRef<N, L>>): JSX.Element {
+function VisGraphFC<N extends GraphInputNode, L extends GraphInputLink> (props: VisGraphProps<N, L>, fRef: ForwardedRef<VisGraphRef<N, L>>): ReactElement {
   const ref = useRef<VisComponentElement<Graph<N, L>>>(null)
   const componentRef = useRef<Graph<N, L> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisGraphFC<N extends GraphInputNode, L extends GraphInputLink> (props: 
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-component ref={ref} />
 }
 

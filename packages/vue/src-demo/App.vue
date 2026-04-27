@@ -2,16 +2,19 @@
 import { defineAsyncComponent } from "vue"
 
 const imports = [
+  defineAsyncComponent(() => import('@unovis/shared/examples/dual-axis-chart/dual-axis-chart.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/treemap/treemap.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/step-area-chart/step-area-chart.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/baseline-area-chart/baseline-area-chart.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/non-stacked-area-chart/non-stacked-area-chart.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/stacked-area-chart/stacked-area-chart.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/stacked-area-chart-with-attributes/stacked-area-chart-with-attributes.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/basic-grouped-bar/basic-grouped-bar.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/basic-leaflet-map/basic-leaflet-map.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/leaflet-flow-map/leaflet-flow-map.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/advanced-leaflet-map/advanced-leaflet-map.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/basic-line-chart/basic-line-chart.vue')),
-  defineAsyncComponent(() => import('@unovis/shared/examples/basic-scatter-chart/basic-scatter-chart.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/basic-scatter-plot/basic-scatter-plot.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/brush-grouped-bar/brush-grouped-bar.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/free-brush-scatters/free-brush-scatters.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/horizontal-stacked-bar-chart/horizontal-stacked-bar-chart.vue')),
@@ -24,10 +27,16 @@ const imports = [
   defineAsyncComponent(() => import('@unovis/shared/examples/force-graph/force-graph.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/parallel-graph/parallel-graph.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/data-gap-line-chart/data-gap-line-chart.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/patchy-line-chart/patchy-line-chart.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/crosshair-stacked-bar/crosshair-stacked-bar.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/elk-layered-graph/elk-layered-graph.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/custom-nodes-graph/custom-nodes-graph.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/hierarchical-chord-diagram/hierarchical-chord-diagram.vue')),
   defineAsyncComponent(() => import('@unovis/shared/examples/sunburst-nested-donut/sunburst-nested-donut.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/basic-donut-chart/basic-donut-chart.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/shaped-scatter-plot/shaped-scatter-plot.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/basic-annotations/basic-annotations.vue')),
+  defineAsyncComponent(() => import('@unovis/shared/examples/plotband-plotline/plotband-plotline.vue')),
 ]
 </script>
 
@@ -64,4 +73,3 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 </style>
-

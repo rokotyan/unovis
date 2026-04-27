@@ -1,15 +1,19 @@
 <script>
   const imports = [
+    () => import('@unovis/shared/examples/dual-axis-chart/dual-axis-chart.svelte'),
+    () => import('@unovis/shared/examples/treemap/treemap.svelte'),
     () => import('@unovis/shared/examples/step-area-chart/step-area-chart.svelte'),
     () => import('@unovis/shared/examples/baseline-area-chart/baseline-area-chart.svelte'),
     () => import('@unovis/shared/examples/non-stacked-area-chart/non-stacked-area-chart.svelte'),
     () => import('@unovis/shared/examples/stacked-area-chart/stacked-area-chart.svelte'),
+    () => import('@unovis/shared/examples/stacked-area-chart-with-attributes/stacked-area-chart-with-attributes.svelte'),
     () => import('@unovis/shared/examples/basic-grouped-bar/basic-grouped-bar.svelte'),
     () => import('@unovis/shared/examples/basic-leaflet-map/basic-leaflet-map.svelte'),
     () => import('@unovis/shared/examples/leaflet-flow-map/leaflet-flow-map.svelte'),
     () => import('@unovis/shared/examples/advanced-leaflet-map/advanced-leaflet-map.svelte'),
     () => import('@unovis/shared/examples/basic-line-chart/basic-line-chart.svelte'),
-    () => import('@unovis/shared/examples/basic-scatter-chart/basic-scatter-chart.svelte'),
+    () => import('@unovis/shared/examples/patchy-line-chart/patchy-line-chart.svelte'),
+    () => import('@unovis/shared/examples/basic-scatter-plot/basic-scatter-plot.svelte'),
     () => import('@unovis/shared/examples/brush-grouped-bar/brush-grouped-bar.svelte'),
     () => import('@unovis/shared/examples/free-brush-scatters/free-brush-scatters.svelte'),
     () => import('@unovis/shared/examples/horizontal-stacked-bar-chart/horizontal-stacked-bar-chart.svelte'),
@@ -24,8 +28,12 @@
     () => import('@unovis/shared/examples/data-gap-line-chart/data-gap-line-chart.svelte'),
     () => import('@unovis/shared/examples/crosshair-stacked-bar/crosshair-stacked-bar.svelte'),
     () => import('@unovis/shared/examples/elk-layered-graph/elk-layered-graph.svelte'),
+    () => import('@unovis/shared/examples/custom-nodes-graph/custom-nodes-graph.svelte'),
     () => import('@unovis/shared/examples/hierarchical-chord-diagram/hierarchical-chord-diagram.svelte'),
     () => import('@unovis/shared/examples/sunburst-nested-donut/sunburst-nested-donut.svelte'),
+    () => import('@unovis/shared/examples/basic-donut-chart/basic-donut-chart.svelte'),
+    () => import('@unovis/shared/examples/shaped-scatter-plot/shaped-scatter-plot.svelte'),
+    () => import('@unovis/shared/examples/plotband-plotline/plotband-plotline.svelte'),
   ]
 </script>
 
@@ -43,4 +51,3 @@
     position: relative;
   }
 </style>
-

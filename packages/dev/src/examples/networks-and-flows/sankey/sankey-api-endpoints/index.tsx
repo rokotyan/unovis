@@ -5,36 +5,27 @@ import {
   Sankey,
   SankeyEnterTransitionType,
   SankeyExitTransitionType,
-  SankeyLink,
   SankeyNode,
   SankeyNodeAlign,
   SankeySubLabelPlacement,
   Sizing,
   VerticalAlign,
 } from '@unovis/ts'
+import { ExampleViewerDurationProps } from '@src/components/ExampleViewer/index'
 
 import apiRawData from './apieplist.json'
-import { getSankeyData, ApiEndpointNode, ApiEndpointLink } from './data'
+import { getSankeyData, ApiEndpointNode, ApiEndpointLink, nodeSort, linkSort } from './data'
 
 export const title = 'API Endpoints Tree'
 export const subTitle = 'Collapsible nodes'
 
-export const component = (): JSX.Element => {
+export const component = (props: ExampleViewerDurationProps): React.ReactNode => {
   const collapsedStateRef = useRef<{ [key: string]: boolean }>({})
   const rawData = apiRawData// .slice(25, 50)
   const [data, setData] = useState(getSankeyData(rawData))
 
   const nodeWidth = 30
   const nodeHorizontalSpacing = 260
-
-  const compareStrings = (a = '', b = ''): number => {
-    const strA = a.toUpperCase()
-    const strB = b.toUpperCase()
-
-    if (strA < strB) return -1
-    if (strA > strB) return 1
-    return 0
-  }
 
   return (
     <>
@@ -64,21 +55,9 @@ export const component = (): JSX.Element => {
           exitTransitionType={SankeyExitTransitionType.ToAncestor}
           enterTransitionType={SankeyEnterTransitionType.FromAncestor}
           highlightSubtreeOnHover={false}
-          nodeSort={(a: SankeyNode<ApiEndpointNode, ApiEndpointLink>, b: SankeyNode<ApiEndpointNode, ApiEndpointLink>) => {
-            const aParent = a.targetLinks[0]?.source
-            const bParent = b.targetLinks[0]?.source
-            const aGrandparent = a.targetLinks[0]?.source?.targetLinks[0]?.source
-            const bGrandparent = b.targetLinks[0]?.source?.targetLinks[0]?.source
-
-            if ((aParent === bParent)) { // Same parent nodes are sorted by: value + alphabetically
-              return (b.value - a.value) || compareStrings(a?.path, b?.path)
-            } else { // Different parent nodes are sorted by: 1st grandparent value + 1st parent value + alphabetically
-              return (bGrandparent?.value - aGrandparent?.value) || (bParent?.value - aParent?.value) || -compareStrings(aParent?.path, bParent?.path)
-            }
-          }}
-          linkSort={(a: SankeyLink<ApiEndpointNode, ApiEndpointLink>, b: SankeyLink<ApiEndpointNode, ApiEndpointLink>) => {
-            return b.value - a.value || compareStrings(a.target?.path, b.target?.path) // Links sorted by: value + alphabetically
-          }}
+          duration={props.duration}
+          nodeSort={nodeSort}
+          linkSort={linkSort}
           events={{
             [Sankey.selectors.background]: {
               // eslint-disable-next-line no-console

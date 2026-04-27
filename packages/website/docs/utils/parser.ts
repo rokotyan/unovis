@@ -42,11 +42,11 @@ function parseFunction (str: string, type: string): string {
   }
   const fn = str.split('=>')
   const args = fn[0].match(/[a-z]/gm)?.map(p => params[p] ? [p, params[p]].join(': ') : p).join(', ') || ''
-  const body = fn[1].replace(/(\+|-|\*|\/|=|&|\||\?|:)+/gm, s => ` ${s} `)
+  const body = fn[1].startsWith('`') ? fn[1] : fn[1].replace(/(\+|-|\*|\/|=|&|\||\?|:)+/gm, s => ` ${s} `)
   return `(${args}) => ${body}`
 }
 
-export function parseObject (value: any, type: string, level = 1): string {
+export function parseObject (value: unknown, type: string, level = 1): string {
   if (!value) return ''
   if (typeof value === 'function') {
     const str = String(value)
@@ -127,6 +127,15 @@ function parseVue ({ name, props }: ComponentInfo, closing = false, indent = 0):
   return formatElement(`${tab(indent)}<${tag}`, attrs, endLine, ' ', `${tab(indent)}${endLine}`)
 }
 
+function parseSolid ({ name, props }: ComponentInfo, closing = false, indent?: number): string {
+  const attrs = props?.map(({ key, value, stringLiteral }) =>
+    [key, stringLiteral ? `"${value}"` : `{${value}}`].join('=')
+  )
+  const tag = `Vis${name}`
+  const endLine = closing ? `></${tag}>` : '/>'
+  return formatElement(`${tab(indent)}<${tag}`, attrs, endLine, ' ', `${tab(indent)}${endLine}`)
+}
+
 function parseTypescript (name: string, props: PropInfo[], type?: string, el?: boolean, data?: boolean): string {
   const attrs = props?.map(({ key, value, stringLiteral }) =>
     key === value ? key : [key, stringLiteral ? `"${value}"` : `${value}`].join(': ')
@@ -141,5 +150,6 @@ export const parseComponent = {
   react: parseReact,
   svelte: parseSvelte,
   vue: parseVue,
+  solid: parseSolid,
   typescript: parseTypescript,
 }

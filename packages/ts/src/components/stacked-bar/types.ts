@@ -1,5 +1,7 @@
-export type StackedBarDataRecord<D> = D & {
-  _stacked: [number, number];
-  _negative: boolean;
-  _ending: boolean;
+export type StackedBarDataRecord<D> = {
+  datum: D;
+  index: number;
+  stacked: [number, number];
+  stackIndex: number;
+  isEnding: boolean;
 }

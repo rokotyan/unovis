@@ -9,9 +9,11 @@ import { TrimMode } from 'types/text'
 // Utils
 import { trimString } from 'utils/text'
 import { polygon } from 'utils/path'
-import { smartTransition } from 'utils/d3'
+import { smartTransition, Selection$Transition } from 'utils/d3'
 import { getBoolean, getNumber, getString, getValue, throttle } from 'utils/data'
 import { getColor } from 'utils/color'
+import { isStringSvg } from 'utils/svg'
+import { getCSSVariableValueInPixels } from 'utils/misc'
 
 // Local Types
 import { GraphNode, GraphCircleLabel, GraphNodeAnimationState, GraphNodeAnimatedElement, GraphNodeShape } from '../../types'
@@ -31,8 +33,9 @@ import {
   getNodeIconColor,
   getNodeSize,
   LABEL_RECT_VERTICAL_PADDING,
+  isInternalHref,
 } from './helper'
-import { appendShape, updateShape, isCustomXml } from '../shape'
+import { appendShape, updateShape } from '../shape'
 import { ZoomLevel } from '../zoom-levels'
 
 // Styles
@@ -43,14 +46,15 @@ const SIDE_LABEL_DEFAULT_RADIUS = 10
 
 export interface GraphNodeSVGGElement extends SVGGElement {
   nodeShape?: string;
+  nodeIcon?: string;
 }
 
 export function createNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>
+  config: GraphConfigInterface<N, L>,
+  duration: number,
+  scale = 1
 ): void {
-  const { nodeShape } = config
-
   selection.each((d, i, elements) => {
     const element = elements[i] as GraphNodeSVGGElement
     const group = select<SVGGElement, GraphNode<N, L>>(element)
@@ -64,14 +68,27 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
       })
       .attr('opacity', 0)
 
-    const shape = getString(d, nodeShape, d._index)
-    /** Todo: The 'nodeShape' storing logic below it a temporary fix, needs a cleaner implementation */
-    element.nodeShape = shape
-    appendShape(group, shape, nodeSelectors.node, nodeSelectors.customNode, d._index)
-    appendShape(group, shape, nodeSelectors.nodeSelection, nodeSelectors.customNode, d._index)
-    group.append('path').attr('class', nodeSelectors.nodeGauge)
-    group.append('text').attr('class', nodeSelectors.nodeIcon)
+    // If there's a custom render function, use it
+    if (config.nodeEnterCustomRenderFunction) {
+      config.nodeEnterCustomRenderFunction(d, group, config, duration, scale)
+    } else { // Default node rendering
+      const shape = getString(d, config.nodeShape, d._index) as GraphNodeShape
+      // Todo: The 'nodeShape'  and `nodeIcon` storing logic below it a temporary solution,
+      // we need a cleaner implementation
+      element.nodeShape = shape
+      appendShape(group, shape, nodeSelectors.node, nodeSelectors.customNode, d._index)
+      appendShape(group, shape, nodeSelectors.nodeSelection, nodeSelectors.customNode, d._index)
+      group.append('path').attr('class', nodeSelectors.nodeGauge)
+      group.append('g').attr('class', nodeSelectors.nodeIcon)
 
+      group.append('g')
+        .attr('class', nodeSelectors.sideLabelsGroup)
+
+      group.append('text')
+        .attr('class', nodeSelectors.nodeBottomIcon)
+    }
+
+    // Label
     const label = group.append('g').attr('class', nodeSelectors.label)
     label.append('rect').attr('class', nodeSelectors.labelBackground)
 
@@ -83,37 +100,52 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
       .attr('class', nodeSelectors.subLabelTextContent)
       .attr('dy', '1.1em')
       .attr('x', '0')
-
-    group.append('g')
-      .attr('class', nodeSelectors.sideLabelsGroup)
-
-    group.append('text')
-      .attr('class', nodeSelectors.nodeBottomIcon)
   })
 }
 
-export function updateSelectedNodes<N extends GraphInputNode, L extends GraphInputLink> (
+/** Updates the nodes partially according to their `_state` */
+export function updateNodesPartial<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>
+  config: GraphConfigInterface<N, L>,
+  duration: number,
+  scale = 1
 ): void {
   const { nodeDisabled } = config
 
-  selection.each((d, i, elements) => {
-    const group: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = select(elements[i])
-    const isGreyout = getBoolean(d, nodeDisabled, d._index) || d._state.greyout
+  if (config.nodePartialUpdateCustomRenderFunction || config.nodeEnterCustomRenderFunction) {
+    // Handle custom rendering behavior
+    selection.each((d, i, elements) => {
+      const g = select<SVGGElement, GraphNode<N, L>>(elements[i])
+      config.nodePartialUpdateCustomRenderFunction?.(d, g, config, duration, scale)
+    })
+  } else {
+    // Default rendering
+    selection.each((d, i, elements) => {
+      const group: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = select(elements[i])
+      const isGreyout = getBoolean(d, nodeDisabled, d._index) || d._state.greyout
 
-    group.classed(nodeSelectors.greyoutNode, isGreyout)
-      .classed(nodeSelectors.draggable, !config.disableDrag)
+      group.classed(nodeSelectors.greyedOutNode, isGreyout && !d._state.brushed)
+        .classed(nodeSelectors.draggable, !config.disableDrag)
 
-    const nodeSelectionOutline = group.selectAll<SVGGElement, GraphNode<N, L>>(`.${nodeSelectors.nodeSelection}`)
-    nodeSelectionOutline.classed(nodeSelectors.nodeSelectionActive, d._state.selected)
+      const nodeSelectionOutline = group.selectAll<SVGGElement, GraphNode<N, L>>(`.${nodeSelectors.nodeSelection}`)
+      nodeSelectionOutline.classed(nodeSelectors.nodeSelectionActive, d._state.selected || d._state.brushed)
 
-    group.selectAll<SVGTextElement, GraphCircleLabel>(`.${nodeSelectors.sideLabel}`)
-      .style('fill', (l) => isGreyout ? null : getSideLabelTextColor(l, selection.node()))
+      group.selectAll<SVGTextElement, GraphCircleLabel>(`.${nodeSelectors.sideLabel}`)
+        .style('fill', (l) => isGreyout ? null : getSideLabelTextColor(l, selection.node()))
 
-    group.selectAll<SVGRectElement, GraphCircleLabel>(`.${nodeSelectors.sideLabelBackground}`)
-      .style('fill', (l) => isGreyout ? null : l.color)
-  })
+      group.selectAll<SVGRectElement, GraphCircleLabel>(`.${nodeSelectors.sideLabelBackground}`)
+        .style('fill', (l) => isGreyout ? null : l.color)
+    })
+  }
+}
+
+export function updateNodePositions<N extends GraphInputNode, L extends GraphInputLink> (
+  selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
+  duration: number
+): Selection$Transition<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> {
+  return smartTransition(selection, duration)
+    .attr('transform', d => `translate(${getX(d)}, ${getY(d)}) scale(1)`)
+    .attr('opacity', 1)
 }
 
 export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> (
@@ -129,7 +161,21 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
     nodeSideLabels, nodeStroke, nodeFill, nodeBottomIcon,
   } = config
 
-  // Re-create nodes to update shapes if they were changes
+  const nodeGroupsUpdate = updateNodePositions(selection, duration)
+
+  // If there's a custom render function, use it
+  if (config.nodeUpdateCustomRenderFunction) {
+    selection.each((d, i, elements) => {
+      const g = select<SVGGElement, GraphNode<N, L>>(elements[i])
+      config.nodeUpdateCustomRenderFunction(d, g, config, duration, scale)
+    })
+
+    updateNodesPartial(selection, config, duration, scale)
+    return nodeGroupsUpdate
+  }
+
+  // Default node rendering
+  // Re-create nodes to update shapes if they were changed
   selection.each((d, i, elements) => {
     const element = elements[i] as GraphNodeSVGGElement
     const group = select<SVGGElement, GraphNode<N, L>>(element)
@@ -146,7 +192,7 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
 
   // Update nodes themselves
   selection.each((d, i, elements) => {
-    const groupElement = elements[i]
+    const groupElement = elements[i] as GraphNodeSVGGElement
     const group: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = select(groupElement)
     const node: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = group.select(`.${nodeSelectors.node}`)
     const nodeArc = group.select<GraphNodeAnimatedElement<SVGElement>>(`.${nodeSelectors.nodeGauge}`)
@@ -213,11 +259,35 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
     updateShape(nodeSelectionOutline, nodeShape, nodeSize, d._index)
 
     // Update Node Icon
-    icon
-      .style('font-size', `${getNumber(d, nodeIconSize, d._index) ?? 2.5 * Math.sqrt(nodeSizeValue)}px`)
-      .attr('dy', '0.1em')
-      .style('fill', getNodeIconColor(d, nodeFill, d._index, selection.node()))
-      .html(getString(d, nodeIcon, d._index))
+    const prevNodeIconValue = groupElement.nodeIcon
+    const nodeIconValue = getString(d, nodeIcon, d._index)
+    const nodeIconSizeValue = getNumber(d, nodeIconSize, d._index) ?? 2.5 * Math.sqrt(nodeSizeValue)
+    const nodeIconColor = getNodeIconColor(d, nodeFill, d._index, selection.node())
+    const shouldRenderUseElement = isInternalHref(nodeIconValue)
+
+    if (prevNodeIconValue !== nodeIconValue) {
+      // If the icon has changed, we remove all children and re-render
+      icon.selectAll('*').remove()
+      // If the icon is a href, we need to append a <use> element. If it's a text we append the `<text>` element.
+      icon.append(shouldRenderUseElement ? 'use' : 'text')
+      groupElement.nodeIcon = nodeIconValue
+    }
+
+    if (shouldRenderUseElement) {
+      icon.select('use')
+        .attr('href', nodeIconValue)
+        .attr('x', -nodeIconSizeValue / 2)
+        .attr('y', -nodeIconSizeValue / 2)
+        .attr('width', nodeIconSizeValue)
+        .attr('height', nodeIconSizeValue)
+        .style('fill', nodeIconColor)
+    } else {
+      icon.select('text')
+        .style('font-size', `${nodeIconSizeValue}px`)
+        .attr('dy', '0.1em')
+        .style('fill', nodeIconColor)
+        .html(nodeIconValue)
+    }
 
     // Side Labels
     const sideLabelsData = getValue<GraphNode<N, L>, GraphCircleLabel[]>(d, nodeSideLabels, d._index) || []
@@ -277,9 +347,9 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
       })
 
     // Position label
-    const labelFontSize = parseFloat(window.getComputedStyle(groupElement).getPropertyValue('--vis-graph-node-label-font-size')) || 12
+    const labelFontSize = getCSSVariableValueInPixels('var(--vis-graph-node-label-font-size)', groupElement) || 12
     const labelMargin = LABEL_RECT_VERTICAL_PADDING + 1.25 * labelFontSize ** 1.03
-    const nodeHeight = isCustomXml((getString(d, nodeShape, d._index)) as GraphNodeShape) ? nodeBBox.height : nodeSizeValue
+    const nodeHeight = isStringSvg((getString(d, nodeShape, d._index)) as GraphNodeShape) ? nodeBBox.height : nodeSizeValue
     label.attr('transform', `translate(0, ${nodeHeight / 2 + labelMargin})`)
     if (scale >= ZoomLevel.Level3) setLabelRect(label, getString(d, nodeLabel, d._index), nodeSelectors.labelText)
 
@@ -288,17 +358,16 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
       .attr('transform', `translate(0, ${nodeHeight / 2})`)
   })
 
-  updateSelectedNodes(selection, config)
+  updateNodesPartial(selection, config, duration, scale)
 
-  return smartTransition(selection, duration)
-    .attr('transform', d => `translate(${getX(d)}, ${getY(d)}) scale(1)`)
-    .attr('opacity', 1)
+  return nodeGroupsUpdate
 }
 
 export function removeNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
   config: GraphConfigInterface<N, L>,
-  duration: number
+  duration: number,
+  scale = 1
 ): void {
   smartTransition(selection, duration / 2)
     .attr('opacity', 0)
@@ -310,6 +379,14 @@ export function removeNodes<N extends GraphInputNode, L extends GraphInputLink> 
       return `translate(${x}, ${y}) scale(${scale})`
     })
     .remove()
+
+  // If there's a custom render function, use it
+  if (config.nodeExitCustomRenderFunction) {
+    selection.each((d, i, elements) => {
+      const g = select<SVGGElement, GraphNode<N, L>>(elements[i])
+      config.nodeExitCustomRenderFunction(d, g, config, duration, scale)
+    })
+  }
 }
 
 function setLabelBackgroundRect<N extends GraphInputNode, L extends GraphInputLink> (
@@ -332,15 +409,23 @@ export function zoomNodes<N extends GraphInputNode, L extends GraphInputLink> (
   config: GraphConfigInterface<N, L>,
   scale: number
 ): void {
-  selection.classed(generalSelectors.zoomOutLevel1, scale < ZoomLevel.Level1)
-  selection.classed(generalSelectors.zoomOutLevel2, scale < ZoomLevel.Level2)
+  if (config.nodeOnZoomCustomRenderFunction || config.nodeEnterCustomRenderFunction) {
+    // Handle custom rendering behavior
+    selection.each((d, i, elements) => {
+      const g = select<SVGGElement, GraphNode<N, L>>(elements[i])
+      config.nodeOnZoomCustomRenderFunction?.(d, g, config, scale)
+    })
+  } else {
+    // Default rendering
+    selection.classed(generalSelectors.zoomOutLevel1, scale < ZoomLevel.Level1)
+    selection.classed(generalSelectors.zoomOutLevel2, scale < ZoomLevel.Level2)
+    selection.selectAll(`${nodeSelectors.sideLabelBackground}`)
+      .attr('transform', `scale(${1 / Math.pow(scale, 0.35)})`)
+    selection.selectAll(`.${nodeSelectors.sideLabel}`)
+      .attr('transform', `scale(${1 / Math.pow(scale, 0.45)})`)
 
-  selection.selectAll(`${nodeSelectors.sideLabelBackground}`)
-    .attr('transform', `scale(${1 / Math.pow(scale, 0.35)})`)
-  selection.selectAll(`.${nodeSelectors.sideLabel}`)
-    .attr('transform', `scale(${1 / Math.pow(scale, 0.45)})`)
-
-  if (scale >= ZoomLevel.Level3) selection.call(setLabelBackgroundRectThrottled, config)
+    if (scale >= ZoomLevel.Level3) selection.call(setLabelBackgroundRectThrottled, config)
+  }
 }
 
 export const zoomNodesThrottled = throttle(zoomNodes, 500)

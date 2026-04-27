@@ -1,9 +1,22 @@
+import { D3BrushEvent } from 'd3-brush'
+import { D3DragEvent } from 'd3-drag'
+import { D3ZoomEvent, ZoomTransform } from 'd3-zoom'
+import { Selection } from 'd3-selection'
+import { ElkShape } from 'elkjs'
+
+// Core
+import type { GraphDataModel } from 'data-models/graph'
+
+// Utils
+import { isEqual } from 'utils/data'
+
 // Config
 import { ComponentConfigInterface, ComponentDefaultConfig } from 'core/component/config'
 
 // Types
 import { TrimMode } from 'types/text'
-import { GraphInputLink, GraphInputNode } from 'types/graph'
+import { Spacing } from 'types/spacing'
+import { GraphInputLink, GraphInputNode, GraphInputData } from 'types/graph'
 import { BooleanAccessor, ColorAccessor, NumericAccessor, StringAccessor, GenericAccessor } from 'types/accessor'
 
 // Local Types
@@ -16,6 +29,11 @@ import {
   GraphForceLayoutSettings,
   GraphElkLayoutSettings,
   GraphNodeShape,
+  GraphDagreLayoutSetting,
+  GraphNode,
+  GraphLink,
+  GraphNodeSelectionHighlightMode,
+  GraphFitViewAlignment,
 } from './types'
 
 export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphInputLink> extends ComponentConfigInterface {
@@ -24,12 +42,20 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
   zoomScaleExtent?: [number, number];
   /** Disable zooming. Default: `false` */
   disableZoom?: boolean;
+  /** Custom Zoom event filter to better control which actions should trigger zooming.
+   * Learn more: https://d3js.org/d3-zoom#zoom_filter.
+   * Default: `undefined` */
+  zoomEventFilter?: (event: PointerEvent) => boolean;
   /** Disable node dragging. Default: `false` */
   disableDrag?: boolean;
+  /** Disable brush for multiple node selection. Default: `false` */
+  disableBrush?: boolean;
   /** Interval to re-render the graph when zooming. Default: `100` */
   zoomThrottledUpdateNodeThreshold?: number;
-  /** Zoom event callback. Default: `undefined` */
-  onZoom?: (zoomScale: number, zoomScaleExtent: [number, number]) => void;
+  /** Padding for the graph when fitting to container. Default: `50` */
+  fitViewPadding?: Spacing | number;
+  /** Default alignment when fitting the graph view. Default: `GraphFitViewAlignment.Center` */
+  fitViewAlign?: GraphFitViewAlignment;
 
   // Layout general settings
   /** Type of the graph layout. Default: `GraphLayoutType.Force` */
@@ -69,6 +95,14 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
    * Only for `GraphLayoutType.Parallel` and `GraphLayoutType.ParallelHorizontal` layouts.
    * Default: `1` */
   layoutParallelSubGroupsPerRow?: number;
+  /** Spacing between nodes, dynamic by default.
+   * Only for `GraphLayoutType.Parallel` and `GraphLayoutType.ParallelHorizontal` layouts.
+   * Default: `undefined` */
+  layoutParallelNodeSpacing?: number | [number, number];
+  /** Spacing between sub-groups.
+   * Only for `GraphLayoutType.Parallel` and `GraphLayoutType.ParallelHorizontal` layouts.
+   * Default: `40` */
+  layoutParallelSubGroupSpacing?: number;
   /** Spacing between groups.
    * Only for `GraphLayoutType.Parallel` and `GraphLayoutType.ParallelHorizontal` layouts.
    * Default: `undefined` */
@@ -80,22 +114,13 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
 
   // Force layout
   /** Force Layout settings, see the `d3-force` package for more details */
-  forceLayoutSettings?: GraphForceLayoutSettings;
+  forceLayoutSettings?: GraphForceLayoutSettings<N, L>;
 
   // Dagre layout
   /** Darge Layout settings, see the `dagrejs` package
    * for more details: https://github.com/dagrejs/dagre/wiki#configuring-the-layout
   */
-  dagreLayoutSettings?: {
-    /** Direction for rank node. `TB`, `BT`, `LR`, or `RL`. Default: `BT` */
-    rankdir: string;
-    /** Type of algorithm to assigns a rank to each node in the input graph.
-     * `network-simplex`, `tight-tree` or `longest-path`.
-     * Default: `longest-path` */
-    ranker: string;
-    /** Other configurable Dagre settings. https://github.com/dagrejs/dagre/wiki */
-    [key: string]: any;
-  };
+  dagreLayoutSettings?: GraphDagreLayoutSetting;
 
   // ELK layout
   /** ELK layout options, see the `elkjs` package for more details: https://github.com/kieler/elkjs.
@@ -108,6 +133,12 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
    * E.g.: `[n => n.group, n => n.subGroup]`.
    * Default: `undefined` */
   layoutElkNodeGroups?: StringAccessor<N>[];
+  /** A function to be called per graph node to get the ELK shape object.
+   * This enables you to provide custom node dimensions (through the `width` and `height` properties)
+   * and coordinates (through the `x` and `y` properties) if needed.
+   * Default: `undefined`
+  */
+  layoutElkGetNodeShape?: (d: GraphNode<N, L>, i: number) => ElkShape;
 
   // Links
   /** Link width accessor function ot constant value. Default: `1` */
@@ -117,23 +148,38 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
   /** Link band width accessor function or constant value. Default: `0` */
   linkBandWidth?: NumericAccessor<L>;
   /** Link arrow accessor function or constant value. Default: `undefined` */
-  linkArrow?: GenericAccessor<GraphLinkArrowStyle, L> | undefined;
+  linkArrow?: GenericAccessor<GraphLinkArrowStyle | string | boolean, L> | undefined;
   /** Link stroke color accessor function or constant value. Default: `undefined` */
   linkStroke?: ColorAccessor<L>;
   /** Link disabled state accessor function or constant value. Default: `false` */
   linkDisabled?: BooleanAccessor<L>;
   /** Link flow animation accessor function or constant value. Default: `false` */
   linkFlow?: BooleanAccessor<L>;
-  /** Animation duration of the flow (traffic) circles. Default: `20000` */
-  linkFlowAnimDuration?: number;
+  /** Animation duration of the flow (traffic) circles in milliseconds. If `linkFlowParticleSpeed` is provided,
+   * this duration will be calculated based on the link length and particle speed. Default: `20000` */
+  linkFlowAnimDuration?: NumericAccessor<L>;
   /** Size of the moving particles that represent traffic flow. Default: `2` */
-  linkFlowParticleSize?: number;
+  linkFlowParticleSize?: NumericAccessor<L>;
+  /** Speed of the moving particles in pixels per second. This property takes precedence over `linkFlowAnimDuration`. Default: `undefined` */
+  linkFlowParticleSpeed?: NumericAccessor<L>;
   /** Link label accessor function or constant value. Default: `undefined` */
-  linkLabel?: GenericAccessor<GraphCircleLabel, L> | undefined;
+  linkLabel?: GenericAccessor<GraphCircleLabel | GraphCircleLabel[], L> | undefined;
   /** Shift label along the link center a little bit to avoid overlap with the link arrow. Default: `true` */
   linkLabelShiftFromCenter?: BooleanAccessor<L>;
   /** Spacing between neighboring links. Default: `8` */
   linkNeighborSpacing?: number;
+  /** Curvature of the link. Recommended value range: [0:1.5].
+   * `0` - straight line,
+   * `1` - nice curvature,
+   * `1.5` - very curve.
+   * Default: `0` */
+  linkCurvature?: NumericAccessor<L>;
+  /** Highlight links on hover. Default: `true` */
+  linkHighlightOnHover?: boolean;
+  /** Offset [x,y] in pixels from the source node's center point where the link should start. Default: `undefined` */
+  linkSourcePointOffset?: GenericAccessor<[number, number], GraphLink<N, L>>;
+  /** Offset [x,y] in pixels from the target node's center point where the link should end. Default: `undefined` */
+  linkTargetPointOffset?: GenericAccessor<[number, number], GraphLink<N, L>>;
   /** Set selected link by its unique id. Default: `undefined` */
   selectedLinkId?: number | string;
 
@@ -190,11 +236,78 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
   nodeExitPosition?: GenericAccessor<[number, number], N> | undefined;
   /** Specify the destination scale for exiting nodes in the range [0,1]. Default: `0.75` */
   nodeExitScale?: NumericAccessor<N> | undefined;
+  /** Custom "enter" function for node rendering. Default: `undefined` */
+  nodeEnterCustomRenderFunction?:
+  (datum: GraphNode<N, L>, nodeGroupElementSelection: Selection<SVGGElement, GraphNode<N, L>, null, unknown>, config: GraphConfigInterface<N, L>, duration: number, zoomLevel: number) => void;
+  /** Custom "update" function for node rendering. Default: `undefined` */
+  nodeUpdateCustomRenderFunction?:
+  (datum: GraphNode<N, L>, nodeGroupElementSelection: Selection<SVGGElement, GraphNode<N, L>, null, unknown>, config: GraphConfigInterface<N, L>, duration: number, zoomLevel: number) => void;
+  /** Custom partial "update" function for node rendering which will be triggered after the following events:
+   * - Full node update (`nodeUpdateCustomRenderFunction`);
+   * - Background click;
+   * - Node and Link mouseover and mouseout;
+   * - Node brushing,
+   * Default: `undefined` */
+  nodePartialUpdateCustomRenderFunction?:
+  (datum: GraphNode<N, L>, nodeGroupElementSelection: Selection<SVGGElement, GraphNode<N, L>, null, unknown>, config: GraphConfigInterface<N, L>, duration: number, zoomLevel: number) => void;
+  /** Custom "exit" function for node rendering. Default: `undefined` */
+  nodeExitCustomRenderFunction?:
+  (datum: GraphNode<N, L>, nodeGroupElementSelection: Selection<SVGGElement, GraphNode<N, L>, null, unknown>, config: GraphConfigInterface<N, L>, duration: number, zoomLevel: number) => void;
+  /** Custom render function that will be called while zooming / panning the graph. Default: `undefined` */
+  nodeOnZoomCustomRenderFunction?:
+  (datum: GraphNode<N, L>, nodeGroupElementSelection: Selection<SVGGElement, GraphNode<N, L>, null, unknown>, config: GraphConfigInterface<N, L>, zoomLevel: number) => void;
+  /** Define the mode for highlighting selected nodes in the graph. Default: `GraphNodeSelectionHighlightMode.GreyoutNonConnected` */
+  nodeSelectionHighlightMode?: GraphNodeSelectionHighlightMode;
   /** Set selected node by unique id. Default: `undefined` */
   selectedNodeId?: number | string;
+  /** Set selected nodes by unique id. Default: `undefined` */
+  selectedNodeIds?: number[] | string[];
 
   /** Panels configuration. An array of `GraphPanelConfig` objects. Default: `[]` */
   panels?: GraphPanelConfig[] | undefined;
+
+  // Events
+  /** Graph node drag start callback function. Default: `undefined` */
+  onNodeDragStart?: (n: GraphNode<N, L>, event: D3DragEvent<SVGGElement, GraphNode<N, L>, unknown>) => void | undefined;
+  /** Graph node drag callback function. Default: `undefined` */
+  onNodeDrag?: (n: GraphNode<N, L>, event: D3DragEvent<SVGGElement, GraphNode<N, L>, unknown>) => void | undefined;
+  /** Graph node drag end callback function. Default: `undefined` */
+  onNodeDragEnd?: (n: GraphNode<N, L>, event: D3DragEvent<SVGGElement, GraphNode<N, L>, unknown>) => void | undefined;
+  /** Zoom event callback. Default: `undefined` */
+  onZoom?: (zoomScale: number, zoomScaleExtent: [number, number], event: D3ZoomEvent<SVGGElement, unknown> | undefined, transform: ZoomTransform) => void;
+  /** Zoom start event callback. Default: `undefined` */
+  onZoomStart?: (zoomScale: number, zoomScaleExtent: [number, number], event: D3ZoomEvent<SVGGElement, unknown> | undefined, transform: ZoomTransform) => void;
+  /** Zoom end event callback. Default: `undefined` */
+  onZoomEnd?: (zoomScale: number, zoomScaleExtent: [number, number], event: D3ZoomEvent<SVGGElement, unknown> | undefined, transform: ZoomTransform) => void;
+  /** Callback function to be called when the graph layout is calculated. Default: `undefined` */
+  onLayoutCalculated?: (nodes: GraphNode<N, L>[], links: GraphLink<N, L>[]) => void;
+  /** Graph node selection brush callback function. Default: `undefined` */
+  onNodeSelectionBrush?: (selectedNodes: GraphNode<N, L>[], event: D3BrushEvent<SVGGElement> | undefined) => void;
+  /** Graph multiple node drag callback function. Default: `undefined` */
+  onNodeSelectionDrag?: (selectedNodes: GraphNode<N, L>[], event: D3DragEvent<SVGGElement, GraphNode<N, L>, unknown>) => void;
+  /** Callback function to be called when the graph rendering is complete. Default: `undefined` */
+  onRenderComplete?: (
+    g: Selection<SVGGElement, unknown, null, undefined>,
+    nodes: GraphNode<N, L>[],
+    links: GraphLink<N, L>[],
+    config: GraphConfigInterface<N, L>,
+    duration: number,
+    zoomLevel: number,
+    width: number,
+    height: number
+  ) => void;
+
+  /** Determines whether the component should update when new data is provided.
+   * This function takes the previous and new data as parameters and returns a boolean
+   * indicating whether the update should proceed. Useful for fine-grained control over
+   * update behavior when your data has a complex nested structure.
+   * By default the `isEqual` function from Unovis will be used to do the comparison.
+   */
+  shouldDataUpdate?: (
+    prevData: GraphInputData<N, L>,
+    nextData: GraphInputData<N, L>,
+    datamodel: GraphDataModel<N, L, GraphNode<N, L>, GraphLink<N, L>>
+  ) => boolean;
 }
 
 export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInputLink> = {
@@ -202,18 +315,23 @@ export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInput
   duration: 1000,
   zoomScaleExtent: [0.35, 1.25],
   disableZoom: false,
+  zoomEventFilter: undefined,
   disableDrag: false,
+  disableBrush: false,
   zoomThrottledUpdateNodeThreshold: 100,
-  onZoom: undefined,
   layoutType: GraphLayoutType.Force,
   layoutAutofit: true,
   layoutAutofitTolerance: 8.0,
   layoutNonConnectedAside: false,
+  fitViewPadding: 50,
+  fitViewAlign: GraphFitViewAlignment.Center,
 
   layoutGroupOrder: [],
+  layoutParallelNodeSpacing: undefined,
   layoutParallelSubGroupsPerRow: 1,
   layoutParallelNodesPerColumn: 6,
   layoutParallelGroupSpacing: undefined,
+  layoutParallelSubGroupSpacing: 40,
   layoutParallelSortConnectionsByGroup: undefined,
   layoutNodeGroup: (n: GraphInputNode): string => (n as { group: string }).group,
   layoutParallelNodeSubGroup: (n: GraphInputNode): string => (n as { subgroup: string }).subgroup,
@@ -224,6 +342,8 @@ export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInput
     charge: -500,
     forceXStrength: 0.15,
     forceYStrength: 0.25,
+    numIterations: undefined,
+    fixNodePositionAfterSimulation: false,
   },
 
   dagreLayoutSettings: {
@@ -233,9 +353,11 @@ export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInput
 
   layoutElkSettings: undefined,
   layoutElkNodeGroups: undefined,
+  layoutElkGetNodeShape: undefined,
 
   linkFlowAnimDuration: 20000,
   linkFlowParticleSize: 2,
+  linkFlowParticleSpeed: undefined,
   linkWidth: 1,
   linkStyle: GraphLinkStyle.Solid,
   linkBandWidth: 0,
@@ -246,8 +368,11 @@ export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInput
   linkLabelShiftFromCenter: true,
   linkNeighborSpacing: 8,
   linkDisabled: false,
+  linkCurvature: 0,
+  linkHighlightOnHover: true,
+  linkSourcePointOffset: undefined,
+  linkTargetPointOffset: undefined,
   selectedLinkId: undefined,
-  nodeGaugeAnimDuration: 1500,
 
   nodeSize: 30,
   nodeStrokeWidth: 3,
@@ -274,7 +399,26 @@ export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInput
   nodeExitPosition: undefined,
   nodeExitScale: 0.75,
   nodeSort: undefined,
+  nodeSelectionHighlightMode: GraphNodeSelectionHighlightMode.GreyoutNonConnected,
+  nodeGaugeAnimDuration: 1500,
 
   selectedNodeId: undefined,
+  selectedNodeIds: undefined,
+
   panels: undefined,
+
+  onNodeDragStart: undefined,
+  onNodeDrag: undefined,
+  onNodeDragEnd: undefined,
+  onZoom: undefined,
+  onZoomStart: undefined,
+  onZoomEnd: undefined,
+  onLayoutCalculated: undefined,
+  onNodeSelectionBrush: undefined,
+  onNodeSelectionDrag: undefined,
+  onRenderComplete: undefined,
+
+  shouldDataUpdate: (prevData: GraphInputData<GraphInputNode, GraphInputLink>, nextData: GraphInputData<GraphInputNode, GraphInputLink>): boolean => {
+    return !isEqual(prevData, nextData)
+  },
 }

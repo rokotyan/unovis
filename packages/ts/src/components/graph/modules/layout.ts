@@ -7,13 +7,13 @@ import type { graphlib, Node } from 'dagre'
 import { GraphDataModel } from 'data-models/graph'
 
 // Utils
-import { without, clamp, groupBy, unique, sortBy, getString, getNumber, getValue, merge } from 'utils/data'
+import { without, clamp, groupBy, unique, sortBy, getString, getNumber, getValue, merge, isFunction, isNil, isArray } from 'utils/data'
 
 // Types
 import { GraphInputLink, GraphInputNode } from 'types/graph'
 
 // Local Types
-import { GraphNode, GraphLink } from '../types'
+import { GraphNode, GraphLink, GraphForceSimulationNode } from '../types'
 
 // Config
 import { GraphConfigInterface } from '../config'
@@ -79,6 +79,7 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
   const {
     layoutNonConnectedAside, layoutGroupOrder, layoutParallelSortConnectionsByGroup, layoutParallelNodesPerColumn,
     layoutParallelSubGroupsPerRow, nodeSize, layoutNodeGroup, layoutParallelNodeSubGroup, layoutParallelGroupSpacing,
+    layoutParallelNodeSpacing, layoutParallelSubGroupSpacing,
   } = config
 
   const activeWidth = width - configuredNodeSize(nodeSize)
@@ -131,18 +132,19 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
   const maxN = max(groups, d => d.nodes?.length)
   const labelApprxHeight = 40
   const labelMargin = 10
-  const subgroupMargin = 40
+  const subgroupSpacing = layoutParallelSubGroupSpacing ?? 0
   const maxNodeSize = getMaxNodeSize(layoutNodes, nodeSize)
 
+  const configuredNodeSpacing = isArray(layoutParallelNodeSpacing) ? layoutParallelNodeSpacing : [layoutParallelNodeSpacing, layoutParallelNodeSpacing]
   if (orientation === 'horizontal') {
-    const minHorizontalStep = 2 * maxNodeSize + labelMargin
-    const maxHorizontalStep = 3.5 * maxNodeSize + labelMargin
-    const horizontalStep = clamp(activeWidth / (maxN - 1), minHorizontalStep, maxHorizontalStep)
+    const minHorizontalSpacing = 2 * maxNodeSize + labelMargin
+    const maxHorizontalSpacing = 3.5 * maxNodeSize + labelMargin
+    const horizontalNodeSpacing = configuredNodeSpacing[0] ?? clamp(activeWidth / (maxN - 1), minHorizontalSpacing, maxHorizontalSpacing)
 
     const maxVerticalStep = maxNodeSize * 4 + labelApprxHeight
     const minVerticalStep = maxNodeSize * 1.5 + labelApprxHeight
-    const verticalStep = (maxNodeSize + layoutParallelGroupSpacing) || clamp(activeHeight / (groups.length - 1), minVerticalStep, maxVerticalStep)
-    const subgroupNodeStep = maxNodeSize + labelApprxHeight + labelMargin
+    const groupSpacing = layoutParallelGroupSpacing ?? clamp(activeHeight / (groups.length - 1), minVerticalStep, maxVerticalStep)
+    const verticalNodeSpacing = configuredNodeSpacing[1] ?? maxNodeSize + labelApprxHeight + labelMargin
 
     let y0 = (groups.length < 2) ? height / 2 : 0
     groups.forEach(group => {
@@ -158,7 +160,7 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
         let x = x0
         let y = y0 + dy
         subgroup.nodes.forEach(d => {
-          x = x + horizontalStep
+          x = x + horizontalNodeSpacing
           d.x = x
           d.y = y
           groupWidth = Math.max(groupWidth, x)
@@ -166,20 +168,20 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
           n = n + 1
           if (n >= layoutParallelNodesPerColumn) {
             n = 0
-            y += subgroupNodeStep
+            y += verticalNodeSpacing
             x = x0
           }
         })
 
-        const subgroupWidth = Math.min(subgroup.nodes.length, layoutParallelNodesPerColumn) * horizontalStep
-        const subgroupHeight = subgroupRows * subgroupNodeStep
+        const subgroupWidth = Math.min(subgroup.nodes.length, layoutParallelNodesPerColumn) * horizontalNodeSpacing
+        const subgroupHeight = subgroupRows * verticalNodeSpacing
         subgroupMaxWidth = Math.max(subgroupMaxWidth, subgroupWidth)
-        dy = dy + subgroupHeight + subgroupMargin
+        dy = dy + subgroupHeight + subgroupSpacing
         k = k + 1
         if (k >= layoutParallelSubGroupsPerRow) {
           k = 0
           dy = 0
-          x0 = x0 + subgroupMaxWidth + subgroupMargin
+          x0 = x0 + subgroupMaxWidth + subgroupSpacing
           subgroupMaxWidth = 0
         }
 
@@ -196,17 +198,17 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
       groupWidth = 0
 
       // Update y0 for the next group
-      y0 = groupHeight + verticalStep
+      y0 = groupHeight + groupSpacing
     })
   } else {
-    const minHorizontalStep = 6 * maxNodeSize + labelMargin
-    const maxHorizontalStep = 10 * maxNodeSize + labelMargin
-    const horizontalStep = (maxNodeSize + layoutParallelGroupSpacing) || clamp(activeWidth / (maxN - 1), minHorizontalStep, maxHorizontalStep)
+    const groupSpacingMin = 6 * maxNodeSize + labelMargin
+    const groupSpacingMax = 10 * maxNodeSize + labelMargin
+    const groupSpacing = (layoutParallelGroupSpacing ?? clamp(activeWidth / (maxN - 1), groupSpacingMin, groupSpacingMax))
 
-    const maxVerticalStep = maxNodeSize * 2.0 + labelApprxHeight
-    const minVerticalStep = maxNodeSize * 1.5 + labelApprxHeight
-    const verticalStep = clamp(activeHeight / (groups.length - 1), minVerticalStep, maxVerticalStep)
-    const subgroupNodeStep = maxNodeSize * 2.0
+    const minVerticalSpacing = maxNodeSize * 2.0 + labelApprxHeight
+    const maxVerticalSpacing = maxNodeSize * 1.5 + labelApprxHeight
+    const verticalNodeSpacing = configuredNodeSpacing[1] ?? clamp(activeHeight / (groups.length - 1), maxVerticalSpacing, minVerticalSpacing)
+    const horizontalNodeSpacing = configuredNodeSpacing[0] ?? maxNodeSize * 2.0
 
     let x0 = (groups.length < 2) ? width / 2 : 0
     groups.forEach(group => {
@@ -223,7 +225,7 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
         let y = y0
         let x = x0 + dx
         subgroup.nodes.forEach(d => {
-          y = y + verticalStep
+          y = y + verticalNodeSpacing
           d.x = x
           d.y = y
           groupHeight = Math.max(groupHeight, y)
@@ -231,20 +233,20 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
           n = n + 1
           if (n >= layoutParallelNodesPerColumn) {
             n = 0
-            x += subgroupNodeStep
+            x += horizontalNodeSpacing
             y = y0
           }
         })
 
-        const subgroupHeight = Math.min(subgroup.nodes.length, layoutParallelNodesPerColumn) * verticalStep
-        const subgroupWidth = subgroupColumns * subgroupNodeStep
+        const subgroupHeight = Math.min(subgroup.nodes.length, layoutParallelNodesPerColumn) * verticalNodeSpacing
+        const subgroupWidth = subgroupColumns * horizontalNodeSpacing
         subgroupMaxHeight = Math.max(subgroupMaxHeight, subgroupHeight)
-        dx = dx + subgroupWidth + subgroupMargin
+        dx = dx + subgroupWidth + subgroupSpacing
         k = k + 1
         if (k >= layoutParallelSubGroupsPerRow) {
           k = 0
           dx = 0
-          y0 = y0 + subgroupMaxHeight + subgroupMargin
+          y0 = y0 + subgroupMaxHeight + subgroupSpacing
           subgroupMaxHeight = 0
         }
 
@@ -260,7 +262,7 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
       groupHeight = 0
 
       // Update x0 for the next group
-      x0 = groupWidth + horizontalStep
+      x0 = groupWidth + groupSpacing
     })
   }
 
@@ -407,38 +409,62 @@ export async function applyLayoutForce<N extends GraphInputNode, L extends Graph
   config: GraphConfigInterface<N, L>,
   width: number
 ): Promise<void> {
-  const { layoutNonConnectedAside, forceLayoutSettings: { linkDistance, linkStrength, charge, forceXStrength, forceYStrength }, nodeSize } = config
+  const { layoutNonConnectedAside, forceLayoutSettings, nodeSize } = config
 
   const { forceSimulation, forceLink, forceManyBody, forceX, forceY, forceCollide } = await import('d3-force')
 
   const { nonConnectedNodes, connectedNodes, nodes, links } = datamodel
+
+
+  // Apply fx and fy to nodes if present before running the simulation
+  if (forceLayoutSettings.fixNodePositionAfterSimulation) {
+    nodes.forEach((d: GraphForceSimulationNode<N, L>) => {
+      d.fx = isNil(d._state.fx) ? undefined : d._state.fx
+      d.fy = isNil(d._state.fy) ? undefined : d._state.fy
+    })
+  } else {
+    nodes.forEach((d: GraphForceSimulationNode<N, L>) => {
+      delete d._state.fx
+      delete d._state.fy
+    })
+  }
+
   const simulation = forceSimulation(layoutNonConnectedAside ? connectedNodes : nodes)
     .force('link', forceLink(links)
       .id((d) => String((d as GraphNode<N, L>)._id))
-      .distance(linkDistance)
-      .strength(linkStrength)
+      .distance((l, i) => isFunction(forceLayoutSettings.linkDistance) ? forceLayoutSettings.linkDistance(l, i) : forceLayoutSettings.linkDistance)
+      .strength((l, i) => isFunction(forceLayoutSettings.linkStrength) ? forceLayoutSettings.linkStrength(l, i) : forceLayoutSettings.linkStrength)
     )
-    .force('charge', forceManyBody().strength(d => {
-      const linkCount = links.reduce((count, l) => count + Number((l.source === d) || (l.target === d)), 0)
-      return charge * Math.sqrt(linkCount)
+    .force('charge', forceManyBody().strength((d, i) => {
+      if (isFunction(forceLayoutSettings.charge)) {
+        return forceLayoutSettings.charge(d as GraphNode<N, L>, i)
+      } else {
+        const linkCount = links.reduce((count, l) => count + Number((l.source === d) || (l.target === d)), 0)
+        return forceLayoutSettings.charge * Math.sqrt(linkCount)
+      }
     }))
-    .force('x', forceX().strength(forceXStrength))
-    .force('y', forceY().strength(forceYStrength))
+    .force('x', forceX().strength(forceLayoutSettings.forceXStrength))
+    .force('y', forceY().strength(forceLayoutSettings.forceYStrength))
     .force('collide', forceCollide<SimulationNodeDatum & N>().radius((d, i) => getNodeSize(d, nodeSize, i)).iterations(1))
     .stop()
 
   // See https://bl.ocks.org/mbostock/1667139, https://github.com/d3/d3-force/blob/master/README.md#simulation_tick
-  for (let i = 0, n = Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i) {
+  const numIterations = forceLayoutSettings.numIterations ?? Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay()))
+  for (let i = 0, n = numIterations; i < n; ++i) {
     simulation.tick()
   }
 
-  // Translate coordinates to values > 0 for better animated transition between layout
-  const yMin = min<number>(connectedNodes.map(d => d.y)) ?? 0
-  const xMin = min<number>(connectedNodes.map(d => d.x)) ?? 0
-  nodes.forEach(d => {
-    d.x -= xMin
-    d.y -= yMin
-  })
+  // Fix node positions to `_state` if requested.
+  // And remove fx and fy from the node datum if present to make sure the nodes are not fixed
+  // if the layout was changed to a different layout and then back to force
+  if (forceLayoutSettings.fixNodePositionAfterSimulation) {
+    nodes.forEach((d: GraphForceSimulationNode<N, L>) => {
+      delete d.fx
+      delete d.fy
+      d._state.fx = d.x
+      d._state.fy = d.y
+    })
+  }
 
   // Handle non-connected nodes
   if (layoutNonConnectedAside) {
@@ -460,11 +486,12 @@ export async function applyELKLayout<N extends GraphInputNode, L extends GraphIn
   const elk = new ELK()
 
   const labelApprxHeight = 30
-  const nodes = datamodel.nodes.map(n => ({
+  const nodes = datamodel.nodes.map((n, i) => ({
     ...n,
     id: n._id,
     width: getNumber(n, config.nodeSize, n._index) + getNumber(n, config.nodeStrokeWidth, n._index),
     height: getNumber(n, config.nodeSize, n._index) + labelApprxHeight,
+    ...(config.layoutElkGetNodeShape ? config.layoutElkGetNodeShape(n, i) : {}),
   }))
 
   let elkNodes: (GraphNode<N, L> | GraphElkHierarchyNode<N, L>)[]
@@ -496,8 +523,8 @@ export async function applyELKLayout<N extends GraphInputNode, L extends GraphIn
     const found = datamodel.nodes.find(n => n._id === node.id)
     if (!found) return
 
-    found.x = node.x
-    found.y = node.y
+    found.x = node.x + node.width / 2
+    found.y = node.y + node.height / 2
   })
 
   // Handle non-connected nodes

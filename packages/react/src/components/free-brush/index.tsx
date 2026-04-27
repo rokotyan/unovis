@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { FreeBrush, FreeBrushConfigInterface } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisFreeBrushProps<Datum> = FreeBrushConfigInterface<Datum> & {
   ref?: Ref<VisFreeBrushRef<Datum>>;
 }
 
+export const VisFreeBrushSelectors = FreeBrush.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisFreeBrushFC<Datum> (props: VisFreeBrushProps<Datum>, fRef: ForwardedRef<VisFreeBrushRef<Datum>>): JSX.Element {
+function VisFreeBrushFC<Datum> (props: VisFreeBrushProps<Datum>, fRef: ForwardedRef<VisFreeBrushRef<Datum>>): ReactElement {
   const ref = useRef<VisComponentElement<FreeBrush<Datum>>>(null)
   const componentRef = useRef<FreeBrush<Datum> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisFreeBrushFC<Datum> (props: VisFreeBrushProps<Datum>, fRef: Forwarded
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-component ref={ref} />
 }
 

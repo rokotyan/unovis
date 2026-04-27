@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { Line, LineConfigInterface } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisLineProps<Datum> = LineConfigInterface<Datum> & {
   ref?: Ref<VisLineRef<Datum>>;
 }
 
+export const VisLineSelectors = Line.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisLineFC<Datum> (props: VisLineProps<Datum>, fRef: ForwardedRef<VisLineRef<Datum>>): JSX.Element {
+function VisLineFC<Datum> (props: VisLineProps<Datum>, fRef: ForwardedRef<VisLineRef<Datum>>): ReactElement {
   const ref = useRef<VisComponentElement<Line<Datum>>>(null)
   const componentRef = useRef<Line<Datum> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisLineFC<Datum> (props: VisLineProps<Datum>, fRef: ForwardedRef<VisLin
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-component ref={ref} />
 }
 

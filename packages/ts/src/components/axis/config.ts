@@ -19,6 +19,10 @@ export interface AxisConfigInterface<Datum> extends Partial<XYComponentConfigInt
   labelFontSize?: string | null;
   /** Distance between the axis and the label in pixels. Default: `8` */
   labelMargin?: number;
+  /** Label text fit mode: `FitMode.Wrap` or `FitMode.Trim`. Default: `FitMode.Wrap`. */
+  labelTextFitMode?: FitMode | string;
+  /** Label text trim mode: `TrimMode.Start`, `TrimMode.Middle` or `TrimMode.End`. Default: `TrimMode.Middle` */
+  labelTextTrimType?: TrimMode | string;
   /** Font color of the axis label as CSS string. Default: `null` */
   labelColor?: string | null;
   /** Sets whether to draw the grid lines or not. Default: `true` */
@@ -27,8 +31,14 @@ export interface AxisConfigInterface<Datum> extends Partial<XYComponentConfigInt
   tickLine?: boolean;
   /** Sets whether to draw the domain line or not. Default: `true` */
   domainLine?: boolean;
-  /** Draw the min and max axis ticks only. Default: `false` */
+  /** Draw only the min and max axis ticks. Default: `false` */
   minMaxTicksOnly?: boolean;
+  /** Show grid lines for the min and max axis ticks. Default: `false` */
+  minMaxTicksOnlyShowGridLines?: boolean;
+  /** Draw only the min and max axis ticks, when the chart
+   * width is less than the specified value.
+   * Default: `250` */
+  minMaxTicksOnlyWhenWidthIsLess?: number;
   /** Tick label formatter function. Default: `undefined` */
   tickFormat?: ((tick: number | Date, i: number, ticks: number[] | Date[]) => string);
   /** Explicitly set tick values. Default: `undefined` */
@@ -51,6 +61,13 @@ export interface AxisConfigInterface<Datum> extends Partial<XYComponentConfigInt
   tickTextAlign?: TextAlign | string;
   /** Font color of the tick text as CSS string. Default: `null` */
   tickTextColor?: string | null;
+  /** Text rotation angle for ticks. Default: `undefined` */
+  tickTextAngle?: number;
+  /** Hide tick labels that overlap with each other.
+   * To define overlapping, a simple bounding box collision detection algorithm is used.
+   * Which means the result won't be accurate when `tickTextAngle` is specified.
+   * Default: `undefined` */
+  tickTextHideOverlapping?: boolean;
   /** The spacing in pixels between the tick and it's label. Default: `8` */
   tickPadding?: number;
 }
@@ -61,11 +78,15 @@ export const AxisDefaultConfig: AxisConfigInterface<unknown> = {
   type: undefined,
   label: undefined,
   labelFontSize: null,
+  labelTextFitMode: FitMode.Wrap,
+  labelTextTrimType: TrimMode.Middle,
   gridLine: true,
   tickLine: true,
   domainLine: true,
   numTicks: undefined,
   minMaxTicksOnly: false,
+  minMaxTicksOnlyWhenWidthIsLess: 250,
+  minMaxTicksOnlyShowGridLines: false,
   tickTextWidth: undefined,
   tickTextSeparator: undefined,
   tickTextForceWordBreak: false,
@@ -74,10 +95,12 @@ export const AxisDefaultConfig: AxisConfigInterface<unknown> = {
   tickTextFontSize: null,
   tickTextAlign: undefined,
   tickTextColor: null,
+  tickTextAngle: undefined,
   labelMargin: 8,
   labelColor: null,
   tickFormat: undefined,
   tickValues: undefined,
   fullSize: true,
   tickPadding: 8,
+  tickTextHideOverlapping: undefined,
 }

@@ -9,13 +9,16 @@ export function getComponentCode (
   dataType: string | null = 'Data',
   elementSuffix = 'component',
   isStandAlone = false,
+  renderIntoProvidedDomNode = false,
   styles?: string[]
 ): string {
   const genericsExtend = generics ? `generic="${generics?.map((g, i) => g.extends ? `${g.name} extends ${g.extends}` : g.name)}"` : ''
   const genericsStr = generics ? `<${generics?.map(g => g.name).join(', ')}>` : ''
   const propDefs = dataType ? ['const data = computed(() => accessor.data.value ?? props.data)'] : []
   const componentType = [componentName, genericsStr].join('')
-  const componentInit = `${componentType}(${isStandAlone ? `elRef.value, config.value${dataType ? ', data.value' : ''}` : 'config.value'})`
+  const constructorArgs = isStandAlone
+    ? `elRef.value, ${renderIntoProvidedDomNode ? '{ ...config.value, renderIntoProvidedDomNode: true }' : 'config.value'}${dataType ? ', data.value' : ''}`
+    : 'config.value'
 
   // Vue 3.3.4 has issue resolving complex Typescript, in this case when the type has `WithOptional`.
   // If the build is failing, add the respective component here.
@@ -30,7 +33,7 @@ import { arePropsEqual, useForwardProps } from '../../utils/props'
 ${isStandAlone ? '' : `import { ${elementSuffix}AccessorKey } from '../../utils/context'\n`}
 ${isStandAlone ? '' : `const accessor = inject(${elementSuffix}AccessorKey)\n`}
 // data and required props ${isComplexPropComponent ? '\n// !!! temporary solution to ignore complex type. related issue: https://github.com/vuejs/core/issues/8412' : ''}
-interface Props extends ${isComplexPropComponent ? '/** @vue-ignore */' : ''} ${componentName}ConfigInterface${genericsStr} { }
+${isComplexPropComponent ? `interface Props extends /** @vue-ignore */ ${componentName}ConfigInterface${genericsStr} { }` : `type Props = ${componentName}ConfigInterface${genericsStr}`}
 const props = defineProps<Props & { data?: ${dataType} }>()
 
 ${propDefs.length && !isStandAlone ? `${propDefs.join('\n')}` : isStandAlone ? 'const data = computed(() => props.data)' : ''}
@@ -43,7 +46,7 @@ ${isStandAlone ? 'const elRef = ref<HTMLDivElement>()' : ''}
 
 onMounted(() => {
   nextTick(() => {
-    ${isStandAlone ? 'if(elRef.value)\n    ' : ''}component.value = new ${componentInit}
+    ${isStandAlone ? 'if(elRef.value)\n    ' : ''}component.value = new ${componentType}(${constructorArgs})
     ${propDefs?.length && !isStandAlone ? 'component.value?.setData(data.value)' : ''}
     ${isStandAlone ? '' : 'accessor.update(component.value)'}
   })
@@ -56,16 +59,20 @@ onUnmounted(() => {
 
 watch(config, (curr, prev) => {
   if (!arePropsEqual(curr, prev)) {
-    component.value?.${componentName === 'BulletLegend' ? 'update' : 'setConfig'}(config.value)
+    component.value?.setConfig(config.value)
   }
 })
-${propDefs?.length && !isStandAlone ? `\nwatch(data, () => {
+${propDefs?.length ? `\nwatch(data, () => {
   component.value?.setData(data.value)
 })` : ''}
 
 defineExpose({
   component
 })
+</script>
+
+<script lang="ts">
+export const Vis${componentName}Selectors = ${componentName}.selectors
 </script>
 
 <template>

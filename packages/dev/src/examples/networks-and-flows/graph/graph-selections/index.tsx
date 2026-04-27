@@ -1,22 +1,27 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { VisSingleContainer, VisGraph, VisGraphRef } from '@unovis/react'
-import { Graph } from '@unovis/ts'
+import { Graph, GraphNodeSelectionHighlightMode } from '@unovis/ts'
 import { generateNodeLinkData, NodeDatum, LinkDatum } from '@src/utils/data'
+import { ExampleViewerDurationProps } from '@src/components/ExampleViewer/index'
 
-export const title = 'Basic Graph'
+export const title = 'Graph: Node Selection'
 export const subTitle = 'Select Node on Click'
 
-export const component = (): JSX.Element => {
-  const data = generateNodeLinkData()
+export const component = (props: ExampleViewerDurationProps): React.ReactNode => {
+  const data = useMemo(() => generateNodeLinkData(50), [])
   const ref = useRef<VisGraphRef<NodeDatum, LinkDatum>>(null)
-  const [selectedNode, setSelectedNode] = useState<string | undefined>()
+  const [selectedNodes, setSelectedNodes] = useState<string[] | undefined>()
   const [text, setText] = useState<string>()
 
+  const selectNode = useCallback((n: NodeDatum, e: PointerEvent) => {
+    setSelectedNodes([...(selectedNodes && e.metaKey ? selectedNodes : []), n.id])
+  }, [selectedNodes])
+
   useEffect(() => {
-    const external = selectedNode ?? 'undefined'
-    const internal = ref.current?.component?.config.selectedNodeId ?? 'undefined'
-    setText([external, internal].join(' / '))
-  }, [selectedNode])
+    const external = selectedNodes ?? 'undefined'
+    const internal = ref.current?.component?.selectedNodes?.map(d => d.id) ?? 'undefined' // Delayed by a render
+    setText([external, internal].join(' | '))
+  }, [selectedNodes])
 
   return (
     <>
@@ -24,16 +29,22 @@ export const component = (): JSX.Element => {
       <VisSingleContainer data={data} height={600}>
         <VisGraph
           ref={ref}
-          nodeIcon={(n: NodeDatum) => n.id}
-          events={{
+          forceLayoutSettings={useMemo(() => ({
+            fixNodePositionAfterSimulation: true,
+          }), [])}
+          nodeSelectionHighlightMode={GraphNodeSelectionHighlightMode.Greyout}
+          linkCurvature={1}
+          nodeIcon={useCallback((n: NodeDatum) => n.id, [])}
+          events={useMemo(() => ({
             [Graph.selectors.node]: {
-              click: useCallback((n: NodeDatum) => { setSelectedNode(n.id) }, []),
+              click: selectNode,
             },
             [Graph.selectors.background]: {
-              click: useCallback(() => { setSelectedNode(undefined) }, []),
+              click: () => { setSelectedNodes(undefined) },
             },
-          }}
-          selectedNodeId={selectedNode}
+          }), [selectedNodes])}
+          selectedNodeIds={selectedNodes}
+          duration={props.duration}
         />
       </VisSingleContainer>
 

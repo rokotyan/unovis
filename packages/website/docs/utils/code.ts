@@ -122,7 +122,42 @@ export function getVueStrings (config: CodeConfig): string {
   lines.push(getImportString({ '@unovis/vue': visImports, ...imports }))
   if (data) lines.push(`const props = defineProps<{ ${data} }>()`)
   Object.entries(rest).forEach(d => lines.push(`const ${d.join(' = ')}`))
-  return `<script setup lang="ts">>\n${lines.join('\n')}\n</script>\n\n<template>\n${html}\n</template>`
+  return `<script setup lang="ts">\n${lines.join('\n')}\n</script>\n\n<template>\n${html}\n</template>`
+}
+
+export function getSolidStrings (config: CodeConfig): string {
+  const { components, container, declarations, imports, visImports } = config
+  const { data, ...rest } = declarations
+  const lines: string[] = []
+
+  let indentLevel = 0
+  let containerString: string
+
+  if (imports || Object.values(declarations).length) {
+    if (imports) {
+      lines.push(getImportString({ '@unovis/solid': visImports, ...imports }))
+    }
+
+    lines.push('function Component(props) {')
+    if (data) lines.push(`${t}const ${data} = () => props.data`)
+    lines.push(...Object.entries(rest).map(d => `${t}const ${d.join(' = ')}`))
+    lines.push(`\n${t}return (`)
+    indentLevel += 2
+  }
+
+  if (container) {
+    containerString = `${parse.solid(container, true, indentLevel)}`
+    if (data) containerString = containerString.replace('{data}', '{data()}')
+    indentLevel++
+  }
+  const componentString = `${components.map(c => parse.solid(c, false, indentLevel)).join('\n')}`
+  lines.push(containerString?.replace('><', `>\n${componentString}\n${tab(--indentLevel)}<`) || componentString)
+
+  if (indentLevel) {
+    lines.push(`${tab(--indentLevel)})`)
+    if (indentLevel) lines.push('}')
+  }
+  return lines.join('\n')
 }
 
 export function getTypescriptStrings (config: CodeConfig, mainComponentName: string, isStandAlone: boolean): string {

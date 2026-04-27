@@ -18,6 +18,7 @@ export const variables = injectGlobal`
 
     --vis-chord-diagram-label-text-fill-color-bright: #ffffff;
     --vis-chord-diagram-label-text-fill-color-dark: #a5abb2;
+    --vis-chord-diagram-label-text-font-size: 1em;
 
     --vis-dark-chord-diagram-link-fill-color: #575c65;
   }
@@ -25,6 +26,10 @@ export const variables = injectGlobal`
   body.theme-dark ${`.${root}`} {
     --vis-chord-diagram-link-fill-color: var(--vis-dark-chord-diagram-link-fill-color);
   }
+`
+
+export const background = css`
+  label: background;
 `
 
 export const nodes = css`
@@ -53,17 +58,17 @@ export const highlightedNode = css`
   stroke-width: 1.5;
 `
 
-export const gLabel = css`
-  label: group-label;
-`
-
 export const label = css`
   label: label;
+`
+
+export const labelText = css`
+  label: label-text;
 
   dominant-baseline: middle;
   user-select: none;
-  pointer-events: none;
-
+  font-size: var(--vis-chord-diagram-label-text-font-size);
+  
   > textPath {
     dominant-baseline: central;
   }

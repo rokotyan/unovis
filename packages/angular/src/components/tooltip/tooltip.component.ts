@@ -16,16 +16,26 @@ export class VisTooltipComponent implements TooltipConfigInterface, AfterViewIni
   /** Container to where the Tooltip component should be inserted. Default: `undefined` */
   @Input() container?: HTMLElement
 
+  /** Follow the mouse cursor. Default: `true` */
+  @Input() followCursor?: boolean
+
+  /** Allow the tooltip to be hovered over and interacted with. Default: `false` */
+  @Input() allowHover?: boolean
+
   /** Horizontal placement of the tooltip. Default: `Position.Auto` */
   @Input() horizontalPlacement?: Position | string | undefined
 
-  /** Horizontal shift of the tooltip in pixels. Default: `0` */
+  /** Horizontal shift of the tooltip in pixels. Works only with
+   * `horizontalPlacement` set to `Position.Left` or `Position.Right`.
+   * Default: `0` */
   @Input() horizontalShift?: number
 
   /** Vertical placement of the tooltip. Default: `Position.Top` */
   @Input() verticalPlacement?: Position | string | undefined
 
-  /** Vertical shift of the tooltip in pixels. Default: `0` */
+  /** Vertical shift of the tooltip in pixels. Works only with
+   * `verticalPlacement` set to `Position.Top` or `Position.Bottom`.
+   * Default: `0` */
   @Input() verticalShift?: number
 
   /** Defines the content of the tooltip and hovering over which elements should trigger it.
@@ -43,7 +53,7 @@ export class VisTooltipComponent implements TooltipConfigInterface, AfterViewIni
    * }
    * ``` */
   @Input() triggers?: {
-    [selector: string]: (data: any, i: number, elements: (HTMLElement | SVGElement)[]) => string | HTMLElement | undefined | null;
+    [selector: string]: ((data: any, i: number, elements: (HTMLElement | SVGElement)[]) => string | HTMLElement | undefined | null | void) | undefined | null;
   }
 
   /** Custom DOM attributes for the tooltip. Useful when you need to refer to a specific tooltip instance
@@ -65,6 +75,14 @@ export class VisTooltipComponent implements TooltipConfigInterface, AfterViewIni
     [attr: string]: string | number | boolean;
   }
 
+  /** Custom class name for the tooltip. Default: `undefined` */
+  @Input() className?: string
+
+  /** Hide delay in milliseconds. Default: `undefined` */
+  @Input() hideDelay?: number
+
+  /** Show delay in milliseconds. Default: `undefined` */
+  @Input() showDelay?: number
 
   component: Tooltip | undefined
   public componentContainer: ContainerCore | undefined
@@ -79,8 +97,8 @@ export class VisTooltipComponent implements TooltipConfigInterface, AfterViewIni
   }
 
   private getConfig (): TooltipConfigInterface {
-    const { components, container, horizontalPlacement, horizontalShift, verticalPlacement, verticalShift, triggers, attributes } = this
-    const config = { components, container, horizontalPlacement, horizontalShift, verticalPlacement, verticalShift, triggers, attributes }
+    const { components, container, followCursor, allowHover, horizontalPlacement, horizontalShift, verticalPlacement, verticalShift, triggers, attributes, className, hideDelay, showDelay } = this
+    const config = { components, container, followCursor, allowHover, horizontalPlacement, horizontalShift, verticalPlacement, verticalShift, triggers, attributes, className, hideDelay, showDelay }
     const keys = Object.keys(config) as (keyof TooltipConfigInterface)[]
     keys.forEach(key => { if (config[key] === undefined) delete config[key] })
 

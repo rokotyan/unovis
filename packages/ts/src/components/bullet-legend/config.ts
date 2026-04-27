@@ -1,5 +1,6 @@
 // Local Types
-import { BulletLegendItemInterface, BulletShape } from './types'
+import { GenericAccessor } from 'types/accessor'
+import { BulletLegendItemInterface, BulletShape, BulletLegendOrientation } from './types'
 
 export interface BulletLegendConfigInterface {
   /** Legend items. Array of `BulletLegendItemInterface`:
@@ -7,6 +8,7 @@ export interface BulletLegendConfigInterface {
    * {
    *   name: string | number;
    *   color?: string;
+   *   shape?: BulletShape;
    *   inactive?: boolean;
    *   hidden?: boolean;
    *   pointer?: boolean;
@@ -24,8 +26,16 @@ export interface BulletLegendConfigInterface {
   labelMaxWidth?: string | null;
   /** Bullet shape size, mapped to the width and height CSS properties. Default: `null` */
   bulletSize?: string | null;
-  /** Bullet shape: `BulletShape.Circle`, `BulletShape.Line` or `BulletShape.Square`. Default: `BulletShape.Circle` */
-  bulletShape?: BulletShape;
+  /** Spacing between multiple bullet symbols in pixels. Default: `4` */
+  bulletSpacing?: number;
+  /** Bullet shape enum value or accessor function. Default: `d => d.shape ?? BulletShape.Circle */
+  bulletShape?: GenericAccessor<BulletShape, BulletLegendItemInterface>;
+  /** Legend orientation. When set to `BulletLegendOrientation.Vertical`, each legend item will
+   * start on a new line. Default: `BulletLegendOrientation.Horizontal` */
+  orientation?: BulletLegendOrientation | string;
+  /** If set to true, the legend will be rendered directly into the HTML element provided to the constructor
+   * without creating additional `div` element. Default: `false` */
+  renderIntoProvidedDomNode?: boolean;
 }
 
 export const BulletLegendDefaultConfig: BulletLegendConfigInterface = {
@@ -35,5 +45,8 @@ export const BulletLegendDefaultConfig: BulletLegendConfigInterface = {
   labelFontSize: null,
   labelMaxWidth: null,
   bulletSize: null,
-  bulletShape: BulletShape.Circle,
+  bulletSpacing: 4,
+  bulletShape: d => d.shape ?? BulletShape.Circle,
+  orientation: BulletLegendOrientation.Horizontal,
+  renderIntoProvidedDomNode: false,
 }

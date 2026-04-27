@@ -5,14 +5,23 @@ export function getComponentCode (
   generics: GenericParameter[] | undefined,
   importStatements: { source: string; elements: string[] }[],
   dataType: string | null = 'any',
-  elementSuffix = 'component'
+  elementSuffix = 'component',
+  isStandAlone = false,
+  renderIntoProvidedDomNode = false
 ): string {
   const genericsStr = generics ? `<${generics?.map(g => g.name).join(', ')}>` : ''
   const genericsDefStr = generics
     ? `<${generics?.map(g => g.name + (g.extends ? ` extends ${g.extends}` : '') + (g.default ? ` = ${g.default}` : '')).join(', ')}>`
     : ''
+  const componentType = `${componentName}${genericsStr}`
+  const refType = isStandAlone ? `VisComponentElement<${componentType}, HTMLDivElement>` : `VisComponentElement<${componentType}>`
+  const elementDef = `ref.current as ${refType}`
+  const initProps = renderIntoProvidedDomNode
+    ? '{ ...props, renderIntoProvidedDomNode: true }'
+    : 'props'
+
   return `// !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 ${importStatements.map(s => `import { ${s.elements.join(', ')} } from '${s.source}'`).join('\n')}
 
 // Utils
@@ -22,30 +31,31 @@ import { arePropsEqual } from 'src/utils/react'
 import { VisComponentElement } from 'src/types/dom'
 
 export type Vis${componentName}Ref${genericsDefStr} = {
-    component?: ${componentName}${genericsStr}
+    component?: ${componentType};
 }
 
-export type Vis${componentName}Props${genericsDefStr} = ${componentName}ConfigInterface${genericsStr} & {
-  data?: ${dataType};
-  ref?: Ref<Vis${componentName}Ref${genericsStr}>
+export type Vis${componentName}Props${genericsDefStr} = ${componentName}ConfigInterface${genericsStr} & {${dataType ? `\n  data?: ${dataType};` : ''}
+  ref?: Ref<Vis${componentName}Ref${genericsStr}>;${isStandAlone ? '\nclassName?: string;' : ''}
 }
+
+export const Vis${componentName}Selectors = ${componentName}.selectors
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function Vis${componentName}FC${genericsDefStr} (props: Vis${componentName}Props${genericsStr}, fRef: ForwardedRef<Vis${componentName}Ref${genericsStr}>): JSX.Element {
-  const ref = useRef<VisComponentElement<${componentName}${genericsStr}>>(null)
-  const componentRef = useRef<${componentName}${genericsStr} | undefined>(undefined)
+function Vis${componentName}FC${genericsDefStr} (props: Vis${componentName}Props${genericsStr}, fRef: ForwardedRef<Vis${componentName}Ref${genericsStr}>): ReactElement {
+  const ref = useRef<${refType}>(null)
+  const componentRef = useRef<${componentType} | undefined>(undefined)
 
   // On Mount
   useEffect(() => {
-    const element = (ref.current as VisComponentElement<${componentName}${genericsStr}>)
+    const element = (${elementDef})
 
-    const c = new ${componentName}${genericsStr}(props)
+    const c = ${isStandAlone ? `new ${componentType}(${elementDef}, ${initProps}${dataType ? ', props.data' : ''})` : `new ${componentType}(${initProps})`}
     componentRef.current = c
     element.__component__ = c
 
     return () => {
-        componentRef.current = undefined
-        c.destroy()
+      componentRef.current = undefined
+      c.destroy()
     }
   }, [])
 
@@ -56,8 +66,8 @@ function Vis${componentName}FC${genericsDefStr} (props: Vis${componentName}Props
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
-  return <vis-${elementSuffix} ref={ref} />
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
+  return <${isStandAlone ? 'div className={props.className}' : `vis-${elementSuffix}`} ref={ref} />
 }
 
 // We export a memoized component to avoid unnecessary re-renders

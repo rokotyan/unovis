@@ -13,17 +13,17 @@ const outputDefault = (format: ModuleFormat, extension: string): OutputOptions =
     vue: 'Vue',
     '@unovis/ts': '@unovis/ts',
   },
-  sourcemap: true,
   preserveModules: true,
   preserveModulesRoot: './src',
   format,
   entryFileNames: ({ name }) => {
     return `${name.replace('.vue', '')}.${extension}`
   },
+  exports: 'named',
 })
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode, ssrBuild }): UserConfig => {
+export default defineConfig(({ command, mode }): UserConfig => {
   if (command === 'build' && mode !== 'gallery') {
     return {
       plugins: [
@@ -41,13 +41,12 @@ export default defineConfig(({ command, mode, ssrBuild }): UserConfig => {
           entry: resolve(__dirname, 'src/index.ts'),
         },
         rollupOptions: {
-          // make sure to externalize deps that shouldn't be bundled
-          // into your library (Vue)
           external: ['vue', '@unovis/ts'],
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore overloaded issue
           output: [outputDefault('cjs', 'cjs'), outputDefault('es', 'js')],
         },
+        sourcemap: true,
       },
     }
   } else {
@@ -57,6 +56,11 @@ export default defineConfig(({ command, mode, ssrBuild }): UserConfig => {
       ],
       build: {
         outDir: 'dist-demo',
+      },
+      resolve: {
+        alias: {
+          '@unovis/vue': resolve(__dirname, 'src/index.ts'),
+        },
       },
     }
   }

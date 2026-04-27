@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { Tooltip, TooltipConfigInterface } from '@unovis/ts'
 
 // Utils
@@ -13,12 +13,13 @@ export type VisTooltipRef = {
 }
 
 export type VisTooltipProps = TooltipConfigInterface & {
-  data?: null;
   ref?: Ref<VisTooltipRef>;
 }
 
+export const VisTooltipSelectors = Tooltip.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisTooltipFC (props: VisTooltipProps, fRef: ForwardedRef<VisTooltipRef>): JSX.Element {
+function VisTooltipFC (props: VisTooltipProps, fRef: ForwardedRef<VisTooltipRef>): ReactElement {
   const ref = useRef<VisComponentElement<Tooltip>>(null)
   const componentRef = useRef<Tooltip | undefined>(undefined)
 
@@ -43,7 +44,7 @@ function VisTooltipFC (props: VisTooltipProps, fRef: ForwardedRef<VisTooltipRef>
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-tooltip ref={ref} />
 }
 

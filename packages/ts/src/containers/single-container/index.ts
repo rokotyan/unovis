@@ -16,9 +16,9 @@ import { Sizing, ExtendedSizeComponent } from 'types/component'
 import { SingleContainerDefaultConfig, SingleContainerConfigInterface } from './config'
 
 export class SingleContainer<Data> extends ContainerCore {
-  public component: ComponentCore<Data>
-  public config: SingleContainerConfigInterface<Data>
   protected _defaultConfig = SingleContainerDefaultConfig as SingleContainerConfigInterface<Data>
+  public component: ComponentCore<Data>
+  public config: SingleContainerConfigInterface<Data> = this._defaultConfig
 
   constructor (element: HTMLElement, config?: SingleContainerConfigInterface<Data>, data?: Data) {
     super(element)
@@ -58,8 +58,14 @@ export class SingleContainer<Data> extends ContainerCore {
       tooltip.setComponents([this.component])
     }
 
+    const annotations = containerConfig.annotations
+    if (annotations) {
+      this.element.appendChild(annotations.element)
+    }
+
     // Defs
     this.element.appendChild(this._svgDefs.node())
+    this.element.appendChild(this._svgDefsExternal.node())
 
     if (!preventRender) this.render()
   }
@@ -93,6 +99,9 @@ export class SingleContainer<Data> extends ContainerCore {
   protected _preRender (): void {
     super._preRender()
     this.component.setSize(this.width, this.height, this.containerWidth, this.containerHeight)
+    this.component.setContainerMargin(this.config.margin)
+    this.config.annotations?.setSize(this.width, this.height, this.containerWidth, this.containerHeight)
+    this.config.annotations?.setContainerMargin(this.config.margin)
   }
 
   protected _render (duration?: number): void {
@@ -101,8 +110,10 @@ export class SingleContainer<Data> extends ContainerCore {
 
     component.g.attr('transform', `translate(${config.margin.left},${config.margin.top})`)
     component.render(duration)
+    config.annotations?.render(duration)
 
     if (config.tooltip) config.tooltip.update()
+    config.onRenderComplete?.(this.svg.node(), config.margin, this.containerWidth, this.containerHeight, this.width, this.height)
   }
 
   // Re-defining the `render()` function to handle different sizing techniques (`Sizing.Extend` and `Sizing.FitWidth`)
@@ -139,8 +150,8 @@ export class SingleContainer<Data> extends ContainerCore {
     if (!this._resizeObserver) this._setUpResizeObserver()
 
     // Schedule the actual rendering in the next frame
-    cancelAnimationFrame(this._requestedAnimationFrame)
-    this._requestedAnimationFrame = requestAnimationFrame(() => {
+    cancelAnimationFrame(this._renderAnimationFrameId)
+    this._renderAnimationFrameId = requestAnimationFrame(() => {
       this._preRender()
       this._render(duration)
     })
@@ -158,5 +169,6 @@ export class SingleContainer<Data> extends ContainerCore {
 
     component?.destroy()
     config.tooltip?.destroy()
+    config.annotations?.destroy()
   }
 }

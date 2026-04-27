@@ -1,4 +1,13 @@
 import { TransformValues } from 'types/svg'
+import striptags from 'striptags'
+
+import { allowedSvgTextTags } from './text'
+
+export const allowedSvgTags = [
+  'svg', 'g', 'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon',
+  'defs', 'clipPath', 'use', 'symbol', 'image', 'marker', 'style', 'mask',
+  ...allowedSvgTextTags,
+]
 
 export function getTransformValues (svgElement: SVGElement): TransformValues {
   // Get the transform attribute value from the SVG element
@@ -46,4 +55,20 @@ export function transformValuesToString (transformValues: TransformValues): stri
     : translateString
 
   return transformString
+}
+
+export function sanitizeSvgString (svgString: string, allowedTags = allowedSvgTags): string {
+  return striptags(svgString, allowedTags)
+}
+
+
+export function isStringSvg (input: string): boolean {
+  /* Since a general-purpose regex for this can be complex and potentially vulnerable
+  * to ReDoS attacks, we'll create a simpler, safer regex that looks for a few common
+  * SVG elements or attributes.
+  */
+  const svgElementsRegex = new RegExp(`<(${allowedSvgTags.join('|')})\\b`, 'i')
+  const svgAttributesRegex = /\b(d|fill|stroke|transform|viewBox)=/i
+
+  return svgElementsRegex.test(input) || svgAttributesRegex.test(input)
 }

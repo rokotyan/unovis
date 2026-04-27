@@ -1,11 +1,21 @@
 export interface GraphInputNode {
   id?: number | string;
+  x?: number;
+  y?: number;
 }
 
 export interface GraphInputLink {
   id?: number | string;
   source: number | string | GraphInputNode;
   target: number | string | GraphInputNode;
+}
+
+export type GraphInputData<
+  N extends GraphInputNode = GraphInputNode,
+  L extends GraphInputLink = GraphInputLink,
+> = {
+  nodes: N[];
+  links?: L[];
 }
 
 export type GraphNodeCore<N extends GraphInputNode, L extends GraphInputLink> = N & {

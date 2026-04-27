@@ -58,6 +58,8 @@ export const variables = injectGlobal`
     --vis-dark-graph-node-side-label-fill-color-dark: var(--vis-color-grey);
 
     /* Greyout */
+    --vis-graph-node-greyout-opacity: 0.9;
+    --vis-graph-node-greyout-filter: none;
     --vis-graph-node-greyout-color: #ebeff7;
     --vis-graph-node-icon-greyout-color: #c6cad1;
     --vis-graph-node-side-label-background-greyout-color: #f1f4f7;
@@ -65,6 +67,14 @@ export const variables = injectGlobal`
     --vis-dark-graph-node-greyout-color: #494b56;
     --vis-dark-graph-node-icon-greyout-color: var(--vis-color-grey);
     --vis-dark-graph-node-side-label-background-greyout-color: #494B56;
+
+    /* Brushed */
+    --vis-graph-brushed-node-stroke-color: var(--vis-color-main);
+    --vis-graph-brushed-node-label-text-color: var(--vis-color-main);
+    --vis-graph-brushed-node-icon-fill-color: var(--vis-color-main);
+    
+    /* Misc */
+    --vis-graph-node-dominant-baseline: middle;
   }
 
   body.theme-dark ${`.${nodes}`} {
@@ -93,36 +103,50 @@ export const variables = injectGlobal`
   }
 `
 
+export const brushable = css`
+  label: brushable;
+`
+
+
 export const node = css`
   label: node-shape;
 
   stroke: var(--vis-graph-node-stroke-color);
   fill: var(--vis-graph-node-fill-color);
-  transition: .4s fill, .4s stroke;
+
+  :not(.${brushable}) {
+    transition: .4s fill, 4s stroke;
+  }
 `
 
 export const nodeIcon = css`
   label: icon;
 
   font-family: var(--vis-graph-icon-font-family), var(--vis-font-family);
-  dominant-baseline: middle;
+  dominant-baseline: var(--vis-graph-node-dominant-baseline);
   text-anchor: middle;
   pointer-events: none;
-  transition: .4s all;
   fill: var(--vis-graph-node-icon-fill-color);
+
+  :not(.${brushable}) {
+    transition: .4s all;
+  }
 `
 
 export const nodeBottomIcon = css`
   label: node-bottom-icon;
   font-family: var(--vis-graph-icon-font-family), var(--vis-font-family);
   font-size: var(--vis-graph-node-bottom-icon-font-size);
-  dominant-baseline: middle;
+  dominant-baseline: var(--vis-graph-node-dominant-baseline);
   text-anchor: middle;
   pointer-events: none;
-  transition: .4s fill;
   fill: var(--vis-graph-node-bottom-icon-fill-color);
   stroke: var(--vis-graph-node-bottom-icon-stroke-color);
   stroke-width: var(--vis-graph-node-bottom-icon-stroke-width);
+
+  :not(.${brushable}) {
+    transition: .4s all;
+  }
 `
 
 export const nodeIsDragged = css`
@@ -181,7 +205,7 @@ export const sideLabel = css`
   label: side-label;
 
   font-family: var(--vis-graph-icon-font-family), var(--vis-font-family);
-  dominant-baseline: middle;
+  dominant-baseline: var(--vis-graph-node-dominant-baseline);
   text-anchor: middle;
   font-size: 16px;
   fill: var(--vis-graph-node-side-label-fill-color-bright);
@@ -262,8 +286,10 @@ export const customNode = css`
   stroke-width: 0;
 `
 
-export const greyoutNode = css`
-  label: greyout;
+export const greyedOutNode = css`
+  label: greyed-out;
+  opacity: var(--vis-graph-node-greyout-opacity);
+  filter: var(--vis-graph-node-greyout-filter);
 
   ${`.${node}`} {
     fill: var(--vis-graph-node-greyout-color) !important;
@@ -291,5 +317,19 @@ export const greyoutNode = css`
    ${`.${sideLabel}`} {
     fill: var(--vis-graph-node-side-label-fill-color-bright) !important;
     opacity: 0.25;
+  }
+`
+
+export const brushed = css`
+  label: brushed-node;
+
+  ${`.${node}`} {
+    stroke: var(--vis-graph-brushed-node-stroke-color);
+  }
+  ${`.${nodeIcon}`} {
+    fill: var(--vis-graph-brushed-node-icon-fill-color);
+  }
+  ${`.${labelTextContent}`} {
+    fill: var(--vis-graph-brushed-node-label-text-color);
   }
 `

@@ -18,6 +18,7 @@ const example: Example = {
     </a> (source: <em>American Community Survey 2010-2012</em>)
   </div>,
   codeReact: require(`!!raw-loader!./${pathname}.tsx`).default,
+  codeSolid: require(`!!raw-loader!./${pathname}-solid.tsx`).default,
   codeTs: require(`!!raw-loader!./${pathname}.ts`).default,
   codeAngular: {
     html: require(`!!raw-loader!./${pathname}.component.html`).default,
@@ -26,7 +27,7 @@ const example: Example = {
   },
   codeSvelte: require(`!!raw-loader!./${pathname}.svelte`).default,
   codeVue: require(`!!raw-loader!./${pathname}.vue`).default,
-  data: require('!!raw-loader!./../basic-scatter-chart/data.ts').default,
+  data: require('!!raw-loader!./../sized-scatter-plot/data.ts').default,
   preview: require(`../_previews/${pathname}.png`).default,
   previewDark: require(`../_previews/${pathname}-dark.png`).default,
   styles: require('!!raw-loader!./styles.css').default,

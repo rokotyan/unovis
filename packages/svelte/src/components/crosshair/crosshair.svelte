@@ -1,6 +1,6 @@
 <script lang="ts">
   // !!! This code was automatically generated. You should not change it !!!
-  import { Crosshair, CrosshairConfigInterface } from '@unovis/ts'
+  import { Crosshair, CrosshairConfigInterface, NumericAccessor } from '@unovis/ts'
   import { onMount, getContext } from 'svelte'
 
   import type { Lifecycle } from '../../types/context'
@@ -11,11 +11,13 @@
   // data and required props
   // eslint-disable-next-line no-undef-init
   export let data: Datum[] = undefined
+  export let x: NumericAccessor<Datum>
+  export let y: NumericAccessor<Datum> | NumericAccessor<Datum>[]
 
   // config
   let prevConfig: CrosshairConfigInterface<Datum>
   let config: CrosshairConfigInterface<Datum>
-  $: config = { ...$$restProps }
+  $: config = { x, y, ...$$restProps }
 
   // component declaration
   let component: Crosshair<Datum>

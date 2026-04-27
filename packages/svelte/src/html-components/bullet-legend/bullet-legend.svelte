@@ -20,11 +20,11 @@
   let ref: HTMLDivElement
 
   onMount(() => {
-    component = new BulletLegend(ref, config)
+    component = new BulletLegend(ref, { ...config, renderIntoProvidedDomNode: true })
     return () => component?.destroy()
   })
   $: if (!arePropsEqual(prevConfig, config)) {
-    component?.update(config)
+    component?.setConfig(config)
     prevConfig = config
   }
 

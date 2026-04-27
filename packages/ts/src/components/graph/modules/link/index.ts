@@ -1,11 +1,13 @@
 import { select, Selection } from 'd3-selection'
-import { range } from 'd3-array'
+import { range, sum } from 'd3-array'
 import { Transition } from 'd3-transition'
 
 // Utils
-import { throttle, getValue, getBoolean } from 'utils/data'
+import { throttle, getValue, getNumber, getBoolean, ensureArray } from 'utils/data'
 import { smartTransition } from 'utils/d3'
-import { getHref } from 'utils/misc'
+import { getCSSVariableValueInPixels } from 'utils/misc'
+import { estimateStringPixelLength } from 'utils/text'
+import { toPx } from 'utils/to-px'
 
 // Types
 import { GraphInputLink, GraphInputNode } from 'types/graph'
@@ -17,16 +19,14 @@ import { GraphCircleLabel, GraphLink, GraphLinkArrowStyle, GraphLinkStyle } from
 import { GraphConfigInterface } from '../../config'
 
 // Helpers
-import { getX, getY } from '../node/helper'
+import { getX, getY, isInternalHref } from '../node/helper'
 import {
-  getPolylineData,
   getLinkShiftTransform,
-  getLinkLabelShift,
   getLinkStrokeWidth,
   getLinkBandWidth,
   getLinkColor,
   getLinkLabelTextColor,
-  LINK_LABEL_RADIUS,
+  getLinkArrowStyle,
   LINK_MARKER_WIDTH,
 } from './helper'
 import { ZoomLevel } from '../zoom-levels'
@@ -40,38 +40,36 @@ export function createLinks<N extends GraphInputNode, L extends GraphInputLink> 
 ): void {
   selection.attr('opacity', 0)
 
-  selection.append('line')
+  selection.append('path')
     .attr('class', linkSelectors.linkSupport)
 
-  selection.append('polyline')
+  selection.append('path')
     .attr('class', linkSelectors.link)
 
-  selection.append('line')
+  selection.append('path')
     .attr('class', linkSelectors.linkBand)
-    .attr('x1', d => getX(d.source))
-    .attr('y1', d => getY(d.source))
-    .attr('x2', d => getX(d.target))
-    .attr('y2', d => getY(d.target))
+
+  selection.append('use')
+    .attr('class', linkSelectors.linkArrow)
 
   selection.append('g')
     .attr('class', linkSelectors.flowGroup)
+    .style('opacity', 0)
     .selectAll(`.${linkSelectors.flowCircle}`)
     .data(range(0, 6)).enter()
     .append('circle')
     .attr('class', linkSelectors.flowCircle)
-
-  selection.append('g')
-    .attr('class', linkSelectors.labelGroups)
 }
 
-export function updateSelectedLinks<N extends GraphInputNode, L extends GraphInputLink> (
+/** Updates the links partially according to their `_state` */
+export function updateLinksPartial<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
   config: GraphConfigInterface<N, L>,
   scale: number
 ): void {
   const isGreyedOut = (d: GraphLink<N, L>, i: number): boolean => getBoolean(d, config.linkDisabled, i) || d._state.greyout
   selection
-    .classed(linkSelectors.greyout, (d, i) => isGreyedOut(d, i))
+    .classed(linkSelectors.greyedOutLink, (d, i) => isGreyedOut(d, i))
 
   selection.each((d, i, elements) => {
     const element = elements[i]
@@ -90,14 +88,99 @@ export function updateSelectedLinks<N extends GraphInputNode, L extends GraphInp
   })
 }
 
+export function updateLinkLines<N extends GraphInputNode, L extends GraphInputLink> (
+  selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
+  config: GraphConfigInterface<N, L>,
+  duration: number,
+  scale = 1,
+  getLinkArrowDefId: (arrow: GraphLinkArrowStyle | undefined) => string,
+  linkPathLengthMap: Map<string, number>
+): Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown> {
+  return selection.each((d, i, elements) => {
+    const element = elements[i]
+    const linkGroup = select(element)
+    const link = linkGroup.select<SVGPathElement>(`.${linkSelectors.link}`)
+    const linkBand = linkGroup.select<SVGPathElement>(`.${linkSelectors.linkBand}`)
+    const linkSupport = linkGroup.select<SVGPathElement>(`.${linkSelectors.linkSupport}`)
+    const linkArrow = linkGroup.select<SVGUseElement>(`.${linkSelectors.linkArrow}`)
+    const linkColor = getLinkColor(d, config)
+    const linkShiftTransform = getLinkShiftTransform(d, config.linkNeighborSpacing)
+    const linkLabelData = ensureArray(
+      getValue<GraphLink<N, L>, GraphCircleLabel | GraphCircleLabel[]>(d, config.linkLabel, d._indexGlobal)
+    )
+    const offsetSource = getValue(d, config.linkSourcePointOffset, i)
+    const offsetTarget = getValue(d, config.linkTargetPointOffset, i)
+    const x1 = getX(d.source) + (offsetSource?.[0] || 0)
+    const y1 = getY(d.source) + (offsetSource?.[1] || 0)
+    const x2 = getX(d.target) + (offsetTarget?.[0] || 0)
+    const y2 = getY(d.target) + (offsetTarget?.[1] || 0)
+
+    const curvature = getNumber(d, config.linkCurvature, i) ?? 0
+    const cp1x = x1 + (x2 - x1) * 0.5 * curvature
+    const cp1y = y1 + (y2 - y1) * 0.0 * curvature
+    const cp2x = x1 + (x2 - x1) * 0.5 * curvature
+    const cp2y = y1 + (y2 - y1) * 1.0 * curvature
+
+    const pathData = `M${x1},${y1} C${cp1x},${cp1y} ${cp2x},${cp2y} ${x2},${y2}`
+    const linkPathElement = linkSupport.attr('d', pathData).node()
+    const cachedLinkPathLength = linkPathLengthMap.get(pathData)
+    const pathLength = cachedLinkPathLength ?? linkPathElement.getTotalLength()
+    if (!cachedLinkPathLength) linkPathLengthMap.set(pathData, pathLength)
+
+    linkSupport
+      .style('stroke', linkColor)
+      .attr('transform', linkShiftTransform)
+
+    link
+      .attr('class', linkSelectors.link)
+      .style('stroke-width', getLinkStrokeWidth(d, scale, config))
+      .style('stroke', linkColor)
+      .attr('transform', linkShiftTransform)
+
+    smartTransition(link, duration)
+      .attr('d', pathData)
+
+    linkBand
+      .attr('class', linkSelectors.linkBand)
+      .attr('transform', linkShiftTransform)
+      .style('stroke-width', getLinkBandWidth(d, scale, config))
+      .style('stroke', linkColor)
+
+    smartTransition(linkBand, duration)
+      .attr('d', pathData)
+
+
+    // Arrow
+    const linkArrowStyle = getLinkArrowStyle(d, config)
+    if (linkArrowStyle) {
+      const arrowPos = pathLength * (linkLabelData.length ? 0.65 : 0.5)
+      const p1 = linkPathElement.getPointAtLength(arrowPos)
+      const p2 = linkPathElement.getPointAtLength(arrowPos + 1) // A point very close to p1
+
+      // Calculate the angle for the arrowhead
+      const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * (180 / Math.PI)
+      const arrowWasShownBefore = linkArrow.attr('href')
+      linkArrow
+        .attr('href', `#${getLinkArrowDefId(linkArrowStyle)}`)
+
+      smartTransition(linkArrow, arrowWasShownBefore ? duration : 0)
+        .attr('fill', linkColor)
+        .attr('transform', `translate(${p1.x}, ${p1.y}) rotate(${angle})`)
+    } else {
+      linkArrow.attr('href', null)
+    }
+  })
+}
+
 export function updateLinks<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
   config: GraphConfigInterface<N, L>,
   duration: number,
   scale = 1,
-  getMarkerId: (d: GraphLink) => string
+  getLinkArrowDefId: (arrow: GraphLinkArrowStyle | undefined) => string,
+  linkPathLengthMap: Map<string, number>
 ): void {
-  const { linkFlowParticleSize, linkStyle, linkFlow, linkArrow, linkLabel, linkLabelShiftFromCenter } = config
+  const { linkStyle, linkFlow, linkLabel, linkLabelShiftFromCenter } = config
   if (!selection.size()) return
 
   selection
@@ -106,118 +189,142 @@ export function updateLinks<N extends GraphInputNode, L extends GraphInputLink> 
       d => getValue<GraphLink<N, L>, GraphLinkStyle>(d, linkStyle, d._indexGlobal) === GraphLinkStyle.Dashed
     )
 
+  // Update line and arrow positions
+  updateLinkLines(selection, config, duration, scale, getLinkArrowDefId, linkPathLengthMap)
+
+  // Update labels and link flow (particles) groups
   selection.each((d, i, elements) => {
     const element = elements[i]
     const linkGroup = select(element)
-    const link = linkGroup.select(`.${linkSelectors.link}`)
-    const linkBand = linkGroup.select(`.${linkSelectors.linkBand}`)
-    const linkSupport = linkGroup.select(`.${linkSelectors.linkSupport}`)
     const flowGroup = linkGroup.select(`.${linkSelectors.flowGroup}`)
+    const linkSupport = linkGroup.select<SVGPathElement>(`.${linkSelectors.linkSupport}`)
+    const linkPathElement = linkSupport.node()
+    const linkColor = getLinkColor(d, config)
+    const linkShiftTransform = getLinkShiftTransform(d, config.linkNeighborSpacing)
+    const linkLabelData = ensureArray(
+      getValue<GraphLink<N, L>, GraphCircleLabel | GraphCircleLabel[]>(d, linkLabel, d._indexGlobal)
+    )
+    const linkFlowParticleSize = getNumber(d, config.linkFlowParticleSize, d._indexGlobal)
 
-    const x1 = getX(d.source)
-    const y1 = getY(d.source)
-    const x2 = getX(d.target)
-    const y2 = getY(d.target)
-
-    link
-      .attr('class', linkSelectors.link)
-      .attr('marker-mid', getHref(d, getMarkerId))
-      .style('stroke-width', getLinkStrokeWidth(d, scale, config))
-      .style('stroke', getLinkColor(d, config))
-      .attr('transform', getLinkShiftTransform(d, config.linkNeighborSpacing))
-
-    smartTransition(link, duration)
-      .attr('points', getPolylineData({ x1, y1, x2, y2 }))
-
-    linkBand
-      .attr('class', linkSelectors.linkBand)
-      .attr('transform', getLinkShiftTransform(d, config.linkNeighborSpacing))
-      .style('stroke-width', getLinkBandWidth(d, scale, config))
-      .style('stroke', getLinkColor(d, config))
-
-    smartTransition(linkBand, duration)
-      .attr('x1', x1)
-      .attr('y1', y1)
-      .attr('x2', x2)
-      .attr('y2', y2)
-
-    linkSupport
-      .style('stroke', getLinkColor(d, config))
-      .attr('transform', getLinkShiftTransform(d, config.linkNeighborSpacing))
-      .attr('x1', x1)
-      .attr('y1', y1)
-      .attr('x2', x2)
-      .attr('y2', y2)
-
+    // Particle Flow
     flowGroup
-      .attr('transform', getLinkShiftTransform(d, config.linkNeighborSpacing))
+      .attr('transform', linkShiftTransform)
       .style('display', getBoolean(d, linkFlow, d._indexGlobal) ? null : 'none')
-      .style('opacity', 0)
 
     flowGroup
       .selectAll(`.${linkSelectors.flowCircle}`)
-      .attr('r', linkFlowParticleSize / scale)
-      .style('fill', getLinkColor(d, config))
+      .attr('r', linkFlowParticleSize / Math.sqrt(scale))
+      .style('fill', linkColor)
 
     smartTransition(flowGroup, duration)
       .style('opacity', scale < ZoomLevel.Level2 ? 0 : 1)
 
     // Labels
-    const labelGroups = linkGroup.selectAll(`.${linkSelectors.labelGroups}`)
-    const labelDatum = getValue<GraphLink<N, L>, GraphCircleLabel>(d, linkLabel, d._indexGlobal)
-    const markerWidth = getValue<GraphLink<N, L>, GraphLinkArrowStyle>(d, linkArrow, d._indexGlobal) ? LINK_MARKER_WIDTH * 2 : 0
-    const labelShift = getBoolean(d, linkLabelShiftFromCenter, d._indexGlobal) ? -markerWidth + 4 : 0
-    const labelTranslate = getLinkLabelShift(d, config.linkNeighborSpacing, labelShift)
+    // Preparing the labels before rendering to be able to center them
+    const linkLabelsDataPrepared = linkLabelData.map((linkLabelDatum) => {
+      const text = linkLabelDatum.text?.toString() || ''
+      const shouldRenderUseElement = isInternalHref(text)
+      const fontSizePx = toPx(linkLabelDatum.fontSize) ?? getCSSVariableValueInPixels('var(--vis-graph-link-label-font-size)', linkGroup.node())
+      const shouldBeRenderedAsCircle = text.length <= 2 || shouldRenderUseElement
+      const paddingVertical = 4
+      const paddingHorizontal = shouldBeRenderedAsCircle ? paddingVertical : 8
+      const estimatedWidthPx = estimateStringPixelLength(text, fontSizePx)
 
-    const labels = labelGroups
-      .selectAll<SVGGElement, GraphLink<N, L>>(`.${linkSelectors.labelGroup}`)
-      .data(labelDatum && labelDatum.text ? [labelDatum] : [])
+      return {
+        ...linkLabelDatum,
+        _shouldRenderUseElement: shouldRenderUseElement,
+        _fontSizePx: fontSizePx,
+        _shouldBeRenderedAsCircle: shouldBeRenderedAsCircle,
+        _paddingVertical: paddingVertical,
+        _paddingHorizontal: paddingHorizontal,
+        _estimatedWidthPx: estimatedWidthPx,
+        _borderRadius: linkLabelDatum.radius ?? (shouldBeRenderedAsCircle ? fontSizePx : 4),
+        _backgroundWidth: (shouldBeRenderedAsCircle ? fontSizePx : estimatedWidthPx) + paddingHorizontal * 2,
+        _backgroundHeight: fontSizePx + paddingVertical * 2,
+      }
+    })
+    type GraphCircleLabelPrepared = typeof linkLabelsDataPrepared[0]
+    const linkLabelGroups = linkGroup
+      .selectAll<SVGGElement, GraphCircleLabelPrepared>(`.${linkSelectors.linkLabelGroup}`)
+      .data(linkLabelsDataPrepared, (d: GraphCircleLabelPrepared) => d.text)
 
-    // Enter
-    const labelsEnter = labels.enter().append('g')
-      .attr('class', linkSelectors.labelGroup)
-      .attr('transform', labelTranslate)
-      .style('opacity', 0)
+    const linkLabelGroupsEnter = linkLabelGroups.enter().append('g').attr('class', linkSelectors.linkLabelGroup)
+    linkLabelGroupsEnter.each((linkLabelDatum, i, elements) => {
+      const linkLabelGroup = select<SVGGElement, GraphCircleLabelPrepared>(elements[i])
+      linkLabelGroup.append('rect').attr('class', linkSelectors.linkLabelBackground)
 
-    labelsEnter.append('circle')
-      .attr('class', linkSelectors.labelCircle)
-      .attr('r', 0)
+      const linkLabelText = linkLabelDatum ? linkLabelDatum.text?.toString() : undefined
+      const shouldRenderUseElement = isInternalHref(linkLabelText)
+      linkLabelGroup.select<SVGTextElement>(`.${linkSelectors.linkLabelContent}`).remove()
+      linkLabelGroup
+        .append(shouldRenderUseElement ? 'use' : 'text')
+        .attr('class', linkSelectors.linkLabelContent)
+    })
+    linkLabelGroupsEnter.style('opacity', 0)
 
-    labelsEnter.append('text')
-      .attr('class', linkSelectors.labelContent)
+    const linkLabelGroupsMerged = linkLabelGroups.merge(linkLabelGroupsEnter)
+    const linkLabelMargin = 1
+    let linkLabelShiftCumulative = -sum(linkLabelsDataPrepared, d => d._backgroundWidth + linkLabelMargin) / 2 // Centering the labels
+    const cachedLinkPathLength = linkPathLengthMap.get(linkPathElement.getAttribute('d'))
+    const pathLength = cachedLinkPathLength ?? linkPathElement.getTotalLength()
+    const linkArrowStyle = getLinkArrowStyle(d, config)
+    linkLabelGroupsMerged.each((linkLabelDatum, i, elements) => {
+      const element = elements[i]
+      const linkLabelGroup = select<SVGGElement, GraphCircleLabelPrepared>(element)
+      const linkLabelText = linkLabelDatum.text?.toString()
+      const linkLabelContent = linkLabelGroup.select<SVGTextElement | SVGUseElement>(`.${linkSelectors.linkLabelContent}`)
+      const linkMarkerWidth = linkArrowStyle ? LINK_MARKER_WIDTH * 2 : 0
+      const linkLabelShift = getBoolean(d, linkLabelShiftFromCenter, d._indexGlobal) ? -linkMarkerWidth + 4 : 0
+      const linkLabelPos = linkPathElement.getPointAtLength(pathLength / 2 + linkLabelShift + linkLabelShiftCumulative + linkLabelDatum._backgroundWidth / 2)
+      const linkLabelTranslate = `translate(${linkLabelPos.x}, ${linkLabelPos.y})`
+      const linkLabelBackground = linkLabelGroup.select<SVGRectElement>(`.${linkSelectors.linkLabelBackground}`)
 
-    // Update
-    const labelsUpdate = labels.merge(labelsEnter)
+      // If the label was not displayed before, we set the initial transform
+      if (!linkLabelGroup.attr('transform')) {
+        linkLabelGroup.attr('transform', `${linkLabelTranslate} scale(0)`)
+      }
 
-    smartTransition(labelsUpdate.select(`.${linkSelectors.labelCircle}`), duration)
-      .attr('r', label => label.radius ?? LINK_LABEL_RADIUS)
-      .style('fill', label => label.color)
+      const linkLabelColor = linkLabelDatum.textColor ?? getLinkLabelTextColor(linkLabelDatum)
+      if (linkLabelDatum._shouldRenderUseElement) {
+        linkLabelContent
+          .attr('href', linkLabelText)
+          .attr('x', -linkLabelDatum._fontSizePx / 2)
+          .attr('y', -linkLabelDatum._fontSizePx / 2)
+          .attr('width', linkLabelDatum._fontSizePx)
+          .attr('height', linkLabelDatum._fontSizePx)
+          .style('color', linkLabelColor)
+      } else {
+        linkLabelContent
+          .text(linkLabelText)
+          .attr('dy', '0.1em')
+          .style('font-size', linkLabelDatum._fontSizePx)
+          .style('fill', linkLabelColor)
+      }
 
-    labelsUpdate.select(`.${linkSelectors.labelContent}`)
-      .text(label => label.text)
-      .attr('dy', '0.1em')
-      .style('fill', label => label.textColor ?? getLinkLabelTextColor(label))
-      .style('font-size', label => {
-        if (label.fontSize) return label.fontSize
-        const radius = label.radius ?? LINK_LABEL_RADIUS
-        return `${radius / Math.pow(label.text.toString().length, 0.4)}px`
-      })
+      linkLabelGroup.attr('hidden', null)
+        .style('cursor', linkLabelDatum.cursor)
 
-    smartTransition(labelsUpdate, duration)
-      .attr('transform', labelTranslate)
-      .style('cursor', label => label.cursor)
-      .style('opacity', 1)
+      smartTransition(linkLabelGroup, duration)
+        .attr('transform', `${linkLabelTranslate} scale(1)`)
+        .style('opacity', 1)
 
-    // Exit
-    const labelsExit = labels.exit()
-    smartTransition(labelsExit.select(`.${linkSelectors.labelCircle}`), duration)
-      .attr('r', 0)
+      linkLabelBackground
+        .attr('x', -linkLabelDatum._backgroundWidth / 2)
+        .attr('y', -linkLabelDatum._backgroundHeight / 2)
+        .attr('width', linkLabelDatum._backgroundWidth)
+        .attr('height', linkLabelDatum._backgroundHeight)
+        .attr('rx', linkLabelDatum._borderRadius)
+        .style('fill', linkLabelDatum.color)
 
-    smartTransition(labelsExit, duration)
+      linkLabelShiftCumulative += linkLabelDatum._backgroundWidth + linkLabelMargin
+    })
+
+    smartTransition(linkLabelGroups.exit(), duration)
       .style('opacity', 0)
       .remove()
   })
 
+  // Pointer Events
   if (duration > 0) {
     selection.attr('pointer-events', 'none')
     const t = smartTransition(selection, duration) as Transition<SVGGElement, GraphLink<N, L>, SVGGElement, GraphLink<N, L>>
@@ -232,7 +339,7 @@ export function updateLinks<N extends GraphInputNode, L extends GraphInputLink> 
     selection.attr('opacity', 1)
   }
 
-  updateSelectedLinks(selection, config, scale)
+  updateLinksPartial(selection, config, scale)
 }
 
 export function removeLinks<N extends GraphInputNode, L extends GraphInputLink> (
@@ -248,7 +355,8 @@ export function removeLinks<N extends GraphInputNode, L extends GraphInputLink> 
 export function animateLinkFlow<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
   config: GraphConfigInterface<N, L>,
-  scale: number
+  scale: number,
+  linkPathLengthMap: Map<string, number>
 ): void {
   const { linkFlow } = config
   if (scale < ZoomLevel.Level2) return
@@ -258,21 +366,19 @@ export function animateLinkFlow<N extends GraphInputNode, L extends GraphInputLi
     const linkGroup = select(element)
     const flowGroup = linkGroup.select(`.${linkSelectors.flowGroup}`)
 
-    if (!getBoolean(d, linkFlow, d._indexGlobal)) return
-    const t = d._state.flowAnimTime
+    const linkPathElement = linkGroup.select<SVGPathElement>(`.${linkSelectors.link}`).node()
+    const cachedLinkPathLength = linkPathLengthMap.get(linkPathElement.getAttribute('d'))
+    const pathLength = cachedLinkPathLength ?? linkPathElement.getTotalLength()
+
+    if (!getBoolean(d, linkFlow, d._indexGlobal) || !pathLength) return
+    const t = d._state.flowAnimDistanceRelative
     const circles = flowGroup.selectAll(`.${linkSelectors.flowCircle}`)
 
     circles
       .attr('transform', index => {
         const tt = (t + (+index) / (circles.size() - 1)) % 1
-        const x1 = getX(d.source)
-        const y1 = getY(d.source)
-        const x2 = getX(d.target)
-        const y2 = getY(d.target)
-
-        const x = x1 + tt * (x2 - x1)
-        const y = y1 + tt * (y2 - y1)
-        return `translate(${x}, ${y})`
+        const p = linkPathElement.getPointAtLength(tt * pathLength)
+        return `translate(${p.x}, ${p.y})`
       })
   })
 }
@@ -280,18 +386,20 @@ export function animateLinkFlow<N extends GraphInputNode, L extends GraphInputLi
 export function zoomLinks<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
   config: GraphConfigInterface<N, L>,
-  scale: number,
-  getMarkerId: (d: GraphLink) => string
+  scale: number
 ): void {
-  const { linkFlowParticleSize } = config
-
   selection.classed(generalSelectors.zoomOutLevel2, scale < ZoomLevel.Level2)
-  selection.selectAll(`.${linkSelectors.flowCircle}`)
-    .attr('r', linkFlowParticleSize / scale)
+
+  selection.select(`.${linkSelectors.flowGroup}`)
+    .style('opacity', scale < ZoomLevel.Level2 ? 0 : 1)
+
+  selection.each((l, i, els) => {
+    const r = getNumber(l, config.linkFlowParticleSize, l._indexGlobal) / Math.sqrt(scale)
+    select(els[i]).selectAll(`.${linkSelectors.flowCircle}`).attr('r', r)
+  })
 
   const linkElements = selection.selectAll<SVGGElement, GraphLink<N, L>>(`.${linkSelectors.link}`)
   linkElements
-    .attr('marker-mid', d => getHref(d, getMarkerId))
     .style('stroke-width', d => getLinkStrokeWidth(d, scale, config))
 
   const linkBandElements = selection.selectAll<SVGGElement, GraphLink<N, L>>(`.${linkSelectors.linkBand}`)
@@ -300,3 +408,4 @@ export function zoomLinks<N extends GraphInputNode, L extends GraphInputLink> (
 }
 
 export const zoomLinksThrottled = throttle(zoomLinks, 500)
+

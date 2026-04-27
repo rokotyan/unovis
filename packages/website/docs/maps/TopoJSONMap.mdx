@@ -3,23 +3,21 @@ sidebar_label: TopoJSON Map
 title: TopoJSON Map
 description: Learn how to configure a TopoJSON Map
 ---
+import React from 'react'
 import BrowserOnly from '@docusaurus/BrowserOnly'
 import CodeBlock from '@theme/CodeBlock'
-import { PropTable } from '../components/props-table.tsx'
+import { PropsTable } from '@site/src/components/PropsTable'
 import { DocWrapper, InputWrapper } from '../wrappers'
 import { data, pointData, heatmapData } from './data'
 
-export const defaultProps = (showData = true) => ({
+export const topoJSONMapProps = () => ({
   name: "TopoJSONMap",
   configKey: "component",
   containerName: "SingleContainer",
   topojson: "WorldMapTopoJSON",
   height: 400,
+  data: {},
   dataType: "MapPoint,MapLink,MapArea",
-  showContext: "minimal",
-  hiddenProps: {
-    disableZoom: true,
-  }
 })
 
 export const wiki = (url) => <a href={`https://en.wikipedia.org/wiki/${url}`}>{link}</a>
@@ -28,10 +26,10 @@ export const TopoDoc = (props) => (
   <BrowserOnly>
   {() =>  {
       const lib = require('@unovis/ts/maps')
-      const imports = {
+      const imports = props.showContext ? {
         "@unovis/ts/maps": [props.topojson],
-      }
-      if (props.showData) imports['@unovis/ts'] = ["MapData"]
+        "@unovis/ts": ["MapData"]
+      } : undefined
       return (
         <DocWrapper { ...props } imports={imports} hiddenProps={{ topojson: lib[props.topojson] }}/>
       )
@@ -39,15 +37,17 @@ export const TopoDoc = (props) => (
   </BrowserOnly>
 )
 
-## Basic Configuration
-The _TopoJSONMap_ is a map that uses [TopoJSON](https://github.com/topojson/topojson) as its
-underlying data. The basic configuration is:
-<TopoDoc {...defaultProps(false)} showContext="container"/>
+The _TopoJSONMap_ component is a map that is renders topological geo-data from the
+[TopoJSON](https://github.com/topojson/topojson) data format. You can provide your own custom _topojson_
+or use one of the [pre-configured topojson files](#topojson-configuration) provided in `@unovis/ts/maps`.
+In addition to custom topologies, _TopoJSONMap_ supports a variety of features including the
+ability to add points and links, feature customization, zooming, alternate map projections and more.
 
-:::note
-The remaining examples will use `WorldMapTopoJSON` for the topojson configuration.
-Check out [this section](#topojson-configuration) to learn about other available maps.
-:::
+## Basic Configuration
+<TopoDoc
+  {...topoJSONMapProps()}
+  showContext="full"
+/>
 
 ## Map Data
 There are three main building blocks that can make up the data supplied to _TopoJSONMap_:
@@ -60,15 +60,13 @@ blocks as keys mapped to their data arrays, like so:
 
 ```ts
 type MapData = {
-  area: MapArea[];
   points: MapPoint[];
   links: MapLink[];
+  areas: MapArea[];
 }
 ```
 
-<TopoDoc {...defaultProps()} data={data} showContext="full"/>
-
-where `MapArea`, `MapPoint`, and `MapLink` are custom types that represent map data. Keep
+where [`MapPoint`](#points), [`MapLink`](#links) and [`MapArea`](#areas), are custom types that represent map data. Keep
 reading to learn more about the minimum configurations for these types.
 
 ## Points
@@ -76,23 +74,36 @@ A minimum viable datatype of the objects provided to the `points` attribute is:
 
 ```ts
 type MapPoint = {
+  id: string;
   latitude: number;
   longitude: number;
+  color: string;
 }
 ```
-Or, you can simply provide these values through the `latitude` and `longitude` properties of your
-_TopoJSONMap_ directly.
 
-<TopoDoc
-  {...defaultProps()}
-  data={pointData}
-  dataType="MapPoint,undefined,undefined"
-  showContext="container"/>
+You can also provide these values through the `latitude`, `longitude`, `pointId`, and `color` properties.
 
-### mapFitToPoints
-<TopoDoc {...defaultProps()} data={pointData} mapFitToPoints={true}/>
+### `mapFitToPoints`
+Enabling `mapFitToPoints` will automatically adjust the map's zoom level to fit all the points provided.
 
-### Point Customization
+<>{Array.from([false, true], fit => (<>
+  <h4>{fit ? 'After' : 'Before'}: </h4>
+  <TopoDoc
+    key={`fit${fit}`}
+    {...topoJSONMapProps()}
+    height={200}
+    data={{ points: [
+      { id: 'NYC', latitude: 40.7128, longitude: -74.0060 },
+    { id: 'LAX', latitude: 34.0522, longitude: -118.2437 },
+      { id: 'LON', latitude: 51.5074, longitude: -0.1278 },
+    ]}}
+    disableZoom
+    mapFitToPoints={fit}
+    excludeTabs
+  />
+</>))}</>
+
+### Point Styling
 The following _TopoJSONMap_ properties accept accessor functions to customize the appearance of your
 points:
 * `pointColor`
@@ -104,12 +115,25 @@ points:
 You can provide labels with the `pointLabel` attribute, which accepts a `StringAccessor` function to
 be called on each `MapPoint` datum.
 
-<TopoDoc
-  {...defaultProps()}
-  data={{ points: data.points }}
-  pointLabel={d => d.city}/>
+For example, consider the following type and accessor function:
+```ts
+type MapPoint = {
+  id: string;
+  latitude: number;
+  longitude: number;
+  city: string;
+}
 
-### Custom Point Labels
+const pointBottomLabel = (d: MapPoint) => d.city
+```
+
+<TopoDoc
+  {...topoJSONMapProps()}
+  hideTabLabels
+  data={{ points: data.points }}
+  pointBottomLabel={d => d.city}/>
+
+### Point Label Styling
 The following _TopoJSONMap_ properties can further customize your Point Label.
 * `pointLabelPosition`
 * `pointLabelTextBrighnessRatio`
@@ -135,7 +159,7 @@ export const colorLegendItems = [
   const { TopoJSONMap } = require('@unovis/ts')
   return (
     <TopoDoc
-      {...defaultProps()}
+      {...topoJSONMapProps()}
       data={customData}
       mapFitToPoints={true}
       pointLabel={d => d.serverName}
@@ -172,12 +196,12 @@ type MapLink = {
 Or, you can simply provide these values through the `linkSource` and `linkTarget` properties.
 
 <TopoDoc
-  {...defaultProps()}
+  {...topoJSONMapProps()}
   data={{...data, areas: [] }}
-  showContext="container"
+  excludeTabs
 />
 
-### Link customization
+#### Link customization
 You can further customize the map _Links_ with the following properties:
 * `linkColor`
 * `linkCursor`
@@ -185,8 +209,8 @@ You can further customize the map _Links_ with the following properties:
 
 ## Areas
 To work with features in the _TopoJSONMap_, all you need is a unique `id` which is defined in the
-chart's _topojson_ definition. For example, in our `WorldMapTopoJSON` _topojson_, every country has
-a unique id that corresponds to the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+chart's _topojson_ definition or an `areaId` accessor function. For example, in our `WorldMapTopoJSON`
+_topojson_, every country has a unique id that corresponds to the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
 country code. See our [topojson configuration](#topojson-configuration) section for more details.
 
 ```ts
@@ -195,19 +219,70 @@ type MapArea = {
 }
 ```
 
+As a basic example, let's say you have an array of countries created from ISO codes:
+
+```ts
+const countryCodes = [
+  'AU','BR','CN','EG','FR','IN','JP','MX','NO','PE','PH','RU','TZ','US'
+]
+const areaData = countryCodes.map(id => ({ id }))
+const data = { areas: areaData }
+```
+
+The provided countries will be highlighted according to their color defined in the topojson file:
+
 <TopoDoc
-  {...defaultProps()}
-  data={{ areas: data.areas }}
-  pointId={d => d.id}
-  showContext="minimal"
+  {...topoJSONMapProps()}
+  data={{ areas: data.points }}
+  areaId={d => d.id.substring(0, 2)}
+  excludeTabs
 />
 
-### Area customization
-You can further customize the map _Area_ with the following properties:
-* `areaColor`
-* `areaCursor`
+### Custom Color
+You can override the default area colors by including a `color` property in `AreaDatum` or by providing
+an `areaColor` accessor function.
 
-## Projection
+#### Method 1: Through `AreaDatum` property
+
+```ts
+const data = {
+  points: [],
+  links: [],
+  areas: [
+    { id: 'AU', color: 'red' },
+    { id: 'BR', color: 'blue' },
+    { id: 'CN', color: 'green' },
+  ]
+}
+```
+
+#### Method 2: Through `areaColor` accessor function
+
+```ts
+const areaColor = (d: AreaDatum) => {
+  switch (d.id) {
+    case 'AU': return 'red'
+    case 'BR': return 'blue'
+    case 'CN': return 'green'
+  }
+}
+```
+
+The result:
+<TopoDoc
+  {...topoJSONMapProps()}
+  data={{ areas:  [
+  { id: 'AU', color: 'red', name: 'Australia' },
+  { id: 'BR', color: 'blue', name: 'Brazil' },
+  { id: 'CN', color: 'green', name: 'China' },
+] }}
+  areaId={d => d.id}
+  excludeTabs
+/>
+
+**Note**: If `areaColor` is provided, it will override the `color` property in `AreaDatum`.
+
+## Projections
 You can provide a projection for your _TopoJSONMap_ with a `MapProjection` instance. See D3's
 [geo projections](https://github.com/d3/d3-geo) for more information.
 
@@ -221,7 +296,7 @@ You can provide a projection for your _TopoJSONMap_ with a `MapProjection` insta
   }
   const [curr, setCurr] = React.useState(MapProjection.Mercator)
   return (
-    <InputWrapper {...defaultProps()}
+    <InputWrapper {...topoJSONMapProps()}
       hiddenProps={{ topojson: WorldMapTopoJSON, projection: curr }}
       inputType="select"
       property="projection"
@@ -242,27 +317,26 @@ By default, zooming is enabled for a _TopoJSONMap_ component. You can disable it
 
 For further customization, you can configure the following zoom properties:
 
-### zoomFactor
+### `zoomFactor`
 To set the initial zoom factor.
-<TopoDoc {...defaultProps()} zoomFactor={5}/>
+<TopoDoc {...topoJSONMapProps()} zoomFactor={5}/>
 
-### zoomExtent
+### `zoomExtent`
 `zoomExtent` represents the range `[a,b]` which your map can zoom in and out, where `[a, b]` are the
 minimum and maximum zoom factors, respectively.
 
-<TopoDoc {...defaultProps()} zoomFactor={15} zoomExtent={[10,25]}/>
+<TopoDoc {...topoJSONMapProps()} zoomFactor={15} zoomExtent={[10,25]}/>
 
-### zoomDuration
+### `zoomDuration`
 `zoomDuration` is the duration of the animation on when zooming in on your _TopoJSONMap_.
 
 ## Heatmap Mode
 For datasets with a lot of points, you can enable `heatmapMode`
-<TopoDoc {...defaultProps()} data={heatmapData} heatmapMode={true}/>
+<TopoDoc {...topoJSONMapProps()} data={heatmapData} heatmapMode={true}/>
 
 You can customize the appearance of your heat map blur with the `heatmapModeBlurStdDeviation` property.
 
-### heatmapModeZoomLevelThreshold
-To lower or raise the threshold hat will disable the blur effect of your heat map, use the the
+To lower or raise the threshold that will disable the blur effect of your heat map, use the the
 `heatmapModeZoomLevelThreshold` property. You can provide a zoom level, (i.e. `2` for _2x_ zoom),
 that once reached, that will no longer display the blur effect.
 
@@ -271,9 +345,9 @@ In order for the _TopoJSONMap_ component to render properly, the `topojson` prop
 valid `mapFeatureName` must be provided. The `mapFeatureName` corresponds to the type of unique
 _area_ ids in your data.
 
-<TopoDoc {...defaultProps()} topojson="FranceTopoJSON" mapFeatureName="regions"/>
+<TopoDoc {...topoJSONMapProps()} topojson="FranceTopoJSON" mapFeatureName="regions" showContext='full'/>
 
-TopoJSONs currently available in `@voltera/vis/maps`:
+TopoJSONs currently available in `@unovis/ts/maps`:
 
 <table style={{ display: 'table', margin: '0 auto', width: '100%' }}>
   <thead>
@@ -324,29 +398,19 @@ const events = {
 }
 ```
 
-## Additional Styling: CSS Variables
+## CSS Variables
 The _TopoJSONMap_ component supports additional styling via CSS variables that you can define for
 your visualization container.
 
 <details open>
   <summary>All supported CSS variables and their default values</summary>
   <CodeBlock language="css">
-{`--vis-map-feature-color: #dce3eb;
---vis-map-boundary-color: #ffffff;
---vis-map-point-label-text-color-dark: #5b5f6d;
---vis-map-point-label-text-color-light: #fff;
---vis-map-point-label-font-weight: 600;
---vis-map-point-label-font-size: 12px;
---vis-map-point-label-font-family
- 
-/* Dark Theme */
---vis-dark-map-feature-color: #5b5f6d;
---vis-dark-map-boundary-color: #2a2a2a;
---vis-dark-map-point-label-text-color-dark: #fff;
---vis-dark-map-point-label-text-color-light:#5b5f6d;
-`}
+{`${
+  Object.entries(require('@unovis/ts').TopoJSONMap.selectors.cssVarDefaults)
+    .map(([key, value]) => `${key}: ${value};`).join('\n')
+}`}
   </CodeBlock>
 </details>
 
 ## Component Props
-<PropTable name="VisTopoJSONMap"/>
+<PropsTable name="VisTopoJSONMap"/>

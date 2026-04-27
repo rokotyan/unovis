@@ -4,15 +4,23 @@ import type { ExampleCollection } from './types'
 
 export const examples: ExampleCollection[] = [
   {
-    title: 'Lines and Areas',
-    description: 'Examples of Line and Area charts',
+    title: 'Line Charts',
+    description: '',
     examples: [
       require('./basic-line-chart').default,
       require('./multi-line-chart').default,
       require('./data-gap-line-chart').default,
+      require('./patchy-line-chart').default,
       require('./basic-timeline').default,
+    ],
+  },
+  {
+    title: 'Area Charts',
+    description: '',
+    examples: [
       require('./non-stacked-area-chart').default,
       require('./stacked-area-chart').default,
+      require('./stacked-area-chart-with-attributes').default,
       require('./baseline-area-chart').default,
       require('./step-area-chart').default,
     ],
@@ -29,7 +37,9 @@ export const examples: ExampleCollection[] = [
     title: 'Scatter Plots',
     description: '',
     examples: [
-      require('./basic-scatter-chart').default,
+      require('./basic-scatter-plot').default,
+      require('./sized-scatter-plot').default,
+      require('./shaped-scatter-plot').default,
     ],
   },
   {
@@ -56,17 +66,42 @@ export const examples: ExampleCollection[] = [
       require('./force-graph').default,
       require('./parallel-graph').default,
       require('./elk-layered-graph').default,
+      require('./custom-nodes-graph').default,
+    ],
+  },
+  {
+    title: 'Circular Charts',
+    description: '',
+    examples: [
+      require('./basic-donut-chart').default,
       require('./hierarchical-chord-diagram').default,
       require('./sunburst-nested-donut').default,
     ],
   },
   {
-    title: ' Auxiliary Components',
-    description: 'Examples using Brush, Crosshair, and Tooltip',
+    title: 'Treemap',
+    description: '',
     examples: [
+      require('./treemap').default,
+    ],
+  },
+  {
+    title: 'Composite Charts',
+    description: '',
+    examples: [
+      require('./dual-axis-chart').default,
+      require('./range-plot').default,
+    ],
+  },
+  {
+    title: 'Auxiliary Components',
+    description: 'Annotations, Brushes, Tooltips and more',
+    examples: [
+      require('./basic-annotations').default,
       require('./crosshair-stacked-bar').default,
       require('./brush-grouped-bar').default,
       require('./free-brush-scatters').default,
+      require('./plotband-plotline').default,
     ],
   },
   /* {} */

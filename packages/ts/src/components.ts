@@ -5,7 +5,7 @@ export { XYComponentCore } from 'core/xy-component'
 export type { XYComponentConfigInterface } from 'core/xy-component/config'
 
 // Components
-export { Tooltip } from 'components/tooltip'
+export { Tooltip } from './components/tooltip'
 export { Line } from './components/line'
 export { StackedBar } from './components/stacked-bar'
 export { GroupedBar } from './components/grouped-bar'
@@ -13,6 +13,7 @@ export { Axis } from './components/axis'
 export { Scatter } from './components/scatter'
 export { Brush } from './components/brush'
 export { BulletLegend } from './components/bullet-legend'
+export { RollingPinLegend } from './components/rolling-pin-legend'
 export { FlowLegend } from './components/flow-legend'
 export { Crosshair } from './components/crosshair'
 export { Timeline } from './components/timeline'
@@ -29,6 +30,13 @@ export { Donut } from './components/donut'
 export { FreeBrush } from './components/free-brush'
 export { XYLabels } from './components/xy-labels'
 export { NestedDonut } from './components/nested-donut'
+export { Annotations } from './components/annotations'
+export { Plotband } from './components/plotband'
+export { Plotline } from './components/plotline'
+export { Treemap } from './components/treemap'
+
+// Constants
+export * from './components/donut/constants'
 
 // Config Interfaces
 export type { LineConfigInterface } from './components/line/config'
@@ -39,12 +47,27 @@ export type { TooltipConfigInterface } from './components/tooltip/config'
 export type { BrushConfigInterface } from './components/brush/config'
 export type { AxisConfigInterface } from './components/axis/config'
 export type { BulletLegendConfigInterface } from './components/bullet-legend/config'
+export type { RollingPinLegendConfigInterface } from './components/rolling-pin-legend/config'
 export type { FlowLegendConfigInterface } from './components/flow-legend/config'
 export type { CrosshairConfigInterface } from './components/crosshair/config'
 export type { TimelineConfigInterface } from './components/timeline/config'
 export type { SankeyConfigInterface } from './components/sankey/config'
 export type { AreaConfigInterface } from './components/area/config'
 export type { TopoJSONMapConfigInterface } from './components/topojson-map/config'
+
+// Types
+export type {
+  TopoJSONMapPieDatum,
+  TopoJSONMapPointShape,
+  TopoJSONMapPointStyle,
+  TopoJSONMapPointStyles,
+  TopoJSONMapPoint,
+  TopoJSONMapPointDatum,
+  TopoJSONMapClusterDatum,
+  MapPointLabelPosition,
+  MapData,
+  MapFeature,
+} from './components/topojson-map/types'
 export type { LeafletMapConfigInterface } from './components/leaflet-map/config'
 export type { LeafletFlowMapConfigInterface } from './components/leaflet-flow-map/config'
 export type { ChordDiagramConfigInterface } from './components/chord-diagram/config'
@@ -54,3 +77,7 @@ export type { DonutConfigInterface } from './components/donut/config'
 export type { FreeBrushConfigInterface } from './components/free-brush/config'
 export type { XYLabelsConfigInterface } from './components/xy-labels/config'
 export type { NestedDonutConfigInterface } from './components/nested-donut/config'
+export type { AnnotationsConfigInterface } from './components/annotations/config'
+export type { PlotbandConfigInterface } from './components/plotband/config'
+export type { PlotlineConfigInterface } from './components/plotline/config'
+export type { TreemapConfigInterface } from './components/treemap/config'

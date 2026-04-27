@@ -25,16 +25,18 @@ for (const component of components) {
     generics,
     importStatements,
     component.dataType,
-    component.elementSuffix
+    component.elementSuffix,
+    component.isStandAlone,
+    component.renderIntoProvidedDomNode
   )
 
   const nameKebabCase = component.kebabCaseName ?? kebabCase(component.name)
-  const pathComponentBase = `src/components/${nameKebabCase}`
+  const pathComponentBase = `src/${component.isStandAlone ? 'html-' : ''}components/${nameKebabCase}`
   const pathComponent = `${pathComponentBase}/index.tsx` // `${pathComponentBase}/${nameKebabCase}.component.tsx`
 
   exec(`mkdir ${pathComponentBase}`, () => {
     writeFileSync(pathComponent, componentCode)
-    exec(`npx eslint ${pathComponent} --fix`)
+    exec(`pnpm exec eslint ${pathComponent} --fix`)
   })
 
   // eslint-disable-next-line no-console

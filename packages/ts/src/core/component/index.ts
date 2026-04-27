@@ -25,8 +25,8 @@ export class ComponentCore<
   public element: SVGGElement | HTMLElement
   public type: ComponentType = ComponentType.SVG
   public g: Selection<SVGGElement, unknown, null, undefined> | Selection<HTMLElement, unknown, null, undefined>
-  public config: ComponentConfigInterface
-  public prevConfig: ComponentConfigInterface
+  public config: ConfigInterface
+  public prevConfig: ConfigInterface
   public datamodel: CoreDataModel<CoreDatum> = new CoreDataModel()
   public sizing: Sizing | string = Sizing.Fit // Supported by SingleContainer and a subset of components only (Sankey)
   public uid: string
@@ -38,7 +38,7 @@ export class ComponentCore<
   } = {}
 
   /** Default configuration */
-  protected _defaultConfig: ComponentConfigInterface = ComponentDefaultConfig
+  protected _defaultConfig: ConfigInterface = ComponentDefaultConfig as ConfigInterface
   /** Component width in pixels. This property is set automatically by the container. */
   protected _width = 400
   /** Component height in pixels. This property is set automatically by the container. */
@@ -47,8 +47,16 @@ export class ComponentCore<
   protected _containerWidth: number | undefined = undefined
   /** Container height in pixels. This property is set automatically by the container. */
   protected _containerHeight: number | undefined = undefined
+  /** Container margin in pixels. This property is set automatically by the container. */
+  protected _containerMargin: Spacing = { top: 0, bottom: 0, left: 0, right: 0 }
 
   _setUpComponentEventsThrottled = throttle(this._setUpComponentEvents, 500)
+
+  /** Set the container margin. Called automatically by containers. */
+  setContainerMargin (margin: Spacing): void {
+    this._containerMargin = margin
+  }
+
   _setCustomAttributesThrottled = throttle(this._setCustomAttributes, 500)
 
   constructor (type = ComponentType.SVG) {
@@ -132,6 +140,13 @@ export class ComponentCore<
     this._bindEvents(this.config.events, '.user')
   }
 
+  // Sometimes we don't want to pass the original data to the event handler.
+  // This method can be overridden by components to implement a custom mapping.
+  // See Stacked Bar for an example.
+  protected _mapEventDatum (datum: unknown): unknown {
+    return datum
+  }
+
   private _bindEvents (events = this.events, suffix = ''): void {
     Object.keys(events).forEach(className => {
       Object.keys(events[className]).forEach(eventType => {
@@ -141,7 +156,8 @@ export class ComponentCore<
           const els = selection.nodes()
           const i = els.indexOf(event.currentTarget as SVGGElement | HTMLElement)
           const eventFunction = events[className][eventType as VisEventType]
-          return eventFunction(d, event, i, els)
+          const datum = this._mapEventDatum(d)
+          return eventFunction?.(datum, event, i, els)
         })
       })
     })

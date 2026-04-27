@@ -1,5 +1,5 @@
 // !!! This code was automatically generated. You should not change it !!!
-import React, { ForwardedRef, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
+import React, { ForwardedRef, ReactElement, Ref, useImperativeHandle, useEffect, useRef, useState } from 'react'
 import { Scatter, ScatterConfigInterface } from '@unovis/ts'
 
 // Utils
@@ -17,8 +17,10 @@ export type VisScatterProps<Datum> = ScatterConfigInterface<Datum> & {
   ref?: Ref<VisScatterRef<Datum>>;
 }
 
+export const VisScatterSelectors = Scatter.selectors
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-function VisScatterFC<Datum> (props: VisScatterProps<Datum>, fRef: ForwardedRef<VisScatterRef<Datum>>): JSX.Element {
+function VisScatterFC<Datum> (props: VisScatterProps<Datum>, fRef: ForwardedRef<VisScatterRef<Datum>>): ReactElement {
   const ref = useRef<VisComponentElement<Scatter<Datum>>>(null)
   const componentRef = useRef<Scatter<Datum> | undefined>(undefined)
 
@@ -43,7 +45,7 @@ function VisScatterFC<Datum> (props: VisScatterProps<Datum>, fRef: ForwardedRef<
     component?.setConfig(props)
   })
 
-  useImperativeHandle(fRef, () => ({ component: componentRef.current }), [componentRef.current])
+  useImperativeHandle(fRef, () => ({ get component () { return componentRef.current } }), [])
   return <vis-component ref={ref} />
 }
 

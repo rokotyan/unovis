@@ -6,7 +6,7 @@ import { arePropsEqual, useForwardProps } from '../../utils/props'
 
 
 // data and required props 
-interface Props extends  BulletLegendConfigInterface { }
+type Props = BulletLegendConfigInterface
 const props = defineProps<Props & { data?: null }>()
 
 const data = computed(() => props.data)
@@ -20,7 +20,7 @@ const elRef = ref<HTMLDivElement>()
 onMounted(() => {
   nextTick(() => {
     if(elRef.value)
-    component.value = new BulletLegend(elRef.value, config.value)
+    component.value = new BulletLegend(elRef.value, { ...config.value, renderIntoProvidedDomNode: true })
     
     
   })
@@ -33,7 +33,7 @@ onUnmounted(() => {
 
 watch(config, (curr, prev) => {
   if (!arePropsEqual(curr, prev)) {
-    component.value?.update(config.value)
+    component.value?.setConfig(config.value)
   }
 })
 
@@ -41,6 +41,10 @@ watch(config, (curr, prev) => {
 defineExpose({
   component
 })
+</script>
+
+<script lang="ts">
+export const VisBulletLegendSelectors = BulletLegend.selectors
 </script>
 
 <template>

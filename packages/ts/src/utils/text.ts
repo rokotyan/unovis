@@ -12,6 +12,15 @@ import { getTextAnchorFromTextAlign } from 'types/svg'
 // Styles
 import { getFontWidthToHeightRatio, UNOVIS_TEXT_DEFAULT, UNOVIS_TEXT_SEPARATOR_DEFAULT, UNOVIS_TEXT_HYPHEN_CHARACTER_DEFAULT } from 'styles/index'
 
+export const textAlignToAnchor = (textAlign: TextAlign): string | null => {
+  switch (textAlign) {
+    case TextAlign.Left: return 'start'
+    case TextAlign.Right: return 'end'
+    case TextAlign.Center: return 'middle'
+    default: return null
+  }
+}
+
 /**
  * Converts a kebab-case string to camelCase.
  *
@@ -48,43 +57,50 @@ export function escapeStringKeepHash (str: string): string {
 
 /**
  * Trims the input string from the start, leaving only the specified maximum length.
- * @param {string} [str=''] - The input string to be trimmed.
+ * @param {string} str - The input string to be trimmed.
  * @param {number} [maxLength=15] - The maximum allowed length of the trimmed string.
  * @returns {string} - The trimmed string.
  */
-export function trimStringStart (str = '', maxLength = 15): string {
+export function trimStringStart (str: string | undefined, maxLength = 15): string {
+  if (!str) return ''
   return str.length > maxLength ? `…${str.substr(str.length - maxLength, maxLength)}` : str
 }
 
 /**
  * Trims the input string from the middle, leaving only the specified maximum length.
- * @param {string} [str=''] - The input string to be trimmed.
+ * @param {string} str - The input string to be trimmed.
  * @param {number} [maxLength=15] - The maximum allowed length of the trimmed string.
  * @returns {string} - The trimmed string.
  */
-export function trimStringMiddle (str = '', maxLength = 15): string {
+export function trimStringMiddle (str: string | undefined, maxLength = 15): string {
+  if (!str) return ''
+
   const dist = Math.floor((maxLength - 3) / 2)
   return str.length > maxLength ? `${str.substr(0, dist)}…${str.substr(-dist, dist)}` : str
 }
 
 /**
  * Trims the input string from the end, leaving only the specified maximum length.
- * @param {string} [str=''] - The input string to be trimmed.
+ * @param {string} str - The input string to be trimmed.
  * @param {number} [maxLength=15] - The maximum allowed length of the trimmed string.
  * @returns {string} - The trimmed string.
  */
-export function trimStringEnd (str = '', maxLength = 15): string {
+export function trimStringEnd (str: string | undefined, maxLength = 15): string {
+  if (!str) return ''
+
   return str.length > maxLength ? `${str.substr(0, maxLength)}…` : str
 }
 
 /**
  * Trims the input string according to the specified trim mode.
- * @param {string} [str=''] - The input string to be trimmed.
+ * @param {string} str - The input string to be trimmed.
  * @param {number} [length=15] - The maximum allowed length of the trimmed string.
  * @param {TrimMode} [type=TrimMode.Middle] - The trim mode to be applied.
  * @returns {string} - The trimmed string.
  */
-export function trimString (str = '', length = 15, type = TrimMode.Middle): string {
+export function trimString (str: string | undefined, length = 15, type = TrimMode.Middle): string {
+  if (!str) return ''
+
   let result = trimStringEnd(str, length)
   if (type === TrimMode.Start) result = trimStringStart(str, length)
   else if (type === TrimMode.Middle) result = trimStringMiddle(str, length)
@@ -173,7 +189,7 @@ export function trimSVGText (
   fontSize = +window.getComputedStyle(svgTextSelection.node())?.fontSize || 0,
   fontWidthToHeightRatio = getFontWidthToHeightRatio()
 ): boolean {
-  const text = svgTextSelection.text()
+  const text = svgTextSelection.text() || ''
   const textLength = text.length
 
   const textWidth = fastMode ? fontSize * textLength * fontWidthToHeightRatio : svgTextSelection.node().getComputedTextLength()
@@ -209,7 +225,7 @@ export function estimateStringPixelLength (
  * @param {(string | number)} [fontSize] - The font size of the string.
  * @returns {number} The precise length of the string in pixels.
  */
-export function getPreciseStringLengthPx (str: string, fontFamily?: string, fontSize?: string | number): number {
+export function getPreciseStringLengthPx (str: string, fontFamily: string, fontSize: string | number): number {
   const svgNS = 'http://www.w3.org/2000/svg'
   const svg = document.createElementNS(svgNS, 'svg')
   const text = document.createElementNS(svgNS, 'text')
@@ -284,6 +300,9 @@ function breakTextIntoLines (
 ): string[] {
   const text = `${textBlock.text}`
   if (!text) return []
+  const fontSize = textBlock.fontSize ?? UNOVIS_TEXT_DEFAULT.fontSize
+  const fontFamily = textBlock.fontFamily ?? UNOVIS_TEXT_DEFAULT.fontFamily
+  const fontWidthToHeightRatio: number | undefined = textBlock.fontWidthToHeightRatio ?? UNOVIS_TEXT_DEFAULT.fontWidthToHeightRatio
   const separators = Array.isArray(separator) ? separator : [separator]
 
   const splitByNewLine = text.split('\n')
@@ -295,8 +314,8 @@ function breakTextIntoLines (
     let line = ''
     for (let i = 0; i < words.length; i += 1) {
       const textLengthPx = fastMode
-        ? estimateStringPixelLength(line + words[i], textBlock.fontSize, textBlock.fontWidthToHeightRatio)
-        : getPreciseStringLengthPx(line + words[i], textBlock.fontFamily, textBlock.fontSize)
+        ? estimateStringPixelLength(line + words[i], fontSize, fontWidthToHeightRatio)
+        : getPreciseStringLengthPx(line + words[i], fontFamily, fontSize)
 
       if (textLengthPx < width || i === 0) {
         line += words[i]
@@ -310,16 +329,16 @@ function breakTextIntoLines (
       if (wordBreak) {
         while (line.trim().length > minCharactersOnLine) {
           const subLineLengthPx = fastMode
-            ? estimateStringPixelLength(line, textBlock.fontSize, textBlock.fontWidthToHeightRatio)
-            : getPreciseStringLengthPx(line, textBlock.fontFamily, textBlock.fontSize)
+            ? estimateStringPixelLength(line, fontSize, fontWidthToHeightRatio)
+            : getPreciseStringLengthPx(line, fontFamily, fontSize)
 
           if (subLineLengthPx > width) {
             let breakIndex = (line.trim()).length - minCharactersOnLine // Place at least `minCharactersOnLine` characters onto the next line
             while (breakIndex > 0) {
               const subLine = `${line.substring(0, breakIndex)}${UNOVIS_TEXT_HYPHEN_CHARACTER_DEFAULT}` // Use hyphen when force breaking words
               const subLinePx = fastMode
-                ? estimateStringPixelLength(subLine, textBlock.fontSize, textBlock.fontWidthToHeightRatio)
-                : getPreciseStringLengthPx(subLine, textBlock.fontFamily, textBlock.fontSize)
+                ? estimateStringPixelLength(subLine, fontSize, fontWidthToHeightRatio)
+                : getPreciseStringLengthPx(subLine, fontFamily, fontSize)
 
               // If the subline is less than the width, or just one character left, break the line
               if (subLinePx <= width || breakIndex === 1) {
@@ -382,22 +401,24 @@ export function getWrappedText (
 
     h += effectiveMarginPx
     const dh = text.fontSize * text.lineHeight
+    let maxWidth = 0
     // Iterate over lines and handle text overflow based on the height limit if provided
     for (let k = 0; k < lines.length; k += 1) {
       let line = lines[k]
       h += dh
 
+      const lineWithEllipsis = `${line} …`
+      const textLengthPx = fastMode
+        ? estimateStringPixelLength(lineWithEllipsis, text.fontSize, text.fontWidthToHeightRatio)
+        : getPreciseStringLengthPx(lineWithEllipsis, text.fontFamily, text.fontSize)
+
+      maxWidth = Math.max(textLengthPx, maxWidth)
       if (height && (h + dh) > height && (k !== lines.length - 1)) {
         // Remove hyphen character from the end of the line if it's there
         const lastCharacter = line.charAt(line.length - 1)
         if (lastCharacter === UNOVIS_TEXT_HYPHEN_CHARACTER_DEFAULT) {
           line = line.substr(0, lines[k].length - 1)
         }
-
-        const lineWithEllipsis = `${line} …`
-        const textLengthPx = fastMode
-          ? estimateStringPixelLength(lineWithEllipsis, text.fontSize, text.fontWidthToHeightRatio)
-          : getPreciseStringLengthPx(lineWithEllipsis, text.fontFamily, text.fontSize)
 
         if (textLengthPx < width) {
           lines[k] = lineWithEllipsis
@@ -411,7 +432,7 @@ export function getWrappedText (
     }
 
     // Create wrapped text block with its calculated properties
-    blocks.push({ ...text, _lines: lines, _estimatedHeight: h - (prevBlock?._estimatedHeight || 0) })
+    blocks.push({ ...text, _lines: lines, _estimatedHeight: h - (prevBlock?._estimatedHeight || 0), _maxWidth: Math.max(maxWidth, prevBlock?._maxWidth ?? 0) })
   })
 
   return blocks
@@ -426,7 +447,12 @@ export function getWrappedText (
  * @param {number} [y] - The y-coordinate for the tspan elements.
  * @returns {string[]} - The SVG tspan strings.
  */
-function renderTextToTspanStrings (blocks: UnovisWrappedText[], x = 0, y?: number): string[] {
+function renderTextToTspanStrings (
+  blocks: UnovisWrappedText[],
+  x = 0,
+  y?: number,
+  dominantBaseline?: string
+): string[] {
   return blocks.map((b, i) => {
     const prevBlock = i > 0 ? blocks[i - 1] : undefined
     const prevBlockMarginBottomEm = prevBlock ? prevBlock.marginBottom / prevBlock.fontSize : 0
@@ -447,11 +473,11 @@ function renderTextToTspanStrings (blocks: UnovisWrappedText[], x = 0, y?: numbe
 
     return `<tspan xmlns="http://www.w3.org/2000/svg" ${attributesString}>${b._lines.map((line, k) => {
       let dy: number
-      if (i === 0 && k === 0) dy = 0.8 + marginEm
+      if (i === 0 && k === 0) dy = marginEm
       else if (k === 0) dy = marginEm + b.lineHeight
       else dy = b.lineHeight
 
-      return `<tspan x="${x}" dy="${dy}em">${line.length ? line : ' '}</tspan>`
+      return `<tspan x="${x}" dy="${dy}em" dominant-baseline="${dominantBaseline ?? 'auto'}">${line.length ? line : ' '}</tspan>`
     }).join('')}</tspan>`
   })
 }
@@ -468,6 +494,7 @@ export function estimateWrappedTextHeight (blocks: UnovisWrappedText[]): number 
 }
 
 export const allowedSvgTextTags = ['text', 'tspan', 'textPath', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'glyphRef', 'textRef', 'textArea']
+
 /**
  * Renders a text or array of texts to an SVG text element.
  * Calling this function will replace the contents of the specified SVG text element.
@@ -480,14 +507,21 @@ export const allowedSvgTextTags = ['text', 'tspan', 'textPath', 'altGlyph', 'alt
 export function renderTextToSvgTextElement (
   textElement: SVGTextElement,
   text: UnovisText | UnovisText[],
-  options: UnovisTextOptions
+  options: UnovisTextOptions,
+  // Dominant baseline sets alignment for a line of text, whereas
+  // the `options.verticalAlign` property sets alignment for the entire text block
+  // shifting it vertically, irrespective of the dominant baseline.
+  dominantBaseline?: string
 ): void {
   const wrappedText = getWrappedText(text, options.width, undefined, options.fastMode, options.separator, options.wordBreak)
   const textElementX = options.x ?? +textElement.getAttribute('x')
   const textElementY = options.y ?? +textElement.getAttribute('y')
   const x = textElementX ?? 0
   let y = textElementY ?? 0
-  if (options.textAlign) textElement.setAttribute('text-anchor', getTextAnchorFromTextAlign(options.textAlign))
+  if (options.textAlign) {
+    textElement.setAttribute('text-anchor', getTextAnchorFromTextAlign(options.textAlign))
+  }
+
   if (options.verticalAlign && options.verticalAlign !== VerticalAlign.Top) {
     const height = estimateWrappedTextHeight(wrappedText)
     const dy = options.verticalAlign === VerticalAlign.Middle ? -height / 2
@@ -496,10 +530,16 @@ export function renderTextToSvgTextElement (
     y += dy
   }
 
+  if (options.textRotationAngle) {
+    textElement.setAttribute('transform', `rotate(${(options.textRotationAngle === 0 || options.textRotationAngle) ? options.textRotationAngle : 0} ${x} ${y})`)
+  } else {
+    textElement.removeAttribute('transform')
+  }
+
   const parser = new DOMParser()
   textElement.textContent = ''
   wrappedText.forEach(block => {
-    const svgCode = renderTextToTspanStrings([block], x, y).join('')
+    const svgCode = renderTextToTspanStrings([block], x, y, dominantBaseline).join('')
     const svgCodeSanitized = striptags(svgCode, allowedSvgTextTags)
     const parsedSvgCode = parser.parseFromString(svgCodeSanitized, 'image/svg+xml').firstChild
     textElement.appendChild(parsedSvgCode)
@@ -545,7 +585,7 @@ export function renderTextIntoFrame (
     text-anchor="${getTextAnchorFromTextAlign(frameOptions.textAlign)}"
     ${translate}
   >
-    ${renderTextToTspanStrings(wrappedText, x, y).join('')}
+    ${renderTextToTspanStrings(wrappedText, x, y, 'hanging').join('')}
   </text>`
 
   const parser = new DOMParser()
@@ -555,3 +595,4 @@ export function renderTextIntoFrame (
   group.textContent = ''
   group.appendChild(parsedSvgCode)
 }
+

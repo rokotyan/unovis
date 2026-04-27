@@ -6,7 +6,7 @@ import { arePropsEqual, useForwardProps } from '../../utils/props'
 
 
 // data and required props 
-interface Props extends  LeafletMapConfigInterface<Datum> { }
+type Props = LeafletMapConfigInterface<Datum>
 const props = defineProps<Props & { data?: Datum[] }>()
 
 const data = computed(() => props.data)
@@ -37,10 +37,17 @@ watch(config, (curr, prev) => {
   }
 })
 
+watch(data, () => {
+  component.value?.setData(data.value)
+})
 
 defineExpose({
   component
 })
+</script>
+
+<script lang="ts">
+export const VisLeafletMapSelectors = LeafletMap.selectors
 </script>
 
 <template>

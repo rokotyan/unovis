@@ -89,6 +89,12 @@ export class VisAxisComponent<Datum> implements AxisConfigInterface<Datum>, Afte
   /** Distance between the axis and the label in pixels. Default: `8` */
   @Input() labelMargin?: number
 
+  /** Label text fit mode: `FitMode.Wrap` or `FitMode.Trim`. Default: `FitMode.Wrap`. */
+  @Input() labelTextFitMode?: FitMode | string
+
+  /** Label text trim mode: `TrimMode.Start`, `TrimMode.Middle` or `TrimMode.End`. Default: `TrimMode.Middle` */
+  @Input() labelTextTrimType?: TrimMode | string
+
   /** Font color of the axis label as CSS string. Default: `null` */
   @Input() labelColor?: string | null
 
@@ -101,8 +107,16 @@ export class VisAxisComponent<Datum> implements AxisConfigInterface<Datum>, Afte
   /** Sets whether to draw the domain line or not. Default: `true` */
   @Input() domainLine?: boolean
 
-  /** Draw the min and max axis ticks only. Default: `false` */
+  /** Draw only the min and max axis ticks. Default: `false` */
   @Input() minMaxTicksOnly?: boolean
+
+  /** Show grid lines for the min and max axis ticks. Default: `false` */
+  @Input() minMaxTicksOnlyShowGridLines?: boolean
+
+  /** Draw only the min and max axis ticks, when the chart
+   * width is less than the specified value.
+   * Default: `250` */
+  @Input() minMaxTicksOnlyWhenWidthIsLess?: number
 
   /** Tick label formatter function. Default: `undefined` */
   @Input() tickFormat?: ((tick: number | Date, i: number, ticks: number[] | Date[]) => string)
@@ -137,6 +151,15 @@ export class VisAxisComponent<Datum> implements AxisConfigInterface<Datum>, Afte
   /** Font color of the tick text as CSS string. Default: `null` */
   @Input() tickTextColor?: string | null
 
+  /** Text rotation angle for ticks. Default: `undefined` */
+  @Input() tickTextAngle?: number
+
+  /** Hide tick labels that overlap with each other.
+   * To define overlapping, a simple bounding box collision detection algorithm is used.
+   * Which means the result won't be accurate when `tickTextAngle` is specified.
+   * Default: `undefined` */
+  @Input() tickTextHideOverlapping?: boolean
+
   /** The spacing in pixels between the tick and it's label. Default: `8` */
   @Input() tickPadding?: number
   @Input() data: Datum[]
@@ -160,8 +183,8 @@ export class VisAxisComponent<Datum> implements AxisConfigInterface<Datum>, Afte
   }
 
   private getConfig (): AxisConfigInterface<Datum> {
-    const { duration, events, attributes, position, type, fullSize, label, labelFontSize, labelMargin, labelColor, gridLine, tickLine, domainLine, minMaxTicksOnly, tickFormat, tickValues, numTicks, tickTextFitMode, tickTextWidth, tickTextSeparator, tickTextForceWordBreak, tickTextTrimType, tickTextFontSize, tickTextAlign, tickTextColor, tickPadding } = this
-    const config = { duration, events, attributes, position, type, fullSize, label, labelFontSize, labelMargin, labelColor, gridLine, tickLine, domainLine, minMaxTicksOnly, tickFormat, tickValues, numTicks, tickTextFitMode, tickTextWidth, tickTextSeparator, tickTextForceWordBreak, tickTextTrimType, tickTextFontSize, tickTextAlign, tickTextColor, tickPadding }
+    const { duration, events, attributes, position, type, fullSize, label, labelFontSize, labelMargin, labelTextFitMode, labelTextTrimType, labelColor, gridLine, tickLine, domainLine, minMaxTicksOnly, minMaxTicksOnlyShowGridLines, minMaxTicksOnlyWhenWidthIsLess, tickFormat, tickValues, numTicks, tickTextFitMode, tickTextWidth, tickTextSeparator, tickTextForceWordBreak, tickTextTrimType, tickTextFontSize, tickTextAlign, tickTextColor, tickTextAngle, tickTextHideOverlapping, tickPadding } = this
+    const config = { duration, events, attributes, position, type, fullSize, label, labelFontSize, labelMargin, labelTextFitMode, labelTextTrimType, labelColor, gridLine, tickLine, domainLine, minMaxTicksOnly, minMaxTicksOnlyShowGridLines, minMaxTicksOnlyWhenWidthIsLess, tickFormat, tickValues, numTicks, tickTextFitMode, tickTextWidth, tickTextSeparator, tickTextForceWordBreak, tickTextTrimType, tickTextFontSize, tickTextAlign, tickTextColor, tickTextAngle, tickTextHideOverlapping, tickPadding }
     const keys = Object.keys(config) as (keyof AxisConfigInterface<Datum>)[]
     keys.forEach(key => { if (config[key] === undefined) delete config[key] })
 
