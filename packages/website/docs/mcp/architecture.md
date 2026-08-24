@@ -165,3 +165,21 @@ provisioning, not the renderer.
 
 What the suite can't prove is covered in
 [Troubleshooting](./troubleshooting.md#what-the-tests-dont-cover).
+
+## Deliberately deferred
+
+Two pieces of scope are parked on purpose, so the reasoning survives the people
+who parked them:
+
+- **Per-deployment widget builds** (`--components donut,line`). The build
+  already stubs per-module and a subset entry point is mechanical, but the
+  embed bundle is a build-time artifact loaded once — ~670kB in a committed
+  file, not a per-render cost. The complexity of shipping a build *recipe* to
+  consumers isn't paid for until someone is measurably blocked by bundle size.
+- **Extracting `@unovis/ssr`.** The seam is already drawn — `renderToSvg` is
+  the boundary, and `env/` + `svg/` know nothing about specs or MCP — so the
+  split stays cheap indefinitely. What demand has actually shown so far is the
+  opposite need: spec building *without* rendering, served by the
+  `@unovis/mcp/recipes` and `@unovis/mcp/spec` subpaths. The package split
+  happens when a consumer wants headless rendering without the MCP surface;
+  when it does, the subpaths keep working as aliases.
