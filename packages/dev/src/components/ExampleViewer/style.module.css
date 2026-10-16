@@ -18,6 +18,10 @@
   color: var(--color-black);
 }
 
+body.theme-dark .nothingSelected {
+  color: var(--color-light-grey);
+}
+
 .exampleWrapper {
   display: flex;
   flex: 1 1 auto;

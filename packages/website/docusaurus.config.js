@@ -4,6 +4,8 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const darkCodeTheme = require('prism-react-renderer/themes/dracula')
+const url = process.env.DOCUSAURUS_URL || 'https://unovis.dev'
+const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/'
 
 // Legacy Component Reference sub-category per doc page, before they were merged into a single
 // `components` directory. Used to generate redirects for bookmarked/indexed URLs.
@@ -43,8 +45,8 @@ const legacyComponentCategoryByDocId = {
 const config = {
   title: 'Unovis',
   tagline: 'A modular data visualization framework for React, Angular, Svelte, Vue, Solid and vanilla TypeScript or JavaScript',
-  url: 'https://unovis.dev',
-  baseUrl: '/',
+  url,
+  baseUrl,
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/unovis-pictogram-square.svg',

@@ -14,7 +14,7 @@ export type NavigationItemProps = {
 
 export const NavigationItem = React.forwardRef<HTMLDivElement, NavigationItemProps>(function navigationItem (props, ref) {
   const to = {
-    pathname: `examples/${props.group}/${props.title}`,
+    pathname: `${props.group}/${props.title}`,
     search: props.preservedSearch || undefined,
   }
   return (
