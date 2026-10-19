@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Interpolator",
+    "minified": 2097,
+    "gzip": 1012,
+    "brotli": 942,
+    "dependencyIncluded": false
+  },
+  {
+    "name": "Line",
+    "minified": 125699,
+    "gzip": 41933,
+    "brotli": 36926,
+    "dependencyIncluded": false
+  },
+  {
+    "name": "Area",
+    "minified": 128959,
+    "gzip": 42926,
+    "brotli": 37693,
+    "dependencyIncluded": false
+  },
+  {
+    "name": "ChordDiagram",
+    "minified": 128503,
+    "gzip": 43213,
+    "brotli": 38133,
+    "dependencyIncluded": false
+  },
+  {
+    "name": "Combined",
+    "minified": 166373,
+    "gzip": 55210,
+    "brotli": 48385,
+    "dependencyIncluded": false
+  },
+  {
+    "name": "Main",
+    "minified": 4400082,
+    "gzip": 1253331,
+    "brotli": 955108,
+    "dependencyIncluded": false
+  },
+  {
+    "name": "MainSplit",
+    "minified": 656721,
+    "gzip": 189671,
+    "brotli": 157277,
+    "dependencyIncluded": false
+  }
+]
