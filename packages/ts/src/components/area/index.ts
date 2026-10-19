@@ -1,5 +1,5 @@
 import { select } from 'd3-selection'
-import { Transition } from 'd3-transition'
+import { Transition } from '@/utils/transition'
 import { area, Area as AreaInterface, line, Line as LineInterface } from 'd3-shape'
 import { interpolatePath } from 'd3-interpolate-path'
 

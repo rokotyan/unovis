@@ -1,5 +1,5 @@
 import { select, Selection } from 'd3-selection'
-import { Transition } from 'd3-transition'
+import { Transition, transition as createTransition } from '@/utils/transition'
 import { arc } from 'd3-shape'
 
 // Types
@@ -305,8 +305,7 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
       .style('stroke', getNodeColor(d, nodeGaugeFill, d._index))
       .style('stroke-opacity', d => getString(d, nodeShape, d._index) === GraphNodeShape.Circle ? 0 : null)
 
-    nodeArc
-      .transition()
+    createTransition(nodeArc)
       .duration(nodeGaugeAnimDuration)
       .attrTween('d', (
         d,

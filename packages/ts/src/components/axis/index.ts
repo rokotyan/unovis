@@ -1,5 +1,5 @@
 import { select, Selection } from 'd3-selection'
-import { interrupt } from 'd3-transition'
+import { interrupt } from '@/utils/transition'
 import { Axis as D3Axis, axisBottom, axisLeft, axisRight, axisTop } from 'd3-axis'
 import { NumberValue } from 'd3-scale'
 
@@ -192,7 +192,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
       const gridGen = this._buildGrid(renderTickValues)
       // Interrupting all active transitions first to prevent them from being stuck.
       // Somehow we see it happening in Angular apps.
-      this.gridGroup.selectAll('*').interrupt()
+      this.gridGroup.selectAll('*').nodes().forEach(node => interrupt(node))
       smartTransition(this.gridGroup, duration).call(gridGen).style('opacity', 1)
       this.gridGroup.selectAll<SVGGElement, number | Date>('g.tick')
         .classed(s.gridTickHidden, d => labeledTickKeys ? !labeledTickKeys.has(tickKey(d)) : false)
@@ -290,7 +290,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
 
     // Interrupting all active transitions first to prevent them from being stuck.
     // Somehow we see it happening in Angular apps.
-    selection.selectAll('*').interrupt()
+    selection.selectAll('*').nodes().forEach(node => interrupt(node))
     const transition = smartTransition(selection, duration).call(axisGen)
 
     // Unset D3's default y and dy attributes because we're going to set them manually in the renderTextToSvgTextElement function

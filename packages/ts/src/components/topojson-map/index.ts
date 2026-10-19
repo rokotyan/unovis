@@ -14,6 +14,8 @@ import { MapGraphDataModel } from '@/data-models/map-graph'
 // Utils
 import { clamp, getNumber, getString, isNumber } from '@/utils/data'
 import { smartTransition } from '@/utils/d3'
+import { createD3Transition } from '@/utils/d3-transition'
+import { transition as createTransition } from '@/utils/transition'
 import { getColor, hexToBrightness } from '@/utils/color'
 import { getCSSVariableValue, isStringCSSVariable } from '@/utils/misc'
 import { trimStringMiddle } from '@/utils/text'
@@ -476,7 +478,7 @@ export class TopoJSONMap<
       // Divide by zoom level since the group transform will scale it back up
       const adjustedRadius = backgroundRadius / currentZoomLevel
 
-      this._clusterBackgroundGroup
+      createTransition(this._clusterBackgroundGroup
         .append('circle')
         .attr('class', s.clusterBackgroundCircle)
         .attr('cx', pos[0])
@@ -487,8 +489,7 @@ export class TopoJSONMap<
         .style('cursor', 'pointer')
         .on('click', () => {
           this._collapseExpandedCluster()
-        })
-        .transition()
+        }))
         .duration(duration)
         .attr('r', adjustedRadius)
         .style('opacity', 0.7)
@@ -1505,8 +1506,7 @@ export class TopoJSONMap<
     this._eventInitiatedByComponent = true
 
     // Apply the transform with smooth eased animation
-    this.g
-      .transition()
+    createD3Transition(this.g)
       .duration(config.zoomDuration)
       .ease(easeCubicInOut)
       .call(this._zoomBehavior.transform, transform)

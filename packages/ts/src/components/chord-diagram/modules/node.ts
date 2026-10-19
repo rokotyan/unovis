@@ -1,5 +1,5 @@
 import { Selection } from 'd3-selection'
-import { Transition } from 'd3-transition'
+import { Transition } from '@/utils/transition'
 import { interpolate } from 'd3-interpolate'
 import { Arc } from 'd3-shape'
 

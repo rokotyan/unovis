@@ -1,5 +1,5 @@
 import { select } from 'd3-selection'
-import { Transition } from 'd3-transition'
+import { Transition, transition as createTransition } from '@/utils/transition'
 import { CurveFactoryLineOnly, Line as LineGenInterface, line } from 'd3-shape'
 import { interpolatePath } from 'd3-interpolate-path'
 
@@ -201,7 +201,7 @@ export class Line<Datum> extends XYComponentCore<Datum, LineConfigInterface<Datu
           .attr('stroke-width', config.lineWidth - 1)
           .style('opacity', 1)
       } else {
-        lineGaps.transition()
+        createTransition(lineGaps)
           .duration(duration)
           .style('opacity', 0)
       }
