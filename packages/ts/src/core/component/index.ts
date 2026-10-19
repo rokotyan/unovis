@@ -1,5 +1,5 @@
 import { select, Selection, ValueFn } from 'd3-selection'
-import { Transition } from 'd3-transition'
+import { transition as createTransition } from '@/utils/transition'
 
 // Core
 import { CoreDataModel } from '@/data-models/core'
@@ -111,9 +111,8 @@ export class ComponentCore<
     const ANIMATING_ATTR = 'animating'
     if (duration) {
       this.g.attr(ANIMATING_ATTR, '')
-      const transition = this.g
-        .transition(ANIMATING_ATTR)
-        .duration(duration) as Transition<SVGGElement | HTMLElement, unknown, null, undefined>
+      const transition = createTransition(this.g as Selection<SVGGElement | HTMLElement, unknown, null, undefined>, ANIMATING_ATTR)
+        .duration(duration)
 
       transition.on('end interrupt', () => {
         this.g.attr(ANIMATING_ATTR, null)

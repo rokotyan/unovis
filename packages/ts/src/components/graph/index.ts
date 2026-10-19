@@ -1,5 +1,5 @@
 import { min, max, extent } from 'd3-array'
-import { Transition } from 'd3-transition'
+import { Transition } from '@/utils/transition'
 import { select, Selection, pointer } from 'd3-selection'
 import { brush, BrushBehavior, D3BrushEvent } from 'd3-brush'
 import { zoom, zoomTransform, zoomIdentity, ZoomTransform, D3ZoomEvent, ZoomBehavior } from 'd3-zoom'
@@ -17,6 +17,7 @@ import { Spacing } from '@/types/spacing'
 // Utils
 import { isNumber, clamp, shallowDiff, isFunction, getBoolean, isPlainObject, isEqual, getNumber } from '@/utils/data'
 import { smartTransition } from '@/utils/d3'
+import { smartD3Transition } from '@/utils/d3-transition'
 
 // Local Types
 import {
@@ -504,7 +505,7 @@ export class Graph<
 
     const transform = this._getTransform(xExtent as [number, number], yExtent as [number, number], alignment)
 
-    smartTransition(this.g, duration)
+    smartD3Transition(this.g, duration)
       .call(this._zoomBehavior.transform, transform)
 
     this._onZoom(transform)
@@ -1032,18 +1033,18 @@ export class Graph<
 
   public zoomIn (increment = 0.3): void {
     const scaleBy = 1 + increment
-    smartTransition(this.g, this.config.duration / 2)
+    smartD3Transition(this.g, this.config.duration / 2)
       .call(this._zoomBehavior.scaleBy, scaleBy)
   }
 
   public zoomOut (increment = 0.3): void {
     const scaleBy = 1 - increment
-    smartTransition(this.g, this.config.duration / 2)
+    smartD3Transition(this.g, this.config.duration / 2)
       .call(this._zoomBehavior.scaleBy, scaleBy)
   }
 
   public setZoom (zoomLevel: number): void {
-    smartTransition(this.g, this.config.duration / 2)
+    smartD3Transition(this.g, this.config.duration / 2)
       .call(this._zoomBehavior.scaleTo, zoomLevel)
   }
 
@@ -1088,7 +1089,7 @@ export class Graph<
       alignment
     )
 
-    smartTransition(this.g, duration)
+    smartD3Transition(this.g, duration)
       .call(this._zoomBehavior.transform, transform)
 
     this._onZoom(transform)
