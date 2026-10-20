@@ -1,0 +1,79 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "beforeCommit": "9152934547fbce1167ba9e332985795de3cb4fd3",
+  "afterCommit": "61378caebdaaa0caecf577ec6f3633765b35b20b",
+  "cases": [
+    {
+      "name": "gallery",
+      "path": "/",
+      "code": false,
+      "theme": "light"
+    },
+    {
+      "name": "search",
+      "path": "/examples/Line/Multi%20Line%20Chart?code=0&q=line+chart",
+      "code": false,
+      "theme": "light"
+    },
+    {
+      "name": "plotline-light",
+      "path": "/examples/Plotline/Plot%20Line?code=1",
+      "code": true,
+      "theme": "light"
+    },
+    {
+      "name": "plotline-dark",
+      "path": "/examples/Plotline/Plot%20Line?code=1",
+      "code": true,
+      "theme": "dark"
+    },
+    {
+      "name": "graph",
+      "path": "/examples/Graph/Parallel%20Layout%20Spacing?code=0",
+      "code": false,
+      "theme": "light"
+    },
+    {
+      "name": "treemap",
+      "path": "/examples/Treemap/Treemap%3A%20Tiling%20Methods?code=0",
+      "code": false,
+      "theme": "light"
+    },
+    {
+      "name": "transitions",
+      "path": "/examples/Stacked%20Bar/Enter%20%26%20Exit%20Transitions?code=0",
+      "code": false,
+      "theme": "light"
+    },
+    {
+      "name": "bar-styles",
+      "path": "/examples/Stacked%20Bar/Per-Bar%20Styles?code=0",
+      "code": false,
+      "theme": "light"
+    },
+    {
+      "name": "xy-labels",
+      "path": "/examples/Xy%20Labels/Stacked%20Bar%20with%20Labels?code=0",
+      "code": false,
+      "theme": "light"
+    }
+  ],
+  "supplemental": [
+    {
+      "name": "copy-feedback-after",
+      "path": "/examples/Plotline/Plot%20Line?code=1",
+      "theme": "light",
+      "state": "Copy active source file and Copy link success feedback"
+    },
+    {
+      "name": "narrow-sidebar-after",
+      "path": "/examples/Plotline/Plot%20Line?code=1",
+      "theme": "light",
+      "sidebarWidth": 264,
+      "state": "FPS hidden; theme and pattern controls remain visible"
+    }
+  ]
+}
