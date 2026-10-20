@@ -1,0 +1,194 @@
+[
+  {
+    "slug": "penguin-distributions",
+    "theme": "light",
+    "width": 1120,
+    "height": 619.46875
+  },
+  {
+    "slug": "bike-demand-heatmap",
+    "theme": "light",
+    "width": 1120,
+    "height": 522.875
+  },
+  {
+    "slug": "solar-cycle-forecast",
+    "theme": "light",
+    "width": 1120,
+    "height": 723.46875
+  },
+  {
+    "slug": "street-tree-treemap",
+    "theme": "light",
+    "width": 1120,
+    "height": 623.078125
+  },
+  {
+    "slug": "electricity-grid-dashboard",
+    "theme": "light",
+    "width": 1120,
+    "height": 808.75
+  },
+  {
+    "slug": "patterned-temperature-lines",
+    "theme": "light",
+    "width": 1120,
+    "height": 619.46875
+  },
+  {
+    "slug": "python-release-timeline",
+    "theme": "light",
+    "width": 1120,
+    "height": 629.46875
+  },
+  {
+    "slug": "state-migration-chord",
+    "theme": "light",
+    "width": 1120,
+    "height": 693.078125
+  },
+  {
+    "slug": "dependency-explorer",
+    "theme": "light",
+    "width": 1120,
+    "height": 699.46875
+  },
+  {
+    "slug": "earthquake-explorer",
+    "theme": "light",
+    "width": 1120,
+    "height": 917.359375
+  },
+  {
+    "slug": "airport-passenger-flows",
+    "theme": "light",
+    "width": 1120,
+    "height": 647.078125
+  },
+  {
+    "slug": "energy-flow-sankey",
+    "theme": "light",
+    "width": 1120,
+    "height": 723.078125
+  },
+  {
+    "slug": "exoplanet-discoveries",
+    "theme": "light",
+    "width": 1120,
+    "height": 725.859375
+  },
+  {
+    "slug": "tree-health-bars",
+    "theme": "light",
+    "width": 1120,
+    "height": 589.46875
+  },
+  {
+    "slug": "bike-trip-distributions",
+    "theme": "light",
+    "width": 1120,
+    "height": 715.21875
+  },
+  {
+    "slug": "state-migration-balance",
+    "theme": "light",
+    "width": 1120,
+    "height": 659.46875
+  },
+  {
+    "slug": "penguin-distributions",
+    "theme": "dark",
+    "width": 1120,
+    "height": 619.46875
+  },
+  {
+    "slug": "bike-demand-heatmap",
+    "theme": "dark",
+    "width": 1120,
+    "height": 522.875
+  },
+  {
+    "slug": "solar-cycle-forecast",
+    "theme": "dark",
+    "width": 1120,
+    "height": 723.46875
+  },
+  {
+    "slug": "street-tree-treemap",
+    "theme": "dark",
+    "width": 1120,
+    "height": 623.078125
+  },
+  {
+    "slug": "electricity-grid-dashboard",
+    "theme": "dark",
+    "width": 1120,
+    "height": 808.75
+  },
+  {
+    "slug": "patterned-temperature-lines",
+    "theme": "dark",
+    "width": 1120,
+    "height": 619.46875
+  },
+  {
+    "slug": "python-release-timeline",
+    "theme": "dark",
+    "width": 1120,
+    "height": 629.46875
+  },
+  {
+    "slug": "state-migration-chord",
+    "theme": "dark",
+    "width": 1120,
+    "height": 693.078125
+  },
+  {
+    "slug": "dependency-explorer",
+    "theme": "dark",
+    "width": 1120,
+    "height": 699.46875
+  },
+  {
+    "slug": "earthquake-explorer",
+    "theme": "dark",
+    "width": 1120,
+    "height": 917.359375
+  },
+  {
+    "slug": "airport-passenger-flows",
+    "theme": "dark",
+    "width": 1120,
+    "height": 647.078125
+  },
+  {
+    "slug": "energy-flow-sankey",
+    "theme": "dark",
+    "width": 1120,
+    "height": 723.078125
+  },
+  {
+    "slug": "exoplanet-discoveries",
+    "theme": "dark",
+    "width": 1120,
+    "height": 725.859375
+  },
+  {
+    "slug": "tree-health-bars",
+    "theme": "dark",
+    "width": 1120,
+    "height": 589.46875
+  },
+  {
+    "slug": "bike-trip-distributions",
+    "theme": "dark",
+    "width": 1120,
+    "height": 715.21875
+  },
+  {
+    "slug": "state-migration-balance",
+    "theme": "dark",
+    "width": 1120,
+    "height": 659.46875
+  }
+]
