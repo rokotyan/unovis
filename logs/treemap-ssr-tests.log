@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 <worktree>/packages/mcp
+
+ ✓ test/recipes.test.ts (45 tests | 42 skipped) 985ms
+   ✓ generate_treemap > renders every fixture to a standalone SVG  983ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 42 skipped (45)
+   Start at  19:45:28
+   Duration  1.69s (transform 465ms, setup 0ms, collect 449ms, tests 985ms, environment 0ms, prepare 43ms)
+

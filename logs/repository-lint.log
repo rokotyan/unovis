@@ -1,0 +1,781 @@
+
+> unovis@1.7.1 lint <worktree>
+> eslint ./ --ext .js,.jsx,.ts,.tsx,.svelte --ignore-path .gitignore
+
+
+<worktree>/packages/angular/autogen/index.ts
+  2:39  error  Unable to resolve path to module '@unovis/shared/integrations/autogen'  import/no-unresolved
+
+<worktree>/packages/angular/karma.conf.js
+   8:15  error  Unable to resolve path to module 'karma-jasmine'                import/no-unresolved
+   9:15  error  Unable to resolve path to module 'karma-chrome-launcher'        import/no-unresolved
+  10:15  error  Unable to resolve path to module 'karma-jasmine-html-reporter'  import/no-unresolved
+  11:15  error  Unable to resolve path to module 'karma-coverage'               import/no-unresolved
+
+<worktree>/packages/angular/src/components/annotations/annotations.component.ts
+  89:16  warning  'changes' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/angular/src/components/area/area.component.ts
+  173:1  warning  This line has a length of 267. Maximum allowed is 200  max-len
+  174:1  warning  This line has a length of 269. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/axis/axis.component.ts
+  157:1  warning  This line has a length of 245. Maximum allowed is 200  max-len
+  207:1  warning  This line has a length of 563. Maximum allowed is 200  max-len
+  208:1  warning  This line has a length of 565. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/boxplot/boxplot.component.ts
+  157:1  warning  This line has a length of 218. Maximum allowed is 200  max-len
+  158:1  warning  This line has a length of 220. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/chord-diagram/chord-diagram.component.ts
+  148:1  warning  This line has a length of 274. Maximum allowed is 200  max-len
+  149:1  warning  This line has a length of 276. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/circular-bar/circular-bar.component.ts
+  163:1  warning  This line has a length of 215. Maximum allowed is 200  max-len
+  164:1  warning  This line has a length of 217. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/crosshair/crosshair.component.ts
+  210:1  warning  This line has a length of 379. Maximum allowed is 200  max-len
+  211:1  warning  This line has a length of 381. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/donut/donut.component.ts
+  163:1  warning  This line has a length of 331. Maximum allowed is 200  max-len
+  164:1  warning  This line has a length of 333. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/graph/graph.component.ts
+  374:1  warning  This line has a length of 231. Maximum allowed is 200   max-len
+  377:1  warning  This line has a length of 232. Maximum allowed is 200   max-len
+  385:1  warning  This line has a length of 239. Maximum allowed is 200   max-len
+  388:1  warning  This line has a length of 230. Maximum allowed is 200   max-len
+  391:1  warning  This line has a length of 214. Maximum allowed is 200   max-len
+  433:1  warning  This line has a length of 247. Maximum allowed is 200   max-len
+  462:1  warning  This line has a length of 1908. Maximum allowed is 200  max-len
+  463:1  warning  This line has a length of 1910. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/grouped-bar/grouped-bar.component.ts
+  170:1  warning  This line has a length of 256. Maximum allowed is 200  max-len
+  171:1  warning  This line has a length of 258. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/heatmap/heatmap.component.ts
+  147:1  warning  This line has a length of 219. Maximum allowed is 200  max-len
+  148:1  warning  This line has a length of 221. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/line/line.component.ts
+  161:1  warning  This line has a length of 234. Maximum allowed is 200  max-len
+  162:1  warning  This line has a length of 236. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/nested-donut/nested-donut.component.ts
+  169:1  warning  This line has a length of 354. Maximum allowed is 200  max-len
+  170:1  warning  This line has a length of 356. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/plotband/plotband.component.ts
+  116:16  warning  'changes' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/angular/src/components/plotline/plotline.component.ts
+  124:16  warning  'changes' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/angular/src/components/radial-bar/radial-bar.component.ts
+  152:1  warning  This line has a length of 320. Maximum allowed is 200  max-len
+  153:1  warning  This line has a length of 322. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/sankey/sankey.component.ts
+  308:1  warning  This line has a length of 1024. Maximum allowed is 200  max-len
+  309:1  warning  This line has a length of 1026. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/scatter/scatter.component.ts
+  181:1  warning  This line has a length of 306. Maximum allowed is 200  max-len
+  182:1  warning  This line has a length of 308. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/stacked-bar/stacked-bar.component.ts
+  177:1  warning  This line has a length of 274. Maximum allowed is 200  max-len
+  178:1  warning  This line has a length of 276. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/timeline/timeline.component.ts
+  226:1  warning  This line has a length of 245. Maximum allowed is 200  max-len
+  229:1  warning  This line has a length of 244. Maximum allowed is 200  max-len
+  254:1  warning  This line has a length of 719. Maximum allowed is 200  max-len
+  255:1  warning  This line has a length of 721. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/tooltip/tooltip.component.ts
+  95:16  warning  'changes' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/angular/src/components/topojson-map/topojson-map.component.ts
+  308:1  warning  This line has a length of 1019. Maximum allowed is 200  max-len
+  309:1  warning  This line has a length of 1021. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/treemap/treemap.component.ts
+  179:1  warning  This line has a length of 497. Maximum allowed is 200  max-len
+  180:1  warning  This line has a length of 499. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/components/xy-labels/xy-labels.component.ts
+  169:1  warning  This line has a length of 325. Maximum allowed is 200  max-len
+  170:1  warning  This line has a length of 327. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/html-components/bullet-legend/bullet-legend.component.ts
+  74:16  warning  'changes' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/angular/src/html-components/flow-legend/flow-legend.component.ts
+  56:16  warning  'changes' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/angular/src/html-components/leaflet-flow-map/leaflet-flow-map.component.ts
+  316:1  warning  This line has a length of 990. Maximum allowed is 200  max-len
+  317:1  warning  This line has a length of 992. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/html-components/leaflet-map/leaflet-map.component.ts
+  277:1  warning  This line has a length of 738. Maximum allowed is 200  max-len
+  278:1  warning  This line has a length of 740. Maximum allowed is 200  max-len
+
+<worktree>/packages/angular/src/html-components/rolling-pin-legend/rolling-pin-legend.component.ts
+  40:16  warning  'changes' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/cypress.config.ts
+  7:22  warning  'on' is defined but never used      @typescript-eslint/no-unused-vars
+  7:26  warning  'config' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/components/ExampleViewer/index.tsx
+  56:63  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  56:97  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/dev/src/examples/auxiliary/annotations/bitcoin-price-peaks/index.tsx
+  6:34  error  Unable to resolve path to module '@unovis/shared/examples/basic-annotations/data'  import/no-unresolved
+
+<worktree>/packages/dev/src/examples/auxiliary/tooltip/tooltip-create-portal/index.tsx
+  2:29  warning  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/color/color-management/color-sync/index.tsx
+  10:27  warning  'props' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/color/color-management/custom-palette/index.tsx
+  47:45  warning  'i' is defined but never used      @typescript-eslint/no-unused-vars
+  47:56  warning  'ticks' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/maps/leaflet/leaflet-map-topojson/index.tsx
+  12:11  warning  'isDarkTheme' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/maps/topojson/clustered-color-map-with-shapes/index.tsx
+  49:9  warning  'colorMap' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/maps/topojson/map-fit-to-points/index.tsx
+  4:32  error  Unable to resolve path to module '../flow-map'  import/no-unresolved
+
+<worktree>/packages/dev/src/examples/networks-and-flows/graph/graph-custom-node-rendering/component.tsx
+   2:27  error    Unable to resolve path to module 'd3-selection'  import/no-unresolved
+  56:7   warning  'links' is defined but never used                @typescript-eslint/no-unused-vars
+  57:7   warning  'config' is defined but never used               @typescript-eslint/no-unused-vars
+  58:7   warning  'duration' is defined but never used             @typescript-eslint/no-unused-vars
+  59:7   warning  'zoomLevel' is defined but never used            @typescript-eslint/no-unused-vars
+  67:31  warning  'zoomLevel' is defined but never used            @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/networks-and-flows/graph/graph-custom-node-rendering/index.tsx
+  48:97  warning  'links' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/networks-and-flows/graph/graph-custom-node-rendering/node-rendering.ts
+    1:10  warning  'select' is defined but never used               @typescript-eslint/no-unused-vars
+    1:35  error    Unable to resolve path to module 'd3-selection'  import/no-unresolved
+   35:3   warning  'config' is defined but never used               @typescript-eslint/no-unused-vars
+  160:67  warning  '_' is defined but never used                    @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/networks-and-flows/graph/graph-custom-node-rendering/swimlane-rendering.tsx
+  2:27  error  Unable to resolve path to module 'd3-selection'  import/no-unresolved
+
+<worktree>/packages/dev/src/examples/networks-and-flows/graph/graph-link-offset/index.tsx
+  1:27  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/networks-and-flows/sankey/index.tsx
+  5:10  warning  'ExampleViewerDurationProps' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/xy-components/axis/axis-label-with-brush/index.tsx
+  12:27  warning  'props' is defined but never used                      @typescript-eslint/no-unused-vars
+  41:1   warning  This line has a length of 229. Maximum allowed is 200  max-len
+
+<worktree>/packages/dev/src/examples/xy-components/axis/axis-label/index.tsx
+    2:44  warning  'VisGroupedBar' is defined but never used              @typescript-eslint/no-unused-vars
+   34:1   warning  This line has a length of 252. Maximum allowed is 200  max-len
+   43:1   warning  This line has a length of 263. Maximum allowed is 200  max-len
+   44:1   warning  This line has a length of 264. Maximum allowed is 200  max-len
+   51:1   warning  This line has a length of 266. Maximum allowed is 200  max-len
+   52:1   warning  This line has a length of 265. Maximum allowed is 200  max-len
+   61:1   warning  This line has a length of 263. Maximum allowed is 200  max-len
+   62:1   warning  This line has a length of 247. Maximum allowed is 200  max-len
+   69:1   warning  This line has a length of 284. Maximum allowed is 200  max-len
+   70:1   warning  This line has a length of 271. Maximum allowed is 200  max-len
+   79:1   warning  This line has a length of 266. Maximum allowed is 200  max-len
+   80:1   warning  This line has a length of 264. Maximum allowed is 200  max-len
+   87:1   warning  This line has a length of 263. Maximum allowed is 200  max-len
+   88:1   warning  This line has a length of 264. Maximum allowed is 200  max-len
+   97:1   warning  This line has a length of 288. Maximum allowed is 200  max-len
+   98:1   warning  This line has a length of 264. Maximum allowed is 200  max-len
+  105:1   warning  This line has a length of 263. Maximum allowed is 200  max-len
+  106:1   warning  This line has a length of 305. Maximum allowed is 200  max-len
+
+<worktree>/packages/dev/src/examples/xy-components/axis/axis-rotation-slider/index.tsx
+  10:27  warning  'props' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/xy-components/brush/basic-brush/index.tsx
+  2:30  error  Unable to resolve path to module 'd3-brush'  import/no-unresolved
+
+<worktree>/packages/dev/src/examples/xy-components/crosshair/crosshair-no-data/index.tsx
+  1:17  warning  'useMemo' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/xy-components/crosshair/free-crosshair/index.tsx
+  37:57  warning  'index' is defined but never used  @typescript-eslint/no-unused-vars
+  88:57  warning  'index' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/xy-components/crosshair/synced-crosshairs/index.tsx
+   1:35  warning  'useEffect' is defined but never used   @typescript-eslint/no-unused-vars
+  33:32  warning  'datum' is defined but never used       @typescript-eslint/no-unused-vars
+  33:39  warning  'datumIndex' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/xy-components/dual-axis/index.tsx
+  1:17  warning  'useRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/xy-components/grouped-bar/basic-grouped-bar/index.tsx
+  29:1  warning  This line has a length of 212. Maximum allowed is 200  max-len
+  32:1  warning  This line has a length of 245. Maximum allowed is 200  max-len
+
+<worktree>/packages/dev/src/examples/xy-components/timeline/timeline-animation/index.tsx
+  24:19  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/dev/src/examples/xy-components/timeline/timeline-bleed/index.tsx
+  2:60  warning  'VisCrosshair' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/examples/xy-components/timeline/timeline-tooltip/index.tsx
+   3:10  warning  'Position' is defined but never used  @typescript-eslint/no-unused-vars
+  12:81  warning  'i' is defined but never used         @typescript-eslint/no-unused-vars
+  19:63  warning  'i' is defined but never used         @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/utils/data.ts
+  168:55  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/dev/src/utils/format.ts
+  14:7  warning  'FMT_MONTH_YEAR_DAY_HH_MM' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  15:7  warning  'FMT_YEAR_MONTH_DAY_HH_MM_SS' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/mcp/scripts/apps-host-harness.ts
+  46:44  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  46:67  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/mcp/src/codegen/index.ts
+  233:1  warning  This line has a length of 208. Maximum allowed is 200  max-len
+  331:1  warning  This line has a length of 203. Maximum allowed is 200  max-len
+
+<worktree>/packages/mcp/src/recipes/choropleth.ts
+  68:11  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  69:13  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/mcp/test/apps-extension.test.ts
+  84:12  warning  Forbidden non-null assertion                           @typescript-eslint/no-non-null-assertion
+  87:12  warning  Forbidden non-null assertion                           @typescript-eslint/no-non-null-assertion
+  88:12  warning  Forbidden non-null assertion                           @typescript-eslint/no-non-null-assertion
+  91:1   warning  This line has a length of 210. Maximum allowed is 200  max-len
+  91:51  warning  Forbidden non-null assertion                           @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/mcp/test/codegen.test.ts
+  5:38  warning  'mkdirSync' is defined but never used  @typescript-eslint/no-unused-vars
+  6:10  warning  'tmpdir' is defined but never used     @typescript-eslint/no-unused-vars
+
+<worktree>/packages/mcp/test/image-snapshot.ts
+  118:1  warning  This line has a length of 211. Maximum allowed is 200  max-len
+
+<worktree>/packages/mcp/test/spec-schema.test.ts
+  51:1  warning  This line has a length of 205. Maximum allowed is 200  max-len
+  74:1  warning  This line has a length of 229. Maximum allowed is 200  max-len
+
+<worktree>/packages/mcp/test/tool-schemas.test.ts
+  67:15  warning  '$schema' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/mcp/test/widget-events.test.ts
+  30:3  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  58:5  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/mcp/test/widget-variants.test.ts
+  12:20  warning  'settle' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/mcp/test/widget-webview.test.ts
+  48:19  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  49:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/mcp/test/widget.test.ts
+   40:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+   42:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+   53:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+   62:17  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+   78:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  134:21  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/react/autogen/index.ts
+  2:39  error  Unable to resolve path to module '@unovis/shared/integrations/autogen'  import/no-unresolved
+
+<worktree>/packages/react/index.ts
+  1:15  error  Unable to resolve path to module './dist'  import/no-unresolved
+
+<worktree>/packages/react/src/components/chord-diagram/index.tsx
+  62:1  warning  This line has a length of 206. Maximum allowed is 200  max-len
+
+<worktree>/packages/react/src/components/topojson-map/index.tsx
+  25:1  warning  This line has a length of 211. Maximum allowed is 200  max-len
+  61:1  warning  This line has a length of 213. Maximum allowed is 200  max-len
+
+<worktree>/packages/react/src/composites/time-series/index.tsx
+  117:11  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/react/src/containers/single-container/index.tsx
+  2:17  warning  'ReactNode' is defined but never used  @typescript-eslint/no-unused-vars
+  2:56  warning  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/react/src/containers/xy-container/index.tsx
+  2:17  warning  'ReactNode' is defined but never used  @typescript-eslint/no-unused-vars
+  2:56  warning  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/react/src/html-components/bullet-legend/index.tsx
+  28:11  warning  'className' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/react/src/html-components/flow-legend/index.tsx
+  28:11  warning  'className' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/react/src/html-components/leaflet-flow-map/index.tsx
+  26:1   warning  This line has a length of 239. Maximum allowed is 200  max-len
+  30:17  warning  'className' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  59:1   warning  This line has a length of 252. Maximum allowed is 200  max-len
+
+<worktree>/packages/react/src/html-components/leaflet-map/index.tsx
+  30:17  warning  'className' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/react/src/html-components/rolling-pin-legend/index.tsx
+  28:11  warning  'className' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/advanced-leaflet-map/advanced-leaflet-map.svelte
+  21:9  warning  'clusteringDistance' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  22:9  warning  'clusterExpandOnClick' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/baseline-area-chart/baseline-area-chart.ts
+  16:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  27:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-annotations/basic-annotations.ts
+  25:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-boxplot/basic-boxplot.ts
+  13:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-circular-bar-chart/basic-circular-bar-chart.ts
+   9:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  27:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-donut-chart/basic-donut-chart-solid.tsx
+  7:50  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-donut-chart/basic-donut-chart.component.ts
+  13:44  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-donut-chart/basic-donut-chart.svelte
+  3:17  warning  'DataRecord' is defined but never used  @typescript-eslint/no-unused-vars
+  6:50  warning  '_' is defined but never used           @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-donut-chart/basic-donut-chart.ts
+   7:48  warning  '_' is defined but never used                @typescript-eslint/no-unused-vars
+  10:7   warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  12:7   warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-donut-chart/basic-donut-chart.tsx
+  6:48  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-grouped-bar/basic-grouped-bar.ts
+  10:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  18:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-leaflet-map/basic-leaflet-map.ts
+  24:7  warning  'map' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-line-chart/basic-line-chart.ts
+  11:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-radial-bar-chart/basic-radial-bar-chart.ts
+   7:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  28:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-sankey/basic-sankey.ts
+  5:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-sankey/basic-sankey.tsx
+  2:29  warning  'Sizing' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-scatter-plot/basic-scatter-plot.ts
+  16:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-timeline/basic-timeline-solid.tsx
+  25:59  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-timeline/basic-timeline.component.ts
+  20:53  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-timeline/basic-timeline.svelte
+  24:59  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-timeline/basic-timeline.ts
+   1:62  warning  'colors' is defined but never used           @typescript-eslint/no-unused-vars
+  10:7   warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  11:46  warning  'i' is defined but never used                @typescript-eslint/no-unused-vars
+  23:7   warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/basic-timeline/data.ts
+    22:1  warning  This line has a length of 209. Maximum allowed is 200  max-len
+    36:1  warning  This line has a length of 229. Maximum allowed is 200  max-len
+    64:1  warning  This line has a length of 233. Maximum allowed is 200  max-len
+   106:1  warning  This line has a length of 258. Maximum allowed is 200  max-len
+   218:1  warning  This line has a length of 222. Maximum allowed is 200  max-len
+   232:1  warning  This line has a length of 260. Maximum allowed is 200  max-len
+   330:1  warning  This line has a length of 239. Maximum allowed is 200  max-len
+   911:1  warning  This line has a length of 203. Maximum allowed is 200  max-len
+  1016:1  warning  This line has a length of 236. Maximum allowed is 200  max-len
+  1142:1  warning  This line has a length of 213. Maximum allowed is 200  max-len
+  1156:1  warning  This line has a length of 264. Maximum allowed is 200  max-len
+  1170:1  warning  This line has a length of 216. Maximum allowed is 200  max-len
+  1177:1  warning  This line has a length of 229. Maximum allowed is 200  max-len
+  1219:1  warning  This line has a length of 248. Maximum allowed is 200  max-len
+  1247:1  warning  This line has a length of 226. Maximum allowed is 200  max-len
+  1282:1  warning  This line has a length of 207. Maximum allowed is 200  max-len
+  1338:1  warning  This line has a length of 225. Maximum allowed is 200  max-len
+  1359:1  warning  This line has a length of 249. Maximum allowed is 200  max-len
+  1422:1  warning  This line has a length of 213. Maximum allowed is 200  max-len
+  1464:1  warning  This line has a length of 268. Maximum allowed is 200  max-len
+  1485:1  warning  This line has a length of 206. Maximum allowed is 200  max-len
+  1520:1  warning  This line has a length of 205. Maximum allowed is 200  max-len
+  1548:1  warning  This line has a length of 234. Maximum allowed is 200  max-len
+  1555:1  warning  This line has a length of 269. Maximum allowed is 200  max-len
+  1576:1  warning  This line has a length of 205. Maximum allowed is 200  max-len
+  1611:1  warning  This line has a length of 286. Maximum allowed is 200  max-len
+  1695:1  warning  This line has a length of 207. Maximum allowed is 200  max-len
+  1730:1  warning  This line has a length of 204. Maximum allowed is 200  max-len
+  1800:1  warning  This line has a length of 243. Maximum allowed is 200  max-len
+  1897:1  warning  This line has a length of 237. Maximum allowed is 200  max-len
+
+<worktree>/packages/shared/examples/brush-grouped-bar/brush-grouped-bar.ts
+  92:7  warning  'brushChart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/crosshair-stacked-bar/crosshair-stacked-bar.ts
+  35:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/custom-nodes-graph/constants.ts
+  454:67  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/custom-nodes-graph/custom-nodes-graph.svelte
+  18:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<worktree>/packages/shared/examples/custom-nodes-graph/custom-nodes-graph.ts
+  205:7  warning  'customNodesGraphExample' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/dagre-graph/dagre-graph.ts
+  5:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/data-gap-line-chart/data-gap-line-chart.ts
+  33:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/dual-axis-chart/dual-axis-chart.ts
+  24:24  warning  'i' is defined but never used                @typescript-eslint/no-unused-vars
+  29:7   warning  'chartA' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  46:7   warning  'chartB' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/elk-layered-graph/elk-layered-graph.svelte
+  4:28  warning  'LinkDatum' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/elk-layered-graph/elk-layered-graph.ts
+  15:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/force-graph/force-graph.ts
+  11:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/free-brush-scatters/free-brush-scatters.ts
+  16:7  warning  'title' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  17:7  warning  'legend' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  41:7  warning  'minimap' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/github-style-heatmap/github-style-heatmap.ts
+  17:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/github-style-heatmap/index.tsx
+  14:1  warning  This line has a length of 298. Maximum allowed is 200  max-len
+
+<worktree>/packages/shared/examples/hierarchical-chord-diagram/hierarchical-chord-diagram.svelte
+  4:17  warning  'ChordHierarchyNode' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/hierarchical-chord-diagram/hierarchical-chord-diagram.ts
+  7:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/horizontal-stacked-bar-chart/horizontal-stacked-bar-chart-solid.tsx
+  18:9  warning  'isSmallScreen' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/horizontal-stacked-bar-chart/horizontal-stacked-bar-chart.ts
+   1:16  warning  'AxisType' is defined but never used         @typescript-eslint/no-unused-vars
+  13:7   warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  17:7   warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/leaflet-flow-map/leaflet-flow-map.ts
+  36:7  warning  'map' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/multi-line-chart/multi-line-chart.ts
+  15:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  19:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/non-stacked-area-chart/non-stacked-area-chart.ts
+  16:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  19:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/patchy-line-chart/patchy-line-chart.svelte
+  22:37  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/plotband-plotline/plotband-plotline.ts
+  42:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/range-plot/range-plot.ts
+   8:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  43:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/shaped-scatter-plot/shaped-scatter-plot.svelte
+  2:12  warning  'Position' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/shaped-scatter-plot/shaped-scatter-plot.ts
+  12:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  26:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/sized-scatter-plot/sized-scatter-plot.ts
+  14:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  29:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/stacked-area-chart-with-attributes/stacked-area-chart-with-attributes.ts
+  7:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  9:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/stacked-area-chart/stacked-area-chart.ts
+  8:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/step-area-chart/step-area-chart.ts
+  15:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  30:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/sunburst-nested-donut/sunburst-nested-donut.ts
+  9:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/topojson-map/topojson-map.ts
+  34:7  warning  'mapContainer' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  64:7  warning  'gradientLegend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/treemap/treemap.svelte
+  23:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+<worktree>/packages/shared/examples/treemap/treemap.ts
+  22:7  warning  'legend' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  34:7  warning  'chart' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/examples/waterfall-chart/waterfall-chart.ts
+  17:7  warning  'chart' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/integrations/components.ts
+  33:1  warning  This line has a length of 238. Maximum allowed is 200  max-len
+  41:1  warning  This line has a length of 399. Maximum allowed is 200  max-len
+  42:1  warning  This line has a length of 473. Maximum allowed is 200  max-len
+  43:1  warning  This line has a length of 274. Maximum allowed is 200  max-len
+  44:1  warning  This line has a length of 270. Maximum allowed is 200  max-len
+  45:1  warning  This line has a length of 250. Maximum allowed is 200  max-len
+
+<worktree>/packages/shared/integrations/utils.ts
+  169:15  warning  't' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/shared/vite.config.ts
+  284:31  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/solid/index.d.ts
+  0:0  error  Parsing error: ESLint was configured to run on `<tsconfigRootDir>/index.d.ts` using `parserOptions.project`: /users/nikitarokotyan/.codex/worktrees/treemap-safari-and-order/unovis/packages/solid/tsconfig.json
+However, that TSConfig does not include this file. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://typescript-eslint.io/linting/troubleshooting#i-get-errors-telling-me-eslint-was-configured-to-run--however-that-tsconfig-does-not--none-of-those-tsconfigs-include-this-file
+
+<worktree>/packages/solid/index.js
+  0:0  error  Parsing error: ESLint was configured to run on `<tsconfigRootDir>/index.js` using `parserOptions.project`: /users/nikitarokotyan/.codex/worktrees/treemap-safari-and-order/unovis/packages/solid/tsconfig.json
+However, that TSConfig does not include this file. Either:
+- Change ESLint's list of included files to not include this file
+- Change that TSConfig to include this file
+- Create a new TSConfig that includes this file and include it in your parserOptions.project
+See the typescript-eslint docs for more info: https://typescript-eslint.io/linting/troubleshooting#i-get-errors-telling-me-eslint-was-configured-to-run--however-that-tsconfig-does-not--none-of-those-tsconfigs-include-this-file
+
+<worktree>/packages/solid/src/components/annotations/index.tsx
+  14:18  warning  The reactive variable 'props' should be used within JSX, a tracked scope (like createEffect), or inside an event handler function, or else changes will be ignored  solid/reactivity
+
+<worktree>/packages/solid/src/components/circular-bar/index.tsx
+  49:13  error  Unsafe return of an `any` typed value  @typescript-eslint/no-unsafe-return
+
+<worktree>/packages/solid/src/components/plotband/index.tsx
+  14:18  warning  The reactive variable 'props' should be used within JSX, a tracked scope (like createEffect), or inside an event handler function, or else changes will be ignored  solid/reactivity
+
+<worktree>/packages/solid/src/components/plotline/index.tsx
+  14:18  warning  The reactive variable 'props' should be used within JSX, a tracked scope (like createEffect), or inside an event handler function, or else changes will be ignored  solid/reactivity
+
+<worktree>/packages/solid/src/components/tooltip/index.tsx
+  14:18  warning  The reactive variable 'props' should be used within JSX, a tracked scope (like createEffect), or inside an event handler function, or else changes will be ignored  solid/reactivity
+
+<worktree>/packages/solid/src/html-components/bullet-legend/index.tsx
+  13:18  warning  The reactive variable 'props' should be used within JSX, a tracked scope (like createEffect), or inside an event handler function, or else changes will be ignored  solid/reactivity
+
+<worktree>/packages/solid/src/html-components/flow-legend/index.tsx
+  13:18  warning  The reactive variable 'props' should be used within JSX, a tracked scope (like createEffect), or inside an event handler function, or else changes will be ignored  solid/reactivity
+
+<worktree>/packages/solid/src/html-components/rolling-pin-legend/index.tsx
+  13:18  warning  The reactive variable 'props' should be used within JSX, a tracked scope (like createEffect), or inside an event handler function, or else changes will be ignored  solid/reactivity
+
+<worktree>/packages/solid/src/utils/combine-style.ts
+  17:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  17:25  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/ssr/src/env/computed-style.ts
+  164:47  warning  'document' is defined but never used  @typescript-eslint/no-unused-vars
+  188:31  warning  Forbidden non-null assertion          @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/ssr/src/svg/postprocess.ts
+  120:14  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/ssr/test/env.test.ts
+  70:19  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/svelte/autogen/index.ts
+  2:39  error  Unable to resolve path to module '@unovis/shared/integrations/autogen'  import/no-unresolved
+
+<worktree>/packages/svelte/index.js
+  2:15  error  Unable to resolve path to module './dist/index.js'  import/no-unresolved
+
+<worktree>/packages/svelte/src/components/circular-bar/circular-bar.svelte
+  29:18  error  Unsafe return of an `any` typed value  @typescript-eslint/no-unsafe-return
+
+<worktree>/packages/svelte/src/containers/single-container/single-container.svelte
+  8:13  warning  '$$Props' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/svelte/src/containers/xy-container/xy-container.svelte
+  6:13  warning  '$$Props' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/chord-diagram/modules/node.ts
+  22:54  warning  'L' is defined but never used  @typescript-eslint/no-unused-vars
+  75:28  warning  'N' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/crosshair/config.ts
+  96:21  warning  'd' is defined but never used                      @typescript-eslint/no-unused-vars
+  96:31  warning  'x' is defined but never used                      @typescript-eslint/no-unused-vars
+  96:49  warning  'data' is defined but never used                   @typescript-eslint/no-unused-vars
+  96:64  warning  'leftNearestDatumIndex' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/free-brush/index.ts
+  114:1  warning  This line has a length of 204. Maximum allowed is 200  max-len
+
+<worktree>/packages/ts/src/components/graph/index.ts
+  674:25  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+  678:28  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+  683:29  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+  688:25  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/graph/modules/layout.ts
+  522:24  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/graph/modules/node/index.ts
+  264:9  warning  'labelFontSize' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/graph/modules/panel/helper.ts
+   51:3   warning  'config' is defined but never used  @typescript-eslint/no-unused-vars
+  108:17  warning  'i' is defined but never used       @typescript-eslint/no-unused-vars
+  151:44  warning  'N' is defined but never used       @typescript-eslint/no-unused-vars
+  151:70  warning  'L' is defined but never used       @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/graph/modules/panel/index.ts
+  24:30  warning  'N' is defined but never used         @typescript-eslint/no-unused-vars
+  24:51  warning  'L' is defined but never used         @typescript-eslint/no-unused-vars
+  51:28  warning  'i' is defined but never used         @typescript-eslint/no-unused-vars
+  51:31  warning  'elements' is defined but never used  @typescript-eslint/no-unused-vars
+  81:16  warning  'd' is defined but never used         @typescript-eslint/no-unused-vars
+  82:16  warning  'd' is defined but never used         @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/graph/types.ts
+  136:3  warning  'N' is defined but never used  @typescript-eslint/no-unused-vars
+  137:3  warning  'L' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/grouped-bar/index.ts
+  141:27  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+  141:30  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+  141:33  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/leaflet-map/index.ts
+  523:52  warning  'i' is defined but never used                          @typescript-eslint/no-unused-vars
+  536:29  warning  'i' is defined but never used                          @typescript-eslint/no-unused-vars
+  650:1   warning  This line has a length of 214. Maximum allowed is 200  max-len
+  750:31  warning  'el' is defined but never used                         @typescript-eslint/no-unused-vars
+  750:48  warning  'event' is defined but never used                      @typescript-eslint/no-unused-vars
+  782:30  warning  'd' is defined but never used                          @typescript-eslint/no-unused-vars
+  782:57  warning  'event' is defined but never used                      @typescript-eslint/no-unused-vars
+  786:28  warning  'd' is defined but never used                          @typescript-eslint/no-unused-vars
+  786:55  warning  'event' is defined but never used                      @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/leaflet-map/modules/clusterBackground.ts
+  34:40  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/leaflet-map/modules/selectionRing.ts
+  45:26  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+  56:24  warning  'd' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/leaflet-map/modules/utils.ts
+  81:1  warning  This line has a length of 215. Maximum allowed is 200  max-len
+
+<worktree>/packages/ts/src/components/leaflet-map/renderer/leaflet-maplibre-gl.js
+  149:24  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  203:27  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  232:27  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  251:31  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/components/topojson-map/index.ts
+  574:46  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+<worktree>/packages/ts/src/components/topojson-map/utils.ts
+  19:13  warning  's' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/containers/xy-container/index.ts
+  179:13  warning  'config' is assigned a value but never used            @typescript-eslint/no-unused-vars
+  183:1   warning  This line has a length of 207. Maximum allowed is 200  max-len
+
+<worktree>/packages/ts/src/core/component/index.ts
+  131:12  warning  'duration' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/core/container/index.ts
+   90:22  warning  'duration' is defined but never used  @typescript-eslint/no-unused-vars
+  217:48  warning  'entries' is defined but never used   @typescript-eslint/no-unused-vars
+  217:57  warning  'observer' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/ts/src/utils/d3.ts
+  61:70  warning  'PElement' is defined but never used  @typescript-eslint/no-unused-vars
+  61:97  warning  'PDatum' is defined but never used    @typescript-eslint/no-unused-vars
+
+<worktree>/packages/vue/autogen/component.ts
+  15:67  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/vue/autogen/index.ts
+  2:39  error  Unable to resolve path to module '@unovis/shared/integrations/autogen'  import/no-unresolved
+
+<worktree>/packages/vue/index.d.ts
+  1:15  error  Unable to resolve path to module './dist/index'  import/no-unresolved
+
+<worktree>/packages/vue/index.js
+  2:15  error  Unable to resolve path to module './dist/index.js'  import/no-unresolved
+
+<worktree>/packages/website/docs/components/data/index.ts
+  37:32  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/website/docusaurus.config.js
+  250:30  warning  'component' is defined but never used  @typescript-eslint/no-unused-vars
+
+<worktree>/packages/website/minify-build.js
+  6:28  error  Unable to resolve path to module 'terser'  import/no-unresolved
+
+<worktree>/packages/website/svelte.config.js
+  2:28  error  Unable to resolve path to module 'svelte-preprocess'  import/no-unresolved
+
+✖ 379 problems (24 errors, 355 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
