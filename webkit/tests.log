@@ -1,0 +1,81 @@
+
+Running 2 tests using 1 worker
+
+(node:98770) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [webkit] › playwright/tests/treemap-labels.spec.ts:4:7 › keeps the first wrapped treemap line inside its clip in light mode (2.1s)
+(node:98785) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [webkit] › playwright/tests/treemap-labels.spec.ts:4:7 › keeps the first wrapped treemap line inside its clip in dark mode (1.7s)
+
+
+  1) [webkit] › playwright/tests/treemap-labels.spec.ts:4:7 › keeps the first wrapped treemap line inside its clip in light mode 
+
+    Error: Q1: 20
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= -0.5
+    Received:    -15.5
+
+      16 |     expect(firstLines.length).toBeGreaterThan(0)
+      17 |     for (const line of firstLines) {
+    > 18 |       expect(line.top, line.text).toBeGreaterThanOrEqual(-0.5)
+         |                                   ^
+      19 |       expect(line.bottom, line.text).toBeGreaterThan(0)
+      20 |     }
+      21 |
+        at <worktree>/packages/dev/playwright/tests/treemap-labels.spec.ts:18:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../visualizations/2026/10/20/01a15b86-0e73-75d3-9966-a42958f016ab/treemap-webkit/results/treemap-labels-keeps-the-f-5eacb-side-its-clip-in-light-mode-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../visualizations/2026/10/20/01a15b86-0e73-75d3-9966-a42958f016ab/treemap-webkit/results/treemap-labels-keeps-the-f-5eacb-side-its-clip-in-light-mode-webkit/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../visualizations/2026/10/20/01a15b86-0e73-75d3-9966-a42958f016ab/treemap-webkit/results/treemap-labels-keeps-the-f-5eacb-side-its-clip-in-light-mode-webkit/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ../../../../../visualizations/2026/10/20/01a15b86-0e73-75d3-9966-a42958f016ab/treemap-webkit/results/treemap-labels-keeps-the-f-5eacb-side-its-clip-in-light-mode-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [webkit] › playwright/tests/treemap-labels.spec.ts:4:7 › keeps the first wrapped treemap line inside its clip in dark mode 
+
+    Error: Q1: 20
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= -0.5
+    Received:    -15.5
+
+      16 |     expect(firstLines.length).toBeGreaterThan(0)
+      17 |     for (const line of firstLines) {
+    > 18 |       expect(line.top, line.text).toBeGreaterThanOrEqual(-0.5)
+         |                                   ^
+      19 |       expect(line.bottom, line.text).toBeGreaterThan(0)
+      20 |     }
+      21 |
+        at <worktree>/packages/dev/playwright/tests/treemap-labels.spec.ts:18:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../visualizations/2026/10/20/01a15b86-0e73-75d3-9966-a42958f016ab/treemap-webkit/results/treemap-labels-keeps-the-f-a8d68-nside-its-clip-in-dark-mode-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../visualizations/2026/10/20/01a15b86-0e73-75d3-9966-a42958f016ab/treemap-webkit/results/treemap-labels-keeps-the-f-a8d68-nside-its-clip-in-dark-mode-webkit/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../visualizations/2026/10/20/01a15b86-0e73-75d3-9966-a42958f016ab/treemap-webkit/results/treemap-labels-keeps-the-f-a8d68-nside-its-clip-in-dark-mode-webkit/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ../../../../../visualizations/2026/10/20/01a15b86-0e73-75d3-9966-a42958f016ab/treemap-webkit/results/treemap-labels-keeps-the-f-a8d68-nside-its-clip-in-dark-mode-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [webkit] › playwright/tests/treemap-labels.spec.ts:4:7 › keeps the first wrapped treemap line inside its clip in light mode 
+    [webkit] › playwright/tests/treemap-labels.spec.ts:4:7 › keeps the first wrapped treemap line inside its clip in dark mode 
+undefined
+<worktree>/packages/dev:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: playwright test --config /tmp/unovis-treemap-webkit.config.mjs

@@ -3,6 +3,8 @@
 Evidence for [Unovis PR #961](https://github.com/f5/unovis/pull/961), collected on 2026-10-21.
 This branch holds research artifacts separately from the code PR.
 
+**Latest verification: the final code fails both light/dark Playwright WebKit tests. The first wrapped line is visibly clipped. See the WebKit follow-up below.**
+
 ## Final implementation
 
 - Use `dominant-baseline: text-before-edge` in the shared label style for headers, trimmed labels, and wrapped leaf labels.
@@ -100,7 +102,7 @@ Existing offsets and component configuration were retained. Sampling used the lo
 | Changed-file ESLint and commit hooks | Pass |
 | Focused `generate_treemap` recipe tests after snapshot refresh | 3 passed, 42 unrelated tests skipped; the render test covers both fixtures |
 | Repository-wide `pnpm lint` | 24 errors and 355 warnings in untouched dependency/config/generated entrypoints in this isolated checkout |
-| Final browser regression spec in Chromium/Firefox/WebKit | Not executed; current final visual checks used connected Chromium |
+| Final browser regression spec | Playwright WebKit: 2 failed (light/dark); final Chromium/Firefox automated runs not executed |
 | Full final MCP/SSR suite | Not rerun; only the focused Treemap recipe tests were run |
 
 The browser regression spec checks first-line clipping in light/dark themes, header bounds, and the shared computed baseline. It is available to all three configured Playwright projects. The core tests check repeated leaf names in separate parents, identity retention across rerenders, and parent-before-child order after filtering and sorting. Earlier PR evidence includes Chromium/WebKit tests of the superseded `1em` implementation; those results do not verify the final implementation.
@@ -126,7 +128,21 @@ An important tooling correction: shared `node_modules` links pointed into anothe
 
 ## Limits
 
-- The final baseline rule still needs Firefox and WebKit execution, especially because the original clipping bug was in WebKit. Current Chromium screenshots cannot establish that the original WebKit issue is fixed.
+- Final WebKit verification fails: the original first-line clipping remains. Final Firefox execution is still outstanding. Chromium screenshots do not establish cross-engine correctness.
 - Fonts with different ascenders/accents may differ. The chosen 3px compensation is evidence-based for the sampled fonts, not a universal padding equation.
 - Arbitrary existing explicit Y offsets are not automatically migrated.
 - This note records tests already completed; it does not claim future CI is green.
+
+## WebKit follow-up (final source `9df0e368`)
+
+The user authorized Playwright WebKit in place of the installed Safari app, which was inaccessible while the Mac was locked. These results test Playwright's WebKit build; they do not claim an installed Safari test.
+
+Both existing `treemap-labels.spec.ts` tests fail, in light and dark themes. The first `Q1: 20` line has `getBBox().y = -15.5`, versus the test's minimum -0.5. Visual screenshots confirm missing/clipped first lines. All 12 wrapped first lines have negative top bounds in both themes.
+
+The parent text's computed `dominant-baseline` is `text-before-edge`, but the first tspan resolves to `auto` in WebKit, despite its explicit `y=0`. This narrows the likely cause to baseline handling on wrapped spans; it does not establish a fix. No production code was changed during this test.
+
+![WebKit light failure](webkit/webkit-light.png)
+
+![WebKit dark failure](webkit/webkit-dark.png)
+
+[Existing spec output](webkit/tests.log), [per-label computed baselines and bounds](webkit/label-metrics.json). Tests used the final local-source dev server on port 9502, an isolated temporary config selecting only `treemap-labels.spec.ts`, the WebKit project, and a 1400×1000 viewport.
