@@ -3,11 +3,11 @@
 Evidence for [Unovis PR #961](https://github.com/f5/unovis/pull/961), collected on 2026-10-21.
 This branch holds research artifacts separately from the code PR.
 
-**Latest verification: the final code fails both light/dark Playwright WebKit tests. The first wrapped line is visibly clipped. See the WebKit follow-up below.**
+**Latest verification: explicit baseline inheritance on wrapped spans fixes the WebKit clipping. All 6 light/dark tests pass across Chromium, Firefox, and WebKit. See the successful fix follow-up below; the earlier failure is retained as history.**
 
 ## Final implementation
 
-- Use `dominant-baseline: text-before-edge` in the shared label style for headers, trimmed labels, and wrapped leaf labels.
+- Use `dominant-baseline: text-before-edge` in the shared label style for headers, trimmed labels, and wrapped leaf labels. Explicitly apply `dominant-baseline: inherit` to descendant tspans so WebKit uses the same reference.
 - Explicitly position the first wrapped `<tspan>` at `y=0`; subsequent lines retain the existing `1.2em` spacing.
 - Remove the intermediate alphabetic-baseline / `dy=1em` workaround.
 - Change the default `labelOffsetY` from 4 to 1; leave `labelOffsetX` at 4.
@@ -17,8 +17,8 @@ This branch holds research artifacts separately from the code PR.
 
 The source PR has two commits:
 
-- [`3771b667`](https://github.com/rokotyan/unovis/commit/3771b667): core behavior and its unit/snapshot tests.
-- [`9df0e368`](https://github.com/rokotyan/unovis/commit/9df0e368): dev example and browser regression coverage.
+- [`39951ebe`](https://github.com/rokotyan/unovis/commit/39951ebecbcea8d8e349bfc59ed7adf074c1754e): core behavior and its unit/snapshot tests, including explicit span inheritance.
+- [`eebfea91`](https://github.com/rokotyan/unovis/commit/eebfea91d8800f8e0a0f7412db24216d4d8c5640): dev example and cross-browser regression coverage.
 
 ## Spacing semantics: before and after
 
@@ -102,7 +102,7 @@ Existing offsets and component configuration were retained. Sampling used the lo
 | Changed-file ESLint and commit hooks | Pass |
 | Focused `generate_treemap` recipe tests after snapshot refresh | 3 passed, 42 unrelated tests skipped; the render test covers both fixtures |
 | Repository-wide `pnpm lint` | 24 errors and 355 warnings in untouched dependency/config/generated entrypoints in this isolated checkout |
-| Final browser regression spec | Playwright WebKit: 2 failed (light/dark); final Chromium/Firefox automated runs not executed |
+| Final browser regression spec | 6 passed: Chromium, Firefox, and WebKit, each in light/dark |
 | Full final MCP/SSR suite | Not rerun; only the focused Treemap recipe tests were run |
 
 The browser regression spec checks first-line clipping in light/dark themes, header bounds, and the shared computed baseline. It is available to all three configured Playwright projects. The core tests check repeated leaf names in separate parents, identity retention across rerenders, and parent-before-child order after filtering and sorting. Earlier PR evidence includes Chromium/WebKit tests of the superseded `1em` implementation; those results do not verify the final implementation.
@@ -128,7 +128,7 @@ An important tooling correction: shared `node_modules` links pointed into anothe
 
 ## Limits
 
-- Final WebKit verification fails: the original first-line clipping remains. Final Firefox execution is still outstanding. Chromium screenshots do not establish cross-engine correctness.
+- Playwright WebKit verification now passes after explicit span inheritance; the installed Safari app was not tested. Chromium and Firefox pass as well.
 - Fonts with different ascenders/accents may differ. The chosen 3px compensation is evidence-based for the sampled fonts, not a universal padding equation.
 - Arbitrary existing explicit Y offsets are not automatically migrated.
 - This note records tests already completed; it does not claim future CI is green.
@@ -146,3 +146,36 @@ The parent text's computed `dominant-baseline` is `text-before-edge`, but the fi
 ![WebKit dark failure](webkit/webkit-dark.png)
 
 [Existing spec output](webkit/tests.log), [per-label computed baselines and bounds](webkit/label-metrics.json). Tests used the final local-source dev server on port 9502, an isolated temporary config selecting only `treemap-labels.spec.ts`, the WebKit project, and a 1400×1000 viewport.
+
+## Successful WebKit fix follow-up
+
+The smallest production change is scoped to Treemap labels:
+
+```css
+/* Inside the existing label style */
+& tspan {
+  dominant-baseline: inherit;
+}
+```
+
+Without this explicit inheritance WebKit computes the first tspan baseline as `auto`, even when the text parent computes to `text-before-edge`. With it, both compute to `text-before-edge`. The first `Q1` line moves from `getBBox().y=-15.5` to 0. All 12 wrapped first lines are within their clips in light and dark themes. No new measurements, font-specific offsets, or changes to the configured padding are required.
+
+The regression assertion now checks computed baselines on both text parents and every tspan. Firefox serializes the equivalent baseline as `text-top`; the test accepts either spelling and continues to assert actual clipping bounds.
+
+Final checks:
+
+- **6 browser tests pass**, across Chromium, Firefox, and WebKit in light/dark. The initial Firefox launch needed its pinned Playwright browser downloaded; once installed, its clipping checks passed and its computed-name difference was handled in the assertion.
+- **15 core tests pass** across 7 files.
+- **3 focused Treemap SSR checks pass**, using both reviewed snapshots unchanged by this CSS fix.
+- Core/dev builds and changed-file lint pass. Existing repository-wide lint errors remain as previously documented.
+- These are Playwright WebKit checks, not a test of the installed Safari app.
+
+WebKit after the fix:
+
+![WebKit fixed, light](webkit-fix/webkit-light.png)
+
+![WebKit fixed, dark](webkit-fix/webkit-dark.png)
+
+[Firefox light](webkit-fix/firefox-light.png), [Firefox dark](webkit-fix/firefox-dark.png).
+
+Artifacts: [browser test log](webkit-fix/browser-tests.log), [WebKit baseline metrics](webkit-fix/label-metrics.json), [Firefox baseline metrics](webkit-fix/firefox-label-metrics.json), [core tests](webkit-fix/core-tests.log), [SSR tests](webkit-fix/ssr-tests.log), [core build](webkit-fix/core-build.log), [dev build](webkit-fix/dev-build.log).

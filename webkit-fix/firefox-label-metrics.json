@@ -1,0 +1,642 @@
+[
+  {
+    "theme": "light",
+    "labels": [
+      {
+        "text": "Revenue — Annual Subscription: 43",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Revenue — Professional Services: 28",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Operating Expenses — Cloud Infrastructure: 23",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Operating Expenses — Marketing: 15",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Research & Development: 19",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Customer Support: 25",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Enterprise Tier — North America: 43",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Global Ser…arding: 12",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Global Service… Workshops: 10",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Partner Ecosyst…Integrations: 6",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Compute Instance…tion Cluster: 14",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Block Sto…pshots: 9",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Paid Search C…d Keywords: 7",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Content Produ…nical Blog: 5",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "Experimental Feat… — Prototypes: 19",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Priority Tic…Accounts: 13",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Self…e: 6",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Com…: 6",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Q1: 20",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Q2: 15",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Q3: 8",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "New",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Remote Delivery: 10",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "Core Compute: 14",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Snapshot",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "Prototype A:",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Prototype",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "P1 Incidents: 13",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Article",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Moderation",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      }
+    ]
+  },
+  {
+    "theme": "dark",
+    "labels": [
+      {
+        "text": "Revenue — Annual Subscription: 43",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Revenue — Professional Services: 28",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Operating Expenses — Cloud Infrastructure: 23",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Operating Expenses — Marketing: 15",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Research & Development: 19",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Customer Support: 25",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Enterprise Tier — North America: 43",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Global Ser…arding: 12",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Global Service… Workshops: 10",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Partner Ecosyst…Integrations: 6",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Compute Instance…tion Cluster: 14",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Block Sto…pshots: 9",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Paid Search C…d Keywords: 7",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Content Produ…nical Blog: 5",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "Experimental Feat… — Prototypes: 19",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Priority Tic…Accounts: 13",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Self…e: 6",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Com…: 6",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Q1: 20",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Q2: 15",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Q3: 8",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "New",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Remote Delivery: 10",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "Core Compute: 14",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Snapshot",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "",
+        "wrapped": false,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 0
+      },
+      {
+        "text": "Prototype A:",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Prototype",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "P1 Incidents: 13",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 20
+      },
+      {
+        "text": "Article",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      },
+      {
+        "text": "Moderation",
+        "wrapped": true,
+        "parentBaseline": "text-top",
+        "firstLineBaseline": "text-top",
+        "y": "0",
+        "top": 0,
+        "bottom": 15
+      }
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+
+> unovis@1.7.1 test:ts <worktree>
+> cd packages/ts && pnpm test
+
+
+> @unovis/ts@1.7.1 test <worktree>/packages/ts
+> vitest run
+
+
+ RUN  v4.1.11 <worktree>/packages/ts
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+ Test Files  7 passed (7)
+      Tests  15 passed (15)
+   Start at  20:26:16
+   Duration  1.81s (transform 491ms, setup 0ms, import 1.16s, tests 206ms, environment 7.34s)
+
