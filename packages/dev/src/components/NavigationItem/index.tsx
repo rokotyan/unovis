@@ -62,7 +62,7 @@ export const NavigationItem = React.forwardRef<HTMLDivElement, NavigationItemPro
   const search = new URLSearchParams(props.preservedSearch)
   if (!props.isActive) search.delete('config')
   const to = {
-    pathname: `/examples/${encodeURIComponent(props.group)}/${encodeURIComponent(props.title)}`,
+    pathname: `${encodeURIComponent(props.group)}/${encodeURIComponent(props.title)}`,
     search: search.toString() || undefined,
   }
   return (

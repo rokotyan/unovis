@@ -18,11 +18,7 @@ const routes = [
     children: [
       { index: true, element: <ExampleViewer examples={examples}/> },
       {
-        path: 'examples',
-        element: <ExampleViewer examples={examples}/>,
-      },
-      {
-        path: 'examples/:group/:title',
+        path: ':group/:title',
         element: <ExampleViewer examples={examples}/>,
         loader: exampleViewerLoader,
       },

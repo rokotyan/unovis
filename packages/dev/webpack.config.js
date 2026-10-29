@@ -103,7 +103,7 @@ module.exports = {
     static: [
       {
         directory: path.resolve(__dirname, './src/examples'),
-        publicPath: '/examples',
+        publicPath: '/',
       },
     ],
   },
@@ -135,7 +135,7 @@ module.exports = {
       __UNOVIS_HASH_ROUTER__: JSON.stringify(Boolean(process.env.UNOVIS_EXAMPLES_BASE)),
     }),
     new CopyPlugin({
-      patterns: [{ from: 'src/examples', to: 'examples' }],
+      patterns: [{ from: 'src/examples', to: '.' }],
     }),
     isDevelopment && new ReactRefreshWebpackPlugin(),
   ].filter(Boolean),

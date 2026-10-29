@@ -48,7 +48,7 @@ function countExamples (sections: ExampleSectionGroup[]): number {
 
 export function NavigationSideBar (props: NavigationSideBarProps): React.ReactNode {
   const [searchParams, setSearchParams] = useSearchParams()
-  const exampleMatch = useMatch({ path: '/examples/:group/:title', end: true })
+  const exampleMatch = useMatch({ path: ':group/:title', end: true })
   const activeItemRef = useRef<HTMLDivElement>(null)
   const didScrollToActiveRef = useRef(false)
   const inputRef = useRef<HTMLInputElement>(null)

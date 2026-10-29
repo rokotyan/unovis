@@ -37,14 +37,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build
-        run: pnpm run build
+        run: DOCUSAURUS_URL=https://rokotyan.github.io DOCUSAURUS_BASE_URL=/unovis/ pnpm run build
       - name: Build examples app
-        run: UNOVIS_EXAMPLES_BASE=/examples/ pnpm run build:dev
+        run: UNOVIS_EXAMPLES_BASE=/unovis/examples/ pnpm run build:dev
       - run: mv packages/website/build _site
       - run: mkdir -p _site/examples
       - run: cp -R packages/dev/dist/. _site/examples/
       - run: cp _site/index.html _site/404.html
-      - run: echo unovis.dev > _site/CNAME
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 

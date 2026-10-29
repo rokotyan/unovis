@@ -34,7 +34,7 @@ export async function exampleViewerLoader ({ params }: { params: Params }): Prom
 }
 
 async function loadFilePreview (file: string): Promise<string> {
-  const url = `/examples/${file}`
+  const url = new URL(file, document.baseURI).toString()
   const response = await fetch(url, { headers: { range: `bytes=0-${PREVIEW_BYTE_LIMIT - 1}` } })
   const text = await response.text()
 
@@ -73,7 +73,7 @@ export async function loadExampleFiles (exampleGroup: ExampleGroup, exampleTitle
     if (file.endsWith('.svg')) continue
     const content = /\.(json|csv|tsv)$/.test(file)
       ? await loadFilePreview(file)
-      : await fetch(`/examples/${file}`).then(response => response.text())
+      : await fetch(new URL(file, document.baseURI).toString()).then(response => response.text())
     files[file.replace(/.*\//, '')] = { code: content }
   }
   return files
