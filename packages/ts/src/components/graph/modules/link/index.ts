@@ -1,6 +1,6 @@
 import { select, Selection } from 'd3-selection'
 import { range, sum } from 'd3-array'
-import { Transition } from 'd3-transition'
+import { Transition } from '@/utils/transition'
 
 // Utils
 import { throttle, getValue, getNumber, getBoolean, ensureArray } from '@/utils/data'

@@ -6,7 +6,7 @@ import { XYComponentCore } from '@/core/xy-component'
 
 // Utils
 import { isNumber, clamp } from '@/utils/data'
-import { smartTransition } from '@/utils/d3'
+import { smartD3Transition as smartTransition } from '@/utils/d3-transition'
 
 // Types
 import { Arrangement } from '@/types/position'

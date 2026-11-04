@@ -1,5 +1,5 @@
 import { Selection } from 'd3-selection'
-import { Transition } from 'd3-transition'
+import { Transition } from '@/utils/transition'
 import { interpolateNumber } from 'd3-interpolate'
 
 // Utils

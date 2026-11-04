@@ -2,7 +2,7 @@ import { Selection, select } from 'd3-selection'
 import { ribbon } from 'd3-chord'
 import { ScalePower } from 'd3-scale'
 import { areaRadial } from 'd3-shape'
-import { Transition } from 'd3-transition'
+import { Transition } from '@/utils/transition'
 import { interpolatePath } from 'd3-interpolate-path'
 
 // Types

@@ -2,7 +2,7 @@ import { Selection } from 'd3-selection'
 import { brush, BrushBehavior, brushX, brushY, D3BrushEvent } from 'd3-brush'
 import { XYComponentCore } from '@/core/xy-component'
 import { clamp, isArray, isNumber } from '@/utils/data'
-import { smartTransition } from '@/utils/d3'
+import { smartD3Transition as smartTransition } from '@/utils/d3-transition'
 
 // Types
 import { ContinuousScale } from '@/types/scale'
