@@ -3,9 +3,6 @@ import { D3ZoomEvent } from 'd3-zoom'
 // Config
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
-// Utils
-import { getNumber } from '@/utils/data'
-
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
 import { FillPatternType } from '@/styles/patterns'
@@ -179,7 +176,7 @@ export interface SankeyConfigInterface<N extends SankeyInputNode, L extends Sank
   selectedNodeIds?: string[];
 }
 
-export const SankeyDefaultConfig: SankeyConfigInterface<SankeyInputNode, SankeyInputLink> = ({
+export const SankeyDefaultConfig: SankeyConfigInterface<SankeyInputNode, SankeyInputLink> = {
   ...ComponentDefaultConfig,
   heightNormalizationCoeff: 1 / 16,
   zoomScale: undefined,
@@ -240,13 +237,6 @@ export const SankeyDefaultConfig: SankeyConfigInterface<SankeyInputNode, SankeyI
   onZoom: undefined,
   onLayoutCalculated: undefined,
   selectedNodeIds: undefined,
-
-  // https://stackoverflow.com/a/21648197/2040291
-  init: function () {
-    (this as SankeyConfigInterface<SankeyInputNode, SankeyInputLink>).linkSort =
-      (link2, link1) => getNumber(link1, this.linkValue) - getNumber(link2, this.linkValue)
-    delete this.init
-    return this
-  },
-}).init()
+  linkSort: (link2, link1) => link1.value - link2.value,
+}
 
