@@ -2,7 +2,7 @@ import { injectGlobal } from '@/styles/css'
 import { getCSSVariableValue } from '@/utils/misc'
 import { darkThemeCssSelectors } from '@/utils/theme'
 import { UNOVIS_PATTERN_INDEX_ATTR } from '@/utils/pattern'
-import { UnovisText } from '@/types/text'
+import { UnovisText, UnovisTextDefaults } from '@/types/text'
 import { colors, colorsDark, getCSSColorVariable, getLighterColor, getDarkerColor } from './colors'
 import { fills, lines, getPatternVariable } from './patterns'
 
@@ -11,7 +11,7 @@ export const UNOVIS_FONT_WH_RATIO_DEFAULT: number = globalThis?.UNOVIS_FONT_W2H_
 export const UNOVIS_TEXT_SEPARATOR_DEFAULT: string[] = globalThis?.UNOVIS_TEXT_SEPARATOR_DEFAULT || [' ', '-', '.', ',']
 export const UNOVIS_TEXT_HYPHEN_CHARACTER_DEFAULT: string = globalThis?.UNOVIS_TEXT_HYPHEN_CHARACTER_DEFAULT || '-'
 export const UNOVIS_TEXT_DEFAULT_FONT_SIZE: number = globalThis?.UNOVIS_TEXT_DEFAULT_FONT_SIZE || 12
-export const UNOVIS_TEXT_DEFAULT: UnovisText = globalThis?.UNOVIS_TEXT_DEFAULT || {
+export const UNOVIS_TEXT_DEFAULT: UnovisText & UnovisTextDefaults = globalThis?.UNOVIS_TEXT_DEFAULT || {
   // If you change these defaults, don't forget to update the values in the `UnovisText` type in `types/text.ts`
   text: '',
   fontSize: UNOVIS_TEXT_DEFAULT_FONT_SIZE,

@@ -16,12 +16,12 @@ export function stringToHtmlId (str: string): string {
   return (str || '').replace(/\W/g, '_')
 }
 
-export function isStringCSSVariable (s: string): boolean {
+export function isStringCSSVariable (s: string | null | undefined): boolean {
   return isString(s) ? (s.substring(0, 6) === 'var(--') : false
 }
 
 const cssVariableCache = new WeakMap<HTMLElement | SVGElement, Map<string, string>>()
-export function getCSSVariableValue (s: string, context: HTMLElement | SVGElement): string {
+export function getCSSVariableValue (s: string | null | undefined, context: HTMLElement | SVGElement): string {
   if (!isString(s)) return ''
   const variableName = s.substr(4, s.length - 5)
 
@@ -94,7 +94,7 @@ export function rectIntersect (rect1: Rect, rect2: Rect, tolerancePx = 0): boole
   return !(top1 < bottom2 || top2 < bottom1 || right1 < left2 || right2 < left1)
 }
 
-export function getHref<T> (d: T, identifier: StringAccessor<T>): string {
+export function getHref<T> (d: T, identifier: StringAccessor<T>): string | null {
   const id = getString(d, identifier)
   return id ? `url(#${id})` : null
 }
@@ -172,7 +172,7 @@ function evaluateCalcExpression (expression: string, basis: number): number {
   }
 }
 
-export function parseUnit (value: LengthUnit, basis = 0): number {
+export function parseUnit (value: LengthUnit | null | undefined, basis = 0): number {
   if (!value) return 0
   else if (typeof value === 'number') return value
   else if (typeof value === 'string' && value.startsWith('calc(') && value.endsWith(')')) {

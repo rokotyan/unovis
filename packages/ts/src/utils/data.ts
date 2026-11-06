@@ -8,10 +8,12 @@ import { ContinuousScale } from '@/types/scale'
 import { DefaultedKeysOf, NoExtraKeys, WithDefaults } from '@/types/misc'
 
 export const isNumber = <T>(a: T): a is T extends number ? T : never => typeof a === 'number'
+export const isFiniteNumber = (a: unknown): a is number => Number.isFinite(a)
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const isFunction = <T>(a: T): a is T extends Function ? T : never => typeof a === 'function'
 export const isUndefined = <T>(a: T): a is T extends undefined ? T : never => a === undefined
 export const isNil = (a: unknown): a is null | undefined => a == null
+export const isNotNil = <T>(a: T): a is NonNullable<T> => a != null
 export const isString = <T>(a: T): a is T extends string ? T : never => typeof a === 'string'
 export const isArray = <T>(a: T): a is T extends any[] ? T : never => Array.isArray(a)
 export const isObject = <T>(a: T): boolean => (a instanceof Object)
@@ -214,7 +216,7 @@ export function getValue<T, ReturnType> (
   d: T,
   accessor: NumericAccessor<T> | StringAccessor<T> | BooleanAccessor<T> | ColorAccessor<T> | GenericAccessor<ReturnType, T>,
   index?: number
-): ReturnType {
+): ReturnType | null | undefined {
   // eslint-disable-next-line @typescript-eslint/ban-types
   if (isFunction(accessor)) return (accessor as Function)(d, index) as (ReturnType | null | undefined)
   else return accessor as unknown as (ReturnType | null | undefined)
@@ -232,8 +234,8 @@ export function getBoolean<T> (d: T, accessor: BooleanAccessor<T>, i?: number): 
   return getValue<T, boolean>(d, accessor, i)
 }
 
-export function clean<T> (data: T[]): T[] {
-  return data.filter(d => d && !isNumber(d))
+export function clean<T> (data: T[]): NonNullable<T>[] {
+  return data.filter((d): d is NonNullable<T> => !!d && !isNumber(d))
 }
 
 export function clamp (d: number, min: number, max: number): number {
@@ -507,7 +509,7 @@ export function isNumberWithinRange (value: number, range: [number, number]): bo
   return (value >= range[0] && value <= range[1]) || (value >= range[1] && value <= range[0])
 }
 
-export const ensureArray = <T>(value: T | T[] | null): T[] => {
+export const ensureArray = <T>(value: T | T[] | null | undefined): T[] => {
   if (value === null || value === undefined) {
     return []
   }

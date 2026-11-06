@@ -7,7 +7,7 @@ import { XYComponentCore } from '@/core/xy-component'
 import { Tooltip } from '@/components/tooltip'
 
 // Utils
-import { isNumber, isArray, getNumber, clamp, getStackedValues, getNearest2D, isFunction } from '@/utils/data'
+import { isNumber, isArray, getNumber, clamp, getStackedValues, getNearest2D, isFunction, isFiniteNumber } from '@/utils/data'
 import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { getColor } from '@/utils/color'
 
@@ -276,7 +276,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
 
     // When `config.forceShowAt` becomes `undefined`, the crosshair "jumps" to the edge of the chart.
     // This looks off, so we stop further rendering when the `xPx` value is not finite.
-    if (!isFinite(xPx)) return
+    if (!isFiniteNumber(xPx)) return
 
     const circleData = this.hideCirclesOutsideYRange(isFunction(config.getCircles)
       ? config.getCircles(xValue, datamodel.data, this.yScale, leftNearestDatumIndex)
@@ -407,7 +407,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
   }
 
   // We don't want Crosshair to be be taken in to account in domain calculations
-  getYDataExtent (): number[] {
+  getYDataExtent (): (number | undefined)[] {
     return [undefined, undefined]
   }
 
@@ -426,7 +426,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     const yPx = this._yPx
     const circleYs = circles.filter(c => c.opacity !== 0 && isFinite(c.y)).map(c => c.y)
     const y = (yPx === undefined ? circleYs[0] : least(circleYs, cy => Math.abs(cy - yPx))) ?? yPx
-    return isFinite(y) ? clamp(Math.round(y), 0, this._height) : undefined
+    return isFiniteNumber(y) ? clamp(Math.round(y), 0, this._height) : undefined
   }
 
   /** Returns the circles in the order they should be painted. Among the circles that overlap each other

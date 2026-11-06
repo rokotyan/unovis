@@ -13,7 +13,7 @@ import { ComponentCore } from '@/core/component'
 import { MapGraphDataModel } from '@/data-models/map-graph'
 
 // Utils
-import { clamp, getNumber, getString, isNumber } from '@/utils/data'
+import { clamp, getNumber, getString, isNumber, isNotNil } from '@/utils/data'
 import { smartTransition } from '@/utils/d3'
 import { getColor, hexToBrightness } from '@/utils/color'
 import { getCSSVariableValue, isStringCSSVariable } from '@/utils/misc'
@@ -425,7 +425,7 @@ export class TopoJSONMap<
           id: feature.data ? getString(feature.data, config.areaId) : feature.id?.toString(),
         }
       })
-      .filter(Boolean) // Remove null entries
+      .filter(isNotNil) // Remove null entries
       .sort((a, b) => b.area - a.area) // Prioritize larger areas
 
     // D3 data binding with improved key function

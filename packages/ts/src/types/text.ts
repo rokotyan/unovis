@@ -50,7 +50,9 @@ export type UnovisText = {
   wordBreak?: boolean;
 }
 
-export type UnovisWrappedText = UnovisText & {
+export type UnovisTextDefaults = Required<Pick<UnovisText, 'text' | 'fontSize' | 'fontFamily' | 'lineHeight' | 'marginTop' | 'marginBottom'>>
+
+export type UnovisWrappedText = UnovisText & UnovisTextDefaults & {
   // An array of text lines, where each element represents a single line of text.
   _lines: string[];
   // Maximum width of any line of text in this text block

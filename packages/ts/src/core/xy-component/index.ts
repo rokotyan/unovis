@@ -70,7 +70,7 @@ export class XYComponentCore<
     if (scale && (dimension === ScaleDimension.Y)) this._yScale = scale
   }
 
-  getDataExtent (dimension: ScaleDimension, scaleByVisibleData: boolean): number[] {
+  getDataExtent (dimension: ScaleDimension, scaleByVisibleData: boolean): (number | undefined)[] {
     const { config, datamodel } = this
 
     switch (dimension) {
@@ -80,7 +80,7 @@ export class XYComponentCore<
     }
   }
 
-  getXDataExtent (): number[] {
+  getXDataExtent (): (number | undefined)[] {
     const { config, datamodel } = this
     return getExtent(datamodel.data, config.x)
   }
@@ -93,7 +93,7 @@ export class XYComponentCore<
   }
 
   /** Some components override this method to provide custom data extent calculation */
-  getYDataExtent (scaleByVisibleData: boolean): number[] {
+  getYDataExtent (scaleByVisibleData: boolean): (number | undefined)[] {
     const { config, datamodel } = this
 
     const xDomain = this.xScale.domain() as [number, number]

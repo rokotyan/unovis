@@ -325,7 +325,7 @@ export class Timeline<Datum> extends XYComponentCore<Datum, TimelineConfigInterf
 
         // Apply custom label style if it has been provided
         const customStyle = getValue(label, config.rowLabelStyle)
-        if (!isPlainObject(customStyle)) return
+        if (!customStyle || !isPlainObject(customStyle)) return
 
         for (const [prop, value] of Object.entries(customStyle)) {
           labelSelection.style(prop, value)
