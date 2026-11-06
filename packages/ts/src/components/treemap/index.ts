@@ -1,4 +1,4 @@
-import { Selection, select } from 'd3-selection'
+import { select } from 'd3-selection'
 import { hierarchy, HierarchyNode, treemap } from 'd3-hierarchy'
 import { group, max, extent } from 'd3-array'
 import { scaleLinear, scaleThreshold } from 'd3-scale'
@@ -13,7 +13,7 @@ import { SeriesDataModel } from '@/data-models/series'
 // Utils
 import { getColor, brighter, getHexValue, isColorDark } from '@/utils/color'
 import { getString, getNumber, isNumber, isFunction } from '@/utils/data'
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { trimSVGText, wrapSVGText } from '@/utils/text'
 import { cssvar } from '@/utils/style'
 
@@ -35,7 +35,7 @@ export class Treemap<Datum> extends ComponentCore<Datum[], TreemapConfigInterfac
   public config: TreemapResolvedConfig<Datum> = this._defaultConfig
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
-  tiles: Selection<SVGGElement, unknown, SVGGElement, unknown>
+  tiles: TopLevelSelection<SVGGElement>
 
   constructor (config?: TreemapConfigInterface<Datum>) {
     super()

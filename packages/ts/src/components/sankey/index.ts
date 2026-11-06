@@ -15,7 +15,7 @@ import { Spacing } from '@/types/spacing'
 import { VerticalAlign } from '@/types/text'
 
 // Utils
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { clamp, getNumber, getString, groupBy, isNumber, areArraysShallowEqual } from '@/utils/data'
 
 // Config
@@ -61,9 +61,9 @@ export class Sankey<
   private _extendedHeight: number | undefined = undefined
   private _extendedHeightIncreased: number | undefined = undefined
   private _extendedWidthIncreased: number | undefined = undefined
-  private _linksGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private _nodesGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private _backgroundRect: Selection<SVGRectElement, unknown, SVGGElement, unknown>
+  private _linksGroup: TopLevelSelection<SVGGElement>
+  private _nodesGroup: TopLevelSelection<SVGGElement>
+  private _backgroundRect: TopLevelSelection<SVGRectElement>
   private _sankey = sankey<SankeyGraph<N, L>, SankeyNode<N, L>, SankeyLink<N, L>>()
   private _highlightTimeoutId: ReturnType<typeof setTimeout> | null = null
   private _highlightActive = false

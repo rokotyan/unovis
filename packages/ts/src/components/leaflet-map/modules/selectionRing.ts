@@ -1,5 +1,5 @@
 import type L from 'leaflet'
-import { Selection } from 'd3-selection'
+import { BaseType, Selection } from 'd3-selection'
 
 // Types
 import { GenericDataRecord } from '@/types/data'
@@ -18,14 +18,14 @@ import * as s from '../style'
 
 
 export function createNodeSelectionRing (
-  selection: Selection<SVGGElement, unknown, SVGElement, undefined>
+  selection: Selection<SVGGElement, unknown, BaseType, unknown>
 ): void {
   selection.datum({ _zIndex: 3 })
   selection.append('path').attr('class', s.pointSelection)
 }
 
 export function updateNodeSelectionRing<D extends GenericDataRecord> (
-  selection: Selection<SVGGElement, unknown, SVGElement, undefined>,
+  selection: Selection<SVGGElement, unknown, BaseType, unknown>,
   selectedPoint: LeafletMapPoint<D>,
   pointData: LeafletMapPoint<D>[],
   config: LeafletMapResolvedConfig<D>,

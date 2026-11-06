@@ -68,3 +68,5 @@ export interface VisAttrStylePatch<GElement extends BaseType, Datum, PElement ex
 export type Selection$Transition<Element extends BaseType, Datum, ParentElement extends BaseType, ParentDatum> =
   (Transition<Element, Datum, ParentElement, ParentDatum> | Selection<Element, Datum, ParentElement, ParentDatum>)
   & VisAttrStylePatch<Element, Datum, ParentElement, ParentDatum>
+
+export type TopLevelSelection<Element extends BaseType, Datum = unknown> = Selection<Element, Datum, null, undefined>

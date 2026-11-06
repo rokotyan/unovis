@@ -1,4 +1,4 @@
-import { Selection, pointer } from 'd3-selection'
+import { BaseType, Selection, pointer } from 'd3-selection'
 import { easeLinear } from 'd3-ease'
 import { least, bisectLeft, bisectRight } from 'd3-array'
 
@@ -8,7 +8,7 @@ import { Tooltip } from '@/components/tooltip'
 
 // Utils
 import { isNumber, isArray, getNumber, clamp, getStackedValues, getNearest2D, isFunction } from '@/utils/data'
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { getColor } from '@/utils/color'
 
 // Types
@@ -32,9 +32,9 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
   clippable = false // The Crosshair is not clipped, so its circles can overflow into the container margins. See XYContainer
   protected _defaultConfig = CrosshairDefaultConfig as CrosshairResolvedConfig<Datum>
   public config: CrosshairResolvedConfig<Datum> = this._defaultConfig
-  container: Selection<SVGSVGElement, any, SVGSVGElement, any>
-  line: Selection<SVGLineElement, any, SVGElement, any>
-  lineHorizontal: Selection<SVGLineElement, any, SVGElement, any>
+  container: Selection<SVGSVGElement, any, BaseType, any>
+  line: TopLevelSelection<SVGLineElement, any>
+  lineHorizontal: TopLevelSelection<SVGLineElement, any>
   private _xPx: number | undefined = undefined
   private _yPx: number | undefined = undefined
   private _mouseEvent: MouseEvent | undefined = undefined
@@ -127,7 +127,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     }
   }
 
-  setContainer (containerSvg: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>): void {
+  setContainer (containerSvg: Selection<SVGSVGElement, unknown, BaseType, unknown>): void {
     if (this.container === containerSvg) return
 
     this.container = containerSvg

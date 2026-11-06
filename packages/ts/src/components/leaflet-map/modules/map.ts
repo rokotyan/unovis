@@ -105,7 +105,7 @@ export async function setupMap<T extends GenericDataRecord> (mapContainer: HTMLE
   leaflet: L.Map;
   layer: L.Layer;
   svgOverlay: Selection<SVGSVGElement, unknown, null, undefined>;
-  svgGroup: Selection<SVGGElement, unknown, SVGElement, undefined>;
+  svgGroup: Selection<SVGGElement, unknown, null, undefined>;
 }> {
   const { style, renderer, topoJSONLayer } = config
   const leaflet = await import('leaflet')

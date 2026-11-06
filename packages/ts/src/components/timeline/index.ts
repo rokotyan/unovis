@@ -20,7 +20,7 @@ import {
   isFunction,
   areArraysShallowEqual,
 } from '@/utils/data'
-import { smartTransition, Selection$Transition } from '@/utils/d3'
+import { smartTransition, Selection$Transition, TopLevelSelection } from '@/utils/d3'
 import { getColor } from '@/utils/color'
 import { getPattern, getFillPatternValue, UNOVIS_PATTERN_INDEX_ATTR } from '@/utils/pattern'
 import { textAlignToAnchor, trimSVGText } from '@/utils/text'
@@ -68,15 +68,15 @@ export class Timeline<Datum> extends XYComponentCore<Datum, TimelineConfigInterf
     },
   }
 
-  private _background: Selection<SVGRectElement, unknown, SVGGElement, unknown>
-  private _rowsGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private _arrowsGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private _linesGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private _labelsGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private _rowIconsGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private _scrollBarGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private _scrollBarBackground: Selection<SVGRectElement, unknown, SVGGElement, unknown>
-  private _scrollBarHandle: Selection<SVGRectElement, unknown, SVGGElement, unknown>
+  private _background: TopLevelSelection<SVGRectElement>
+  private _rowsGroup: TopLevelSelection<SVGGElement>
+  private _arrowsGroup: TopLevelSelection<SVGGElement>
+  private _linesGroup: TopLevelSelection<SVGGElement>
+  private _labelsGroup: TopLevelSelection<SVGGElement>
+  private _rowIconsGroup: TopLevelSelection<SVGGElement>
+  private _scrollBarGroup: TopLevelSelection<SVGGElement>
+  private _scrollBarBackground: TopLevelSelection<SVGRectElement>
+  private _scrollBarHandle: TopLevelSelection<SVGRectElement>
   private _scrollBarWidth = 5
   private _scrollDistance = 0
   private _scrollBarMargin = 5

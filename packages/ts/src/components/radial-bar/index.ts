@@ -1,4 +1,3 @@
-import { Selection } from 'd3-selection'
 import { Transition } from 'd3-transition'
 import { interpolate } from 'd3-interpolate'
 import { arc } from 'd3-shape'
@@ -9,7 +8,7 @@ import { ComponentCore } from '@/core/component'
 import { SeriesDataModel } from '@/data-models/series'
 
 // Utils
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { isNumber, isArray, clamp, getNumber } from '@/utils/data'
 import { getCSSVariableValueInPixels } from '@/utils/misc'
 import { cssvar } from '@/utils/style'
@@ -41,10 +40,10 @@ export class RadialBar<Datum> extends ComponentCore<Datum[], RadialBarConfigInte
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 
-  trackGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  barGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  centralLabel: Selection<SVGTextElement, unknown, SVGGElement, unknown>
-  centralSubLabel: Selection<SVGTextElement, unknown, SVGGElement, unknown>
+  trackGroup: TopLevelSelection<SVGGElement>
+  barGroup: TopLevelSelection<SVGGElement>
+  centralLabel: TopLevelSelection<SVGTextElement>
+  centralSubLabel: TopLevelSelection<SVGTextElement>
   arcGen = arc<RadialBarArcAnimState>()
 
   events = {

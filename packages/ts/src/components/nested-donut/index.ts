@@ -1,4 +1,3 @@
-import { Selection } from 'd3-selection'
 import { Transition } from 'd3-transition'
 import { interpolate } from 'd3-interpolate'
 import { arc, pie } from 'd3-shape'
@@ -16,7 +15,7 @@ import { VerticalAlign } from '@/types/text'
 
 // Utils
 import { getColor } from '@/utils/color'
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { getNumber, getString, getValue, isNumber, isNumberWithinRange, isString, merge } from '@/utils/data'
 import { getPixelValue, parseUnit } from '@/utils/misc'
 import { cssvar } from '@/utils/style'
@@ -52,11 +51,11 @@ NestedDonutConfigInterface<Datum>
   public config: NestedDonutResolvedConfig<Datum> = this._defaultConfig
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 
-  arcBackground: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  arcGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  centralBackground: Selection<SVGCircleElement, unknown, SVGGElement, unknown>
-  centralLabel: Selection<SVGTextElement, unknown, SVGGElement, unknown>
-  centralSubLabel: Selection<SVGTextElement, unknown, SVGGElement, unknown>
+  arcBackground: TopLevelSelection<SVGGElement>
+  arcGroup: TopLevelSelection<SVGGElement>
+  centralBackground: TopLevelSelection<SVGCircleElement>
+  centralLabel: TopLevelSelection<SVGTextElement>
+  centralSubLabel: TopLevelSelection<SVGTextElement>
 
   arcGen = arc<NestedDonutArcAnimState>()
   colorScale: ScaleLinear<string, string> = scaleLinear()

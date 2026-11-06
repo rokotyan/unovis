@@ -1,4 +1,4 @@
-import { Selection } from 'd3-selection'
+import { BaseType, Selection } from 'd3-selection'
 import type L from 'leaflet'
 
 // Types
@@ -14,13 +14,13 @@ import { LeafletMapPointShape, LeafletMapExpandedCluster } from '../types'
 // Config Interface
 import { LeafletMapResolvedConfig } from '../config'
 
-export function createBackgroundNode (selection: Selection<SVGGElement, unknown, SVGElement, undefined>): void {
+export function createBackgroundNode (selection: Selection<SVGGElement, unknown, BaseType, unknown>): void {
   selection.datum({ _zIndex: 1 })
   selection.append('path')
 }
 
 export function updateBackgroundNode<D extends GenericDataRecord> (
-  selection: Selection<SVGGElement, unknown, SVGElement, undefined>,
+  selection: Selection<SVGGElement, unknown, BaseType, unknown>,
   expandedCluster: LeafletMapExpandedCluster<D>,
   config: LeafletMapResolvedConfig<D>,
   leafletMap: L.Map,

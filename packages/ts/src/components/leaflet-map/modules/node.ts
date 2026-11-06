@@ -7,7 +7,7 @@ import { Rect } from '@/types/misc'
 import { GenericDataRecord } from '@/types/data'
 
 // Utils
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { estimateTextSize, trimStringMiddle } from '@/utils/text'
 import { clamp, getString } from '@/utils/data'
 import { getCSSVariableValueInPixels, rectIntersect } from '@/utils/misc'
@@ -60,9 +60,9 @@ export function updateNodes<D extends GenericDataRecord> (
 ): void {
   selection.each((d, i, elements) => {
     const group = select(elements[i])
-    const node: Selection<SVGPathElement, any, SVGGElement, any> = group.select(`.${s.pointPath}`)
-    const innerLabel: Selection<SVGTextElement, any, SVGElement, any> = group.select(`.${s.innerLabel}`)
-    const bottomLabel: Selection<SVGTextElement, any, SVGElement, any> = group.select(`.${s.bottomLabel}`)
+    const node: TopLevelSelection<SVGPathElement, any> = group.select(`.${s.pointPath}`)
+    const innerLabel: TopLevelSelection<SVGTextElement, any> = group.select(`.${s.innerLabel}`)
+    const bottomLabel: TopLevelSelection<SVGTextElement, any> = group.select(`.${s.bottomLabel}`)
 
     const { x, y } = getPointPos(d, leafletMap)
     const donutData = d.donutData
@@ -147,7 +147,7 @@ export function collideLabels<D extends GenericDataRecord> (
   selection.each((datum1: LeafletMapPoint<D>, i, elements: ArrayLike<LabelSVGGElement>) => {
     const group1LabelElement = elements[i]
     const group1 = select(group1LabelElement)
-    const label1: Selection<SVGTextElement, any, SVGElement, any> = group1.select(`.${s.bottomLabel}`)
+    const label1: TopLevelSelection<SVGTextElement, any> = group1.select(`.${s.bottomLabel}`)
     group1LabelElement.labelVisible = true
 
     // Calculate bounding rect of point's bottom label
@@ -165,7 +165,7 @@ export function collideLabels<D extends GenericDataRecord> (
       if (i === j) continue
       const group2LabelElement = elements[j]
       const group2 = select(group2LabelElement)
-      const label2: Selection<SVGTextElement, any, SVGElement, any> = group2.select(`.${s.bottomLabel}`)
+      const label2: TopLevelSelection<SVGTextElement, any> = group2.select(`.${s.bottomLabel}`)
       const datum2 = group2.datum() as LeafletMapPoint<D>
 
       // Calculate bounding rect of the second point's circle

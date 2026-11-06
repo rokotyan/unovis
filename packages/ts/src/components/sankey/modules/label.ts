@@ -1,4 +1,4 @@
-import { Selection } from 'd3-selection'
+import { BaseType, Selection } from 'd3-selection'
 
 // Utils
 import { estimateTextSize, trimSVGText, wrapSVGText } from '@/utils/text'
@@ -201,7 +201,7 @@ export function getLabelMaxWidth<N extends SankeyInputNode, L extends SankeyInpu
 }
 
 export function renderLabel<N extends SankeyInputNode, L extends SankeyInputLink> (
-  labelGroup: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, any>,
+  labelGroup: Selection<SVGGElement, SankeyNode<N, L>, BaseType, unknown>,
   d: SankeyNode<N, L>,
   config: SankeyResolvedConfig<N, L>,
   width: number,
@@ -211,9 +211,9 @@ export function renderLabel<N extends SankeyInputNode, L extends SankeyInputLink
   bleed: Required<Spacing>,
   forceExpand = false
 ): { x: number; y: number; width: number; height: number; layer: number; selection: any; hidden?: boolean } {
-  const labelTextSelection: Selection<SVGTextElement, SankeyNode<N, L>, SVGGElement, SankeyNode<N, L>> = labelGroup.select(`.${s.label}`)
+  const labelTextSelection: Selection<SVGTextElement, SankeyNode<N, L>, BaseType, unknown> = labelGroup.select(`.${s.label}`)
   const labelShowBackground = config.labelBackground || forceExpand
-  const sublabelTextSelection: Selection<SVGTextElement, SankeyNode<N, L>, SVGGElement, SankeyNode<N, L>> = labelGroup.select(`.${s.sublabel}`)
+  const sublabelTextSelection: Selection<SVGTextElement, SankeyNode<N, L>, BaseType, unknown> = labelGroup.select(`.${s.sublabel}`)
   const labelPadding = labelShowBackground ? SANKEY_LABEL_BLOCK_PADDING : 0
   const isSublabelInline = config.subLabelPlacement === SankeySubLabelPlacement.Inline
   const separator = config.labelForceWordBreak ? '' : config.labelTextSeparator

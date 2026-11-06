@@ -1,4 +1,3 @@
-import { Selection } from 'd3-selection'
 import { max } from 'd3-array'
 
 // Core
@@ -6,7 +5,7 @@ import { ComponentCore } from '@/core/component'
 import { SeriesDataModel } from '@/data-models/series'
 
 // Utils
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { isNumber, isArray, clamp, getNumber, getString } from '@/utils/data'
 import { getArcUnitBoundingBox } from '@/components/radial-bar/utils'
 
@@ -46,9 +45,9 @@ export class CircularBar<Datum> extends ComponentCore<Datum[], CircularBarConfig
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 
-  backgroundGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  barGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  iconGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
+  backgroundGroup: TopLevelSelection<SVGGElement>
+  barGroup: TopLevelSelection<SVGGElement>
+  iconGroup: TopLevelSelection<SVGGElement>
 
   events = {
   }

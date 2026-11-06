@@ -5,7 +5,7 @@ import { Position } from '@/types/position'
 import { Symbol, SymbolType } from '@/types/symbol'
 
 // Utils
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { UNOVIS_PATTERN_INDEX_ATTR } from '@/utils/pattern'
 import { getCSSVariableValue, isStringCSSVariable } from '@/utils/misc'
 import { hexToBrightness } from '@/utils/color'
@@ -48,7 +48,7 @@ export function updatePoints<Datum> (
   if (!duration) selection.selectAll<SVGElement, unknown>('path, text').interrupt()
 
   selection.each((d, index, elements) => {
-    const group: Selection<SVGGElement, ScatterPoint<Datum>, SVGGElement, ScatterPoint<Datum>[]> = select(elements[index])
+    const group: TopLevelSelection<SVGGElement, ScatterPoint<Datum>> = select(elements[index])
     const path = group.select('path')
 
     // Shape

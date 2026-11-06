@@ -1,4 +1,4 @@
-import { Selection, select } from 'd3-selection'
+import { BaseType, Selection, select } from 'd3-selection'
 
 // Types
 import { NumericAccessor, StringAccessor } from '@/types/accessor'
@@ -17,7 +17,7 @@ import { GraphNodeShape } from '../types'
 import { getNodeSize } from './node/helper'
 
 export function appendShape<T> (
-  selection: Selection<SVGGElement, T, SVGGElement, unknown>,
+  selection: Selection<SVGGElement, T, BaseType, unknown>,
   shapeAccessor: StringAccessor<T>,
   shapeSelector: string,
   customShapeSelector: string,
@@ -59,7 +59,7 @@ export function appendShape<T> (
 }
 
 export function updateShape<T> (
-  selection: Selection<SVGGElement, T, SVGGElement, unknown>,
+  selection: Selection<SVGGElement, T, BaseType, unknown>,
   shape: StringAccessor<T>,
   size: NumericAccessor<T>,
   index: number

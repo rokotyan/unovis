@@ -1,4 +1,3 @@
-import { Selection } from 'd3-selection'
 import { Transition } from 'd3-transition'
 import { interpolate } from 'd3-interpolate'
 import { pie, arc } from 'd3-shape'
@@ -8,7 +7,7 @@ import { ComponentCore } from '@/core/component'
 import { SeriesDataModel } from '@/data-models/series'
 
 // Utils
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { isNumber, clamp, getNumber, getString } from '@/utils/data'
 import { wrapSVGText } from '@/utils/text'
 
@@ -49,11 +48,11 @@ export class Donut<Datum> extends ComponentCore<Datum[], DonutConfigInterface<Da
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 
-  arcBackground: Selection<SVGPathElement, unknown, SVGGElement, unknown>
-  arcGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  iconGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  centralLabel: Selection<SVGTextElement, unknown, SVGGElement, unknown>
-  centralSubLabel: Selection<SVGTextElement, unknown, SVGGElement, unknown>
+  arcBackground: TopLevelSelection<SVGPathElement>
+  arcGroup: TopLevelSelection<SVGGElement>
+  iconGroup: TopLevelSelection<SVGGElement>
+  centralLabel: TopLevelSelection<SVGTextElement>
+  centralSubLabel: TopLevelSelection<SVGTextElement>
   arcGen = arc<DonutArcAnimState>()
 
   events = {

@@ -1,4 +1,4 @@
-import { select, Selection } from 'd3-selection'
+import { BaseType, select, Selection } from 'd3-selection'
 import { Transition } from 'd3-transition'
 import { arc } from 'd3-shape'
 
@@ -10,7 +10,7 @@ import { BooleanAccessor, GenericAccessor, NumericAccessor, StringAccessor } fro
 // Utils
 import { renderTextToSvgTextElement, trimString } from '@/utils/text'
 import { polygon } from '@/utils/path'
-import { smartTransition, Selection$Transition } from '@/utils/d3'
+import { smartTransition, Selection$Transition, TopLevelSelection } from '@/utils/d3'
 import { getBoolean, getNumber, getString, getValue, throttle } from '@/utils/data'
 import { getColor } from '@/utils/color'
 import { isStringSvg } from '@/utils/svg'
@@ -101,7 +101,7 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
 
 /** Updates the nodes partially according to their `_state` */
 export function updateNodesPartial<N extends GraphInputNode, L extends GraphInputLink> (
-  selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
+  selection: Selection<SVGGElement, GraphNode<N, L>, BaseType, unknown>,
   config: GraphResolvedConfig<N, L>,
   duration: number,
   scale = 1
@@ -117,7 +117,7 @@ export function updateNodesPartial<N extends GraphInputNode, L extends GraphInpu
   } else {
     // Default rendering
     selection.each((d, i, elements) => {
-      const group: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = select(elements[i])
+      const group: TopLevelSelection<SVGGElement, GraphNode<N, L>> = select(elements[i])
       const isGreyout = getBoolean(d, nodeDisabled, d._index) || d._state.greyout
 
       group.classed(nodeSelectors.greyedOutNode, isGreyout && !d._state.brushed)
@@ -135,10 +135,10 @@ export function updateNodesPartial<N extends GraphInputNode, L extends GraphInpu
   }
 }
 
-export function updateNodePositions<N extends GraphInputNode, L extends GraphInputLink> (
-  selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
+export function updateNodePositions<N extends GraphInputNode, L extends GraphInputLink, P extends BaseType> (
+  selection: Selection<SVGGElement, GraphNode<N, L>, P, unknown>,
   duration: number
-): Selection$Transition<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> {
+): Selection$Transition<SVGGElement, GraphNode<N, L>, P, unknown> {
   return smartTransition(selection, duration)
     .attr('transform', d => `translate(${getX(d)}, ${getY(d)}) scale(1)`)
     .attr('opacity', 1)
@@ -182,7 +182,7 @@ function getNodeLabelTextBlock<N extends GraphInputNode, L extends GraphInputLin
 
 /** Renders the node label and sub-label as text blocks into the label's `<text>` element */
 function renderNodeLabels<N extends GraphInputNode, L extends GraphInputLink> (
-  label: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
+  label: Selection<SVGGElement, GraphNode<N, L>, BaseType, unknown>,
   d: GraphNode<N, L>,
   config: GraphResolvedConfig<N, L>,
   labelFontSize: number,
@@ -218,12 +218,12 @@ function renderNodeLabels<N extends GraphInputNode, L extends GraphInputLink> (
   else labelTextSelection.text('')
 }
 
-export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> (
-  selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
+export function updateNodes<N extends GraphInputNode, L extends GraphInputLink, P extends BaseType> (
+  selection: Selection<SVGGElement, GraphNode<N, L>, P, unknown>,
   config: GraphResolvedConfig<N, L>,
   duration: number,
   scale = 1
-): Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> | Transition<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> {
+): Selection<SVGGElement, GraphNode<N, L>, P, unknown> | Transition<SVGGElement, GraphNode<N, L>, P, unknown> {
   const {
     nodeGaugeAnimDuration, nodeStrokeWidth, nodeShape, nodeSize, nodeGaugeValue, nodeGaugeFill,
     nodeIcon, nodeIconSize,
@@ -262,8 +262,8 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
   // Update nodes themselves
   selection.each((d, i, elements) => {
     const groupElement = elements[i] as GraphNodeSVGGElement
-    const group: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = select(groupElement)
-    const node: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> = group.select(`.${nodeSelectors.node}`)
+    const group: TopLevelSelection<SVGGElement, GraphNode<N, L>> = select(groupElement)
+    const node: TopLevelSelection<SVGGElement, GraphNode<N, L>> = group.select(`.${nodeSelectors.node}`)
     const nodeArc = group.select<GraphNodeAnimatedElement<SVGElement>>(`.${nodeSelectors.nodeGauge}`)
     const icon = group.select<SVGTextElement>(`.${nodeSelectors.nodeIcon}`)
     const sideLabelsGroup = group.select<SVGGElement>(`.${nodeSelectors.sideLabelsGroup}`)
@@ -451,8 +451,8 @@ function setLabelBackgroundRect<N extends GraphInputNode, L extends GraphInputLi
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>
 ): void {
   selection.each((d, i, elements) => {
-    const group: Selection<SVGGElement, N, SVGGElement, N> = select(elements[i])
-    const label: Selection<SVGGElement, N, SVGGElement, N> = group.select(`.${nodeSelectors.label}`)
+    const group: TopLevelSelection<SVGGElement, GraphNode<N, L>> = select(elements[i])
+    const label: TopLevelSelection<SVGGElement, GraphNode<N, L>> = group.select(`.${nodeSelectors.label}`)
     setLabelRect(label, nodeSelectors.labelText)
   })
 }

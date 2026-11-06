@@ -1,11 +1,11 @@
-import { select, Selection } from 'd3-selection'
+import { BaseType, select, Selection } from 'd3-selection'
 import { max } from 'd3-array'
 
 // Utils
 import { getColor } from '@/utils/color'
 import { getPattern, getFillPatternValue } from '@/utils/pattern'
 import { getString, isNumber } from '@/utils/data'
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 
 // Types
 import { Spacing } from '@/types/spacing'
@@ -94,7 +94,7 @@ function getNodeXPos<N extends SankeyInputNode, L extends SankeyInputLink> (
 }
 
 function getXDistanceToNextNode<N extends SankeyInputNode, L extends SankeyInputLink> (
-  sel: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
+  sel: Selection<SVGGElement, SankeyNode<N, L>, BaseType, unknown>,
   datum: SankeyNode<N, L>,
   data: SankeyNode<N, L>[], // Assuming that the nodes are sorted by the x position for performance reasons
   config: SankeyResolvedConfig<N, L>,
@@ -196,7 +196,7 @@ export function renderNodeLabels<N extends SankeyInputNode, L extends SankeyInpu
   // After rendering Label return a BBox so we can do intersection detection and hide some of them
   const data = sel.data()
   const labelGroupBBoxes = labelGroupEls.map(g => {
-    const gSelection: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown> = select(g)
+    const gSelection: TopLevelSelection<SVGGElement, SankeyNode<N, L>> = select(g)
     const datum = gSelection.datum()
     const spacing = config.labelMaxWidthTakeAvailableSpace
       ? getXDistanceToNextNode(gSelection, datum, data, config, width)
@@ -268,7 +268,7 @@ export function removeNodes<N extends SankeyInputNode, L extends SankeyInputLink
 export function onNodeMouseOver<N extends SankeyInputNode, L extends SankeyInputLink> (
   d: SankeyNode<N, L>,
   data: SankeyNode<N, L>[],
-  nodeSelection: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
+  nodeSelection: Selection<SVGGElement, SankeyNode<N, L>, BaseType, unknown>,
   config: SankeyResolvedConfig<N, L>,
   width: number,
   layerSpacing: number,
@@ -291,7 +291,7 @@ export function onNodeMouseOver<N extends SankeyInputNode, L extends SankeyInput
 export function onNodeMouseOut<N extends SankeyInputNode, L extends SankeyInputLink> (
   d: SankeyNode<N, L>,
   data: SankeyNode<N, L>[],
-  nodeSelection: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
+  nodeSelection: Selection<SVGGElement, SankeyNode<N, L>, BaseType, unknown>,
   config: SankeyResolvedConfig<N, L>,
   width: number,
   layerSpacing: number,

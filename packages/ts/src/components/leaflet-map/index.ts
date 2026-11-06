@@ -17,6 +17,7 @@ import { GenericDataRecord } from '@/types/data'
 // Utils
 import { clamp, isNil, getNumber, getString, isString } from '@/utils/data'
 import { isDarkThemeEnabled } from '@/utils/style'
+import { TopLevelSelection } from '@/utils/d3'
 import { constraintMapViewThrottled } from './renderer/mapboxgl-utils'
 import {
   projectPoint,
@@ -73,7 +74,7 @@ export class LeafletMap<Datum extends GenericDataRecord> extends ComponentCore<D
     leaflet: L.Map;
     layer: L.Layer;
     svgOverlay: Selection<SVGSVGElement, unknown, null, undefined>;
-    svgGroup: Selection<SVGGElement, unknown, SVGElement, undefined>;
+    svgGroup: Selection<SVGGElement, unknown, null, undefined>;
   }
 
   private _clusterIndex: Supercluster<Datum>
@@ -88,9 +89,9 @@ export class LeafletMap<Datum extends GenericDataRecord> extends ComponentCore<D
   private _externallySelectedPoint: LeafletMapPoint<Datum> | PointFeature<Datum> | null = null
   private _zoomingToExternallySelectedPoint = false
   private _forceExpandCluster = false
-  private _pointGroup: Selection<SVGGElement, unknown, SVGElement, undefined>
-  private _pointSelectionRing: Selection<SVGGElement, unknown, SVGElement, undefined>
-  private _clusterBackground: Selection<SVGGElement, unknown, SVGElement, undefined>
+  private _pointGroup: TopLevelSelection<SVGGElement>
+  private _pointSelectionRing: TopLevelSelection<SVGGElement>
+  private _clusterBackground: TopLevelSelection<SVGGElement>
   private _clusterBackgroundRadius = 0
   private _selectedPoint: LeafletMapPoint<Datum> = null
   private _currentZoomLevel: number | null = null

@@ -1,8 +1,7 @@
-import { Selection } from 'd3-selection'
 import { brush, BrushBehavior, brushX, brushY, D3BrushEvent } from 'd3-brush'
 import { XYComponentCore } from '@/core/xy-component'
 import { clamp, isArray, isNumber } from '@/utils/data'
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 
 // Types
 import { ContinuousScale } from '@/types/scale'
@@ -19,7 +18,7 @@ export class FreeBrush<Datum> extends XYComponentCore<Datum, FreeBrushConfigInte
   protected _defaultConfig = FreeBrushDefaultConfig as FreeBrushResolvedConfig<Datum>
   public config: FreeBrushResolvedConfig<Datum> = this._defaultConfig
 
-  private brush: Selection<SVGGElement, unknown, SVGGElement, unknown>
+  private brush: TopLevelSelection<SVGGElement>
   private brushBehaviour: BrushBehavior<unknown>
   private _firstRender = true
 

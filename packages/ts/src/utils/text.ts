@@ -1,4 +1,4 @@
-import { Selection } from 'd3-selection'
+import { BaseType, Selection } from 'd3-selection'
 import { sum } from 'd3-array'
 
 // Types
@@ -133,12 +133,12 @@ export function splitString (text: string, separators = [' ']): string[] {
 
 /**
  * Wraps an SVG text element to fit within the specified width.
- * @param {Selection<SVGTextElement, any, SVGElement, any>} textElement - The SVG text element to be wrapped.
+ * @param {Selection<SVGTextElement, any, BaseType, any>} textElement - The SVG text element to be wrapped.
  * @param {number} width - The maximum allowed width for the text element.
  * @param {(string | string[])} [separator=[' ', '-', '.', ',']] - The separator(s) to be used for wrapping.
  */
 export function wrapSVGText (
-  textElement: Selection<SVGTextElement, any, SVGElement, any>,
+  textElement: Selection<SVGTextElement, any, BaseType, any>,
   width: number,
   separator: string | string[] = [' ', '-', '.', ',']
 ): void {
@@ -176,7 +176,7 @@ export function wrapSVGText (
 
 /**
  * Trims an SVG text element based on the specified max width, trim type, and other options.
- * @param {Selection<SVGTextElement, any, SVGElement, any>} svgTextSelection - The D3 selection of the SVG text element to be trimmed.
+ * @param {Selection<SVGTextElement, any, BaseType, any>} svgTextSelection - The D3 selection of the SVG text element to be trimmed.
  * @param {number} [maxWidth=50] - The maximum width of the text element.
  * @param {TrimMode} [trimType=TrimMode.Middle] - The type of trim (start, middle, or end).
  * @param {boolean} [fastMode=false] - Whether to use a fast estimation method for text length calculation.
@@ -185,7 +185,7 @@ export function wrapSVGText (
  * @returns {boolean} True if the text was trimmed, false otherwise.
  */
 export function trimSVGText (
-  svgTextSelection: Selection<SVGTextElement, any, SVGElement, any>,
+  svgTextSelection: Selection<SVGTextElement, any, BaseType, any>,
   maxWidth = 50,
   trimType = TrimMode.Middle,
   fastMode = false,
@@ -237,7 +237,7 @@ export function trimSVGText (
  * Estimates the dimensions of an SVG text element.
  *
  * @export
- * @param {Selection<SVGTextElement, any, SVGElement, any>} svgTextSelection - The D3 selection of the SVG text element.
+ * @param {Selection<SVGTextElement, any, BaseType, any>} svgTextSelection - The D3 selection of the SVG text element.
  * @param {number} fontSize - The font size.
  * @param {number} [dy=0.32] - The line height scaling factor.
  * @param {boolean} [fastMode=false] - Whether to use a fast estimation method or a more accurate one.
@@ -245,7 +245,7 @@ export function trimSVGText (
  * @returns {{width: number, height: number}} - The estimated dimensions of the text element.
  */
 export function estimateTextSize (
-  svgTextSelection: Selection<SVGTextElement, any, SVGElement, any>,
+  svgTextSelection: Selection<SVGTextElement, any, BaseType, any>,
   fontSize: number,
   dy = 0.32,
   fastMode = false,

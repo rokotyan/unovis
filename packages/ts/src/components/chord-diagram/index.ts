@@ -1,6 +1,5 @@
 import { max } from 'd3-array'
 import { partition } from 'd3-hierarchy'
-import { Selection } from 'd3-selection'
 import { scalePow, ScalePower } from 'd3-scale'
 import { arc } from 'd3-shape'
 
@@ -12,6 +11,7 @@ import { GraphData, GraphDataModel } from '@/data-models/graph'
 import { getNumber, isNumber, getString, getValue } from '@/utils/data'
 import { estimateStringPixelLength } from '@/utils/text-measure'
 import { getCSSVariableValueInPixels } from '@/utils/misc'
+import { TopLevelSelection } from '@/utils/d3'
 
 // Types
 import { Spacing } from '@/types/spacing'
@@ -53,10 +53,10 @@ export class ChordDiagram<
   public config: ChordDiagramResolvedConfig<N, L> = this._defaultConfig
   datamodel: GraphDataModel<N, L> = new GraphDataModel()
 
-  background: Selection<SVGRectElement, unknown, SVGGElement, unknown>
-  nodeGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  linkGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  labelGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
+  background: TopLevelSelection<SVGRectElement>
+  nodeGroup: TopLevelSelection<SVGGElement>
+  linkGroup: TopLevelSelection<SVGGElement>
+  labelGroup: TopLevelSelection<SVGGElement>
 
   arcGen = arc<ChordNode<N>>()
   radiusScale: ScalePower<number, number> = scalePow()

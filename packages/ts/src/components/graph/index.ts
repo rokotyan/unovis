@@ -16,7 +16,7 @@ import { Spacing } from '@/types/spacing'
 
 // Utils
 import { isNumber, clamp, shallowDiff, isFunction, getBoolean, isPlainObject, isEqual, getNumber } from '@/utils/data'
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 
 // Local Types
 import {
@@ -113,8 +113,8 @@ export class Graph<
   private _shouldSetPanels = false
   private _panels: GraphPanel[]
 
-  private _defs: Selection<SVGDefsElement, unknown, SVGGElement, undefined>
-  private _backgroundRect: Selection<SVGRectElement, unknown, SVGGElement, undefined>
+  private _defs: TopLevelSelection<SVGDefsElement>
+  private _backgroundRect: TopLevelSelection<SVGRectElement>
   private _zoomBehavior: ZoomBehavior<SVGGElement, unknown>
   private _isAutoFitDisabled = false
   private _scale: number
@@ -846,7 +846,7 @@ export class Graph<
   private _handleDrag (
     d: GraphNode<N, L>,
     event: D3DragEvent<SVGGElement, GraphNode<N, L>, unknown>,
-    nodeSelection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>
+    nodeSelection: TopLevelSelection<SVGGElement, GraphNode<N, L>>
   ): void {
     if (event.sourceEvent.shiftKey && d._state.brushed) {
       this._dragSelectedNodes(event)
@@ -868,7 +868,7 @@ export class Graph<
   private _onDragStarted (
     d: GraphNode<N, L>,
     event: D3DragEvent<SVGGElement, GraphNode<N, L>, unknown>,
-    nodeSelection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>
+    nodeSelection: TopLevelSelection<SVGGElement, GraphNode<N, L>>
   ): void {
     const { config } = this
     this._isDragging = true
@@ -910,7 +910,7 @@ export class Graph<
   private _onDragEnded (
     d: GraphNode<N, L>,
     event: D3DragEvent<SVGGElement, GraphNode<N, L>, unknown>,
-    nodeSelection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>
+    nodeSelection: TopLevelSelection<SVGGElement, GraphNode<N, L>>
   ): void {
     const { config } = this
     this._isDragging = false

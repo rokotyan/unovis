@@ -6,7 +6,7 @@ import { XYComponentCore } from '@/core/xy-component'
 
 // Utils
 import { isNumber, clamp } from '@/utils/data'
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 
 // Types
 import { Arrangement } from '@/types/position'
@@ -25,7 +25,7 @@ export class Brush<Datum> extends XYComponentCore<Datum, BrushConfigInterface<Da
   protected _defaultConfig = BrushDefaultConfig as BrushResolvedConfig<Datum>
   public clippable = false // Don't apply clipping path to this component. See XYContainer
   public config: BrushResolvedConfig<Datum> = this._defaultConfig
-  public brush: Selection<SVGGElement, unknown, SVGGElement, unknown>
+  public brush: TopLevelSelection<SVGGElement>
   public unselectedRange: Selection<SVGRectElement, BrushHandleType, SVGGElement, unknown>
   public handleLines: Selection<SVGLineElement, BrushHandleType, SVGGElement, unknown>
   public brushBehaviour: BrushBehavior<unknown> = brushX()

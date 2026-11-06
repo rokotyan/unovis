@@ -1,4 +1,4 @@
-import { select, Selection } from 'd3-selection'
+import { BaseType, select, Selection } from 'd3-selection'
 import { interrupt } from 'd3-transition'
 import { Axis as D3Axis, axisBottom, axisLeft, axisRight, axisTop } from 'd3-axis'
 import { NumberValue } from 'd3-scale'
@@ -14,7 +14,7 @@ import { Spacing } from '@/types/spacing'
 import { FitMode, TextAlign, TrimMode, UnovisText, UnovisTextOptions, VerticalAlign } from '@/types/text'
 
 // Utils
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { estimateWrappedTextHeight, getWrappedText, renderTextToSvgTextElement, textAlignToAnchor, trimSVGText, wrapSVGText } from '@/utils/text'
 import { getCachedComputedTextLength, getPreciseStringLengthPx } from '@/utils/text-measure'
 import { isEqual, isFunction, areArraysShallowEqual } from '@/utils/data'
@@ -56,8 +56,8 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
   static selectors = s
   protected _defaultConfig = AxisDefaultConfig as AxisResolvedConfig<Datum>
   public config: AxisResolvedConfig<Datum> = this._defaultConfig
-  private axisGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  private gridGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
+  private axisGroup: TopLevelSelection<SVGGElement>
+  private gridGroup: TopLevelSelection<SVGGElement>
 
   private _axisRawBBox: DOMRect
   private _axisSizeBBox: SVGRect
@@ -127,7 +127,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     return (position ?? ((type === AxisType.X) ? Position.Bottom : Position.Left)) as Position
   }
 
-  private _getAxisSize (selection: Selection<SVGGElement, unknown, SVGGElement, undefined>): SVGRect {
+  private _getAxisSize (selection: Selection<SVGGElement, unknown, BaseType, unknown>): SVGRect {
     const bBox = selection.node().getBBox()
     return bBox
   }
@@ -183,7 +183,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     }
   }
 
-  public _render (duration = this.config.duration, selection = this.axisGroup): void {
+  public _render (duration = this.config.duration, selection: Selection<SVGGElement, unknown, BaseType, unknown> = this.axisGroup): void {
     const { config } = this
 
     // Adaptive tick sets: the whole original set renders as tick marks (merged with the rare
@@ -285,7 +285,12 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     return gridGen
   }
 
-  private _renderAxis (selection = this.axisGroup, duration = this.config.duration, tickValuesOverride?: TickValues, labeledTickKeys?: Set<string>): void {
+  private _renderAxis (
+    selection: Selection<SVGGElement, unknown, BaseType, unknown> = this.axisGroup,
+    duration = this.config.duration,
+    tickValuesOverride?: TickValues,
+    labeledTickKeys?: Set<string>
+  ): void {
     const { config } = this
 
     const axisGen = this._buildAxis()
@@ -384,7 +389,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     }
   }
 
-  private _resolveTickLabelOverlap (selection = this.axisGroup): void {
+  private _resolveTickLabelOverlap (selection: Selection<SVGGElement, unknown, BaseType, unknown> = this.axisGroup): void {
     const { config } = this
     const tickTextSelection = selection.selectAll<SVGTextElement, number | Date>(`g.tick > text:not(.${s.tickTextExiting}):not(.${s.tickTextHidden})`)
 
@@ -571,7 +576,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     }
   }
 
-  private _renderAxisLabel (selection = this.axisGroup): void {
+  private _renderAxisLabel (selection: Selection<SVGGElement, unknown, BaseType, unknown> = this.axisGroup): void {
     const { type, label, labelMargin, labelFontSize, labelTextFitMode, labelTextSeparator } = this.config
 
     // Remove the old label first to calculate the axis size properly

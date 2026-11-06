@@ -7,7 +7,7 @@ import { ComponentCore } from '@/core/component'
 import { SeriesDataModel } from '@/data-models/series'
 
 // Utils
-import { smartTransition } from '@/utils/d3'
+import { smartTransition, TopLevelSelection } from '@/utils/d3'
 import { isNumber, getNumber, getString, clamp } from '@/utils/data'
 import { getColor } from '@/utils/color'
 import { getCSSVariableValue, getCSSVariableValueInPixels } from '@/utils/misc'
@@ -42,9 +42,9 @@ export class Heatmap<Datum> extends ComponentCore<Datum[], HeatmapConfigInterfac
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 
-  cellsGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  columnLabelsGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
-  rowLabelsGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
+  cellsGroup: TopLevelSelection<SVGGElement>
+  columnLabelsGroup: TopLevelSelection<SVGGElement>
+  rowLabelsGroup: TopLevelSelection<SVGGElement>
 
   events = {}
 
