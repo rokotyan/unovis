@@ -93,7 +93,7 @@ export class ComponentCore<
     if (rootClass) this.g.attr('class', rootClass)
   }
 
-  setConfig (config: ConfigInterface): void {
+  setConfig (config?: ConfigInterface): void {
     this.prevConfig = this.config // Store the previous config instance
     this.config = mergeByReference(this._defaultConfig, config)
   }

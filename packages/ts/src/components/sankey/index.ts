@@ -191,7 +191,7 @@ export class Sankey<
     this._bleedCached = null
   }
 
-  setConfig (config: SankeyConfigInterface<N, L>): void {
+  setConfig (config?: SankeyConfigInterface<N, L>): void {
     super.setConfig(config)
 
     // Update zoom scale from config

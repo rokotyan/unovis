@@ -30,7 +30,7 @@ export class RollingPinLegend {
     this.setConfig(config)
   }
 
-  setConfig (config: RollingPinLegendConfigInterface): void {
+  setConfig (config?: RollingPinLegendConfigInterface): void {
     this.prevConfig = this.config
     this.config = mergeByReference(this._defaultConfig, config)
     this.render()

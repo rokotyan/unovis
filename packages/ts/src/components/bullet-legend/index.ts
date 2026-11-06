@@ -40,7 +40,7 @@ export class BulletLegend {
     this.setConfig(config)
   }
 
-  setConfig (config: BulletLegendConfigInterface): void {
+  setConfig (config?: BulletLegendConfigInterface): void {
     this.prevConfig = this.config
     this.config = mergeByReference(this._defaultConfig, config)
     this.render()

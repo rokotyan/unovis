@@ -224,7 +224,7 @@ export class LeafletMap<Datum extends GenericDataRecord> extends ComponentCore<D
     }
   }
 
-  setConfig (config: LeafletMapConfigInterface<Datum>): void {
+  setConfig (config?: LeafletMapConfigInterface<Datum>): void {
     super.setConfig(config)
 
     if (config?.width) this._containerSelection.style('width', isString(config.width) ? config.width : `${config.width}px`)

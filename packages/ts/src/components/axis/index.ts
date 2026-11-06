@@ -80,7 +80,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
       .attr('class', s.grid)
   }
 
-  public setConfig (config: AxisConfigInterface<Datum>): void {
+  public setConfig (config?: AxisConfigInterface<Datum>): void {
     // `tickTextFontSize` is the only config option the cached font metrics depend on
     // (CSS-driven font changes are not tracked, as re-resolving the style forces a reflow)
     if (config?.tickTextFontSize !== this.config.tickTextFontSize) this._tickTextStyleCached = undefined

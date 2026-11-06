@@ -130,7 +130,7 @@ export class Timeline<Datum> extends XYComponentCore<Datum, TimelineConfigInterf
     this._scrollBarHandle.call(dragBehaviour)
   }
 
-  public setConfig (config: TimelineConfigInterface<Datum>): void {
+  public setConfig (config?: TimelineConfigInterface<Datum>): void {
     super.setConfig(config)
   }
 

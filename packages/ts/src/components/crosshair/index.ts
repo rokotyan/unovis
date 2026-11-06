@@ -141,7 +141,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     this._sortedDataCache = null
   }
 
-  setConfig (config: CrosshairConfigInterface<Datum>): void {
+  setConfig (config?: CrosshairConfigInterface<Datum>): void {
     super.setConfig(config)
     this._sortedDataCache = null
   }

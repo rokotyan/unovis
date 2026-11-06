@@ -88,7 +88,7 @@ export class LeafletFlowMap<
       })
   }
 
-  setConfig (config: LeafletFlowMapConfigInterface<PointDatum, FlowDatum>): void {
+  setConfig (config?: LeafletFlowMapConfigInterface<PointDatum, FlowDatum>): void {
     super.setConfig(config)
     this.leafletMap.setConfig({ ...config, clusteringDistance: 0 })
   }

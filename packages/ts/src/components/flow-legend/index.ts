@@ -38,7 +38,7 @@ export class FlowLegend {
     this.setConfig(config)
   }
 
-  setConfig (config: FlowLegendConfigInterface): void {
+  setConfig (config?: FlowLegendConfigInterface): void {
     this.prevConfig = this.config
     this.config = mergeByReference(this._defaultConfig, config)
     this.render()

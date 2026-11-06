@@ -196,7 +196,7 @@ export class Graph<
     this._addSVGDefs()
   }
 
-  setConfig (config: GraphConfigInterface<N, L>): void {
+  setConfig (config?: GraphConfigInterface<N, L>): void {
     super.setConfig(config)
     const hasLayoutConfigurationChanged = this._shouldLayoutRecalculate()
 
