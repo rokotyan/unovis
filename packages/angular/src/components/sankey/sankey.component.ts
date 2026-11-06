@@ -274,7 +274,7 @@ export class VisSankeyComponent<N extends SankeyInputNode, L extends SankeyInput
   @Input() onZoom?: (horizontalScale: number, verticalScale: number, panX: number, panY: number, zoomExtent: [number, number], event: D3ZoomEvent<SVGGElement, unknown> | undefined) => void
 
   /** Callback function to be called when the graph layout is calculated. Default: `undefined` */
-  @Input() onLayoutCalculated?: (nodes: SankeyNode<N, L>[], links: SankeyLink<N, L>[], depth: number, width: number, height: number, bleed: Spacing) => void
+  @Input() onLayoutCalculated?: (nodes: SankeyNode<N, L>[], links: SankeyLink<N, L>[], depth: number | undefined, width: number, height: number, bleed: Spacing) => void
 
   /** Set selected nodes by unique id. Default: `undefined` */
   @Input() selectedNodeIds?: string[]
