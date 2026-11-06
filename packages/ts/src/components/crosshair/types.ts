@@ -2,11 +2,11 @@ import { NumericAccessor } from '@/types/accessor'
 
 export type CrosshairCircle = {
   y: number;
-  color: string;
+  color: string | null;
   opacity?: number;
   id?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
+  strokeColor?: string | null;
+  strokeWidth?: number | null;
   /** Size of the segment the circle belongs to. Among overlapping circles, the largest one is painted last */
   magnitude?: number;
 }

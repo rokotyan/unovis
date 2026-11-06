@@ -32,17 +32,17 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
   clippable = false // The Crosshair is not clipped, so its circles can overflow into the container margins. See XYContainer
   protected _defaultConfig = CrosshairDefaultConfig as CrosshairResolvedConfig<Datum>
   public config: CrosshairResolvedConfig<Datum> = this._defaultConfig
-  container: Selection<SVGSVGElement, any, BaseType, any>
+  container: Selection<SVGSVGElement, any, BaseType, any> | undefined
   line: TopLevelSelection<SVGLineElement, any>
   lineHorizontal: TopLevelSelection<SVGLineElement, any>
   private _xPx: number | undefined = undefined
   private _yPx: number | undefined = undefined
   private _mouseEvent: MouseEvent | undefined = undefined
-  private _animFrameId: number = null
+  private _animFrameId = 0
 
   /** Tooltip component to be used by Crosshair if not provided by the config.
    * This property is supposed to be set externally by a container component like XYContainer. */
-  public tooltip: Tooltip
+  public tooltip: Tooltip | undefined
 
   /** Accessors passed externally (e.g. from XYContainer) */
   private _accessors: CrosshairAccessors<Datum> = {
@@ -59,7 +59,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
   /** Data indices sorted by x value with the corresponding sorted values, so per-mousemove
    * nearest-datum lookups can bisect instead of re-sorting the dataset on every frame.
    * Invalidated when the data, config, or externally provided accessors change */
-  private _sortedDataCache: { values: number[]; indices: number[] } | null = null
+  private _sortedDataCache: { values: (number | null | undefined)[]; indices: number[] } | null = null
 
   public set accessors (accessors: CrosshairAccessors<Datum>) {
     this._accessors = accessors
@@ -79,10 +79,8 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     return { x, y, yStacked, baseline }
   }
 
-  private _isContainerInViewport (): boolean {
-    if (!this.container?.node()) return false
-
-    const containerRect = this.container.node().getBoundingClientRect()
+  private _isContainerInViewport (containerNode: SVGSVGElement): boolean {
+    const containerRect = containerNode.getBoundingClientRect()
     const viewportWidth = window.innerWidth || document.documentElement.clientWidth
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight
 
@@ -146,12 +144,12 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     this._sortedDataCache = null
   }
 
-  private _getSortedData (): { values: number[]; indices: number[] } {
+  private _getSortedData (): { values: (number | null | undefined)[]; indices: number[] } {
     if (!this._sortedDataCache) {
       const data = this.datamodel.data ?? []
       const x = this.accessors.x
       const indices = data.map((_, i) => i)
-        .sort((a, b) => getNumber(data[a], x, a) - getNumber(data[b], x, b))
+        .sort((a, b) => Number(getNumber(data[a], x, a)) - Number(getNumber(data[b], x, b)))
       const values = indices.map(i => getNumber(data[i], x, i))
       this._sortedDataCache = { values, indices }
     }
@@ -175,14 +173,16 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     if (direction === FindNearestDirection.Left) return indices[index - 1]
 
     // By default (`FindNearestDirection.Auto`) return the index of the nearest value
-    return value - values[index - 1] > values[index] - value ? indices[index] : indices[index - 1]
+    return value - Number(values[index - 1]) > Number(values[index]) - value ? indices[index] : indices[index - 1]
   }
 
   _render (customDuration?: number): void {
     const { config, datamodel } = this
     const duration = isNumber(customDuration) ? customDuration : config.duration
-    const isForceShowAtDefined = config.forceShowAt !== undefined
-    const xPx = isForceShowAtDefined ? this.xScale(config.forceShowAt) : this._xPx
+    const { forceShowAt } = config
+    const isForceShowAtDefined = forceShowAt !== undefined
+    const xPx = isForceShowAtDefined ? this.xScale(forceShowAt) : (this._xPx ?? NaN)
+    const yPx = this._yPx
 
     const xValue = this.xScale.invert(xPx) as number
 
@@ -209,9 +209,9 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
       // In `CrosshairSnapMode.XY` mode we snap to the data point closest to the pointer in both X and Y (pixel space).
       // This requires a real pointer position, so we fall back to X-only snapping when `forceShowAt` is set
       // or there's no pointer Y available yet.
-      const useXYMode = config.snapMode === CrosshairSnapMode.XY && !isForceShowAtDefined && this._yPx !== undefined
+      const useXYMode = config.snapMode === CrosshairSnapMode.XY && !isForceShowAtDefined && yPx !== undefined
       if (useXYMode) {
-        const nearest = getNearest2D(datamodel.data, [this._xPx, this._yPx], this.xScale, this.yScale, this.accessors.x, this.accessors.y, this.accessors.yStacked, this.accessors.baseline)
+        const nearest = getNearest2D(datamodel.data, [xPx, yPx], this.xScale, this.yScale, this.accessors.x, this.accessors.y, this.accessors.yStacked, this.accessors.baseline)
         if (nearest) {
           nearestDatum = nearest.datum
           nearestDatumIndex = nearest.index
@@ -226,11 +226,11 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     const xRange = this.xScale.range()
     const yRange = this.yScale.range()
     const xClamped = config.snapToData && nearestDatum
-      ? clamp(Math.round(this.xScale(getNumber(nearestDatum, this.accessors.x, nearestDatumIndex))), 0, this._width)
+      ? clamp(Math.round(this.xScale(getNumber(nearestDatum, this.accessors.x, nearestDatumIndex) ?? NaN)), 0, this._width)
       : clamp(xPx, xRange[0], xRange[1])
 
     const isCrosshairWithinXRange = (xPx >= xRange[0]) && (xPx <= xRange[1])
-    const isCrosshairWithinYRange = (this._yPx >= Math.min(yRange[0], yRange[1])) && (this._yPx <= Math.max(yRange[0], yRange[1]))
+    const isCrosshairWithinYRange = (yPx !== undefined) && (yPx >= Math.min(yRange[0], yRange[1])) && (yPx <= Math.max(yRange[0], yRange[1]))
     let shouldShow = config.skipRangeCheck ? !!this._xPx : (this._xPx ? isCrosshairWithinXRange && isCrosshairWithinYRange : isCrosshairWithinXRange)
 
     // Distance in pixels between the pointer and the snapped datum: the full 2D distance in
@@ -244,15 +244,16 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     }
 
     const tooltip = config.tooltip ?? this.tooltip
-    if (shouldShow && tooltip && this._isContainerInViewport()) {
-      const container = tooltip.getContainer() || this.container.node()
+    const containerNode = this.container?.node()
+    if (shouldShow && tooltip && containerNode && this._isContainerInViewport(containerNode)) {
+      const container = tooltip.getContainer() || containerNode
       const isContainerBody = tooltip.isContainerBody()
       const nearestDatumXValue = (this.accessors.x && nearestDatum !== undefined) ? getNumber(nearestDatum, this.accessors.x, nearestDatumIndex) : undefined
       const tooltipXValue = nearestDatumXValue ?? xValue
 
       if (isForceShowAtDefined) {
         // Convert SVG coordinates to screen coordinates
-        const containerRect = this.container.node().getBoundingClientRect()
+        const containerRect = containerNode.getBoundingClientRect()
 
         // Use the actual left margin from the container
         const screenX = (isContainerBody ? xPx + containerRect.left : xPx) + this._containerMargin.left
@@ -267,7 +268,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
 
     // Trigger `onCrosshairMove` if the render was triggered by a mouse move event
     if (this._mouseEvent) {
-      config.onCrosshairMove?.(shouldShow ? this.xScale.invert(this._xPx) as number : undefined, nearestDatum, nearestDatumIndex, this._mouseEvent)
+      config.onCrosshairMove?.(shouldShow ? this.xScale.invert(this._xPx ?? NaN) as number : undefined, nearestDatum, nearestDatumIndex, this._mouseEvent)
       this._mouseEvent = undefined
     }
 
@@ -367,7 +368,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
 
   _onMouseOut (event?: MouseEvent): void {
     // Only hide if the mouse actually left the SVG, not just moved to a child
-    if (!event || !this.container?.node().contains((event as MouseEvent).relatedTarget as Node)) {
+    if (!event || !this.container?.node()?.contains((event as MouseEvent).relatedTarget as Node)) {
       this.hide(event)
     }
   }
@@ -393,8 +394,9 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
 
     // Set tooltip placement based on Crosshair's position (left / right)
     if (!tooltip.config.horizontalPlacement || tooltip.config.horizontalPlacement === Position.Auto) {
-      const xRelative = tooltip.isContainerBody() ? x - this.container.node().getBoundingClientRect().left : x
-      tooltip.overrideHorizontalPlacement(xRelative > this._containerWidth / 2 ? Position.Left : Position.Right)
+      const containerNode = this.container?.node()
+      const xRelative = tooltip.isContainerBody() && containerNode ? x - containerNode.getBoundingClientRect().left : x
+      tooltip.overrideHorizontalPlacement(isNumber(this._containerWidth) && xRelative > this._containerWidth / 2 ? Position.Left : Position.Right)
     }
 
     if (content) tooltip.show(content, { x, y })
@@ -449,7 +451,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
 
     for (const cluster of clusters) {
       if (cluster.length < 2) continue
-      const largest = cluster.reduce((a, b) => (circles[b].magnitude > circles[a].magnitude ? b : a))
+      const largest = cluster.reduce((a, b) => (circles[b].magnitude! > circles[a].magnitude! ? b : a))
       const lastPosition = Math.max(...cluster.map(i => order.indexOf(i)))
       const position = order.indexOf(largest)
       if (position === lastPosition) continue
@@ -460,12 +462,12 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     return order.map(i => circles[i])
   }
 
-  private getCircleData (datum: Datum, datumIndex: number): CrosshairCircle[] {
+  private getCircleData (datum: Datum | undefined, datumIndex: number | undefined): CrosshairCircle[] {
     const { config } = this
     const colorOptions = { colorFn: this._colorFunction }
     const colorKeys = this.colorKeys
 
-    if (config.snapToData && datum) {
+    if (config.snapToData && datum && datumIndex !== undefined) {
       const yAccessors = this.accessors.y ?? []
       const yStackedAccessors = this.accessors.yStacked ?? []
       const baselineValue = getNumber(datum, this.accessors.baseline, datumIndex) || 0
@@ -474,7 +476,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
           id: `stacked-${index}`,
           y: this.yScale(value + baselineValue),
           opacity: isNumber(getNumber(datum, yStackedAccessors[index], datumIndex)) ? 1 : 0,
-          magnitude: Math.abs(getNumber(datum, yStackedAccessors[index], datumIndex)),
+          magnitude: Math.abs(Number(getNumber(datum, yStackedAccessors[index], datumIndex))),
           color: getColor(datum, config.color, index, colorKeys?.[index], colorOptions),
           strokeColor: config.strokeColor ? getColor(datum, config.strokeColor, index, colorKeys?.[index], colorOptions) : undefined,
           strokeWidth: config.strokeWidth ? getNumber(datum, config.strokeWidth, index) : undefined,
@@ -486,9 +488,9 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
           const circleIndex = stackedValues.length + index
           return {
             id: `regular-${index}`,
-            y: this.yScale(value),
+            y: this.yScale(value ?? NaN),
             opacity: isNumber(value) ? 1 : 0,
-            magnitude: Math.abs(value),
+            magnitude: Math.abs(Number(value)),
             color: getColor(datum, config.color, circleIndex, colorKeys?.[circleIndex], colorOptions),
             strokeColor: config.strokeColor ? getColor(datum, config.strokeColor, circleIndex, colorKeys?.[circleIndex], colorOptions) : undefined,
             strokeWidth: config.strokeWidth ? getNumber(datum, config.strokeWidth, circleIndex) : undefined,
