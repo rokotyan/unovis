@@ -102,8 +102,8 @@ function getXDistanceToNextNode<N extends SankeyInputNode, L extends SankeyInput
 ): number {
   let yTolerance = config.labelMaxWidthTakeAvailableSpaceTolerance
   if (!isNumber(yTolerance)) {
-    const labelFontSize = getLabelFontSize(config, sel.node())
-    const subLabelFontSize = getSubLabelFontSize(config, sel.node())
+    const labelFontSize = getLabelFontSize(config, sel.node()!)
+    const subLabelFontSize = getSubLabelFontSize(config, sel.node()!)
     const hasSecondLineSublabel = getString(datum, config.subLabel) && config.subLabelPlacement !== SankeySubLabelPlacement.Inline
     yTolerance = (labelFontSize + subLabelFontSize) / (hasSecondLineSublabel ? 2 : 4)
   }
@@ -168,7 +168,7 @@ export function updateNodes<N extends SankeyInputNode, L extends SankeyInputLink
         .style('stroke', color)
         .style('fill', color)
         .style('font-size', fontSize)
-        .html(getString(d, config.nodeIcon))
+        .html(getString(d, config.nodeIcon) ?? null)
     })
 
     smartTransition(nodeIcon, duration)
@@ -186,7 +186,7 @@ export function renderNodeLabels<N extends SankeyInputNode, L extends SankeyInpu
   width: number,
   duration: number,
   layerSpacing: number,
-  sankeyMaxLayer: number,
+  sankeyMaxLayer: number | undefined,
   bleed: Required<Spacing>
 ): void {
   // Label Rendering

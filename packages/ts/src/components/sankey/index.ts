@@ -16,7 +16,7 @@ import { VerticalAlign } from '@/types/text'
 
 // Utils
 import { smartTransition, TopLevelSelection } from '@/utils/d3'
-import { clamp, getNumber, getString, groupBy, isNumber, areArraysShallowEqual } from '@/utils/data'
+import { clamp, getNumber, getString, groupBy, isNumber, areArraysShallowEqual, isFiniteNumber, isNotNil } from '@/utils/data'
 
 // Config
 import { SankeyDefaultConfig, SankeyConfigInterface, SankeyResolvedConfig } from './config'
@@ -57,15 +57,15 @@ export class Sankey<
   // eslint-disable-next-line @typescript-eslint/naming-convention
   private _gNode: SVGGElement & { __zoom: ZoomTransform }
   private _prevWidth: number | undefined = undefined
-  private _extendedWidth: number | undefined = undefined
-  private _extendedHeight: number | undefined = undefined
+  private _extendedWidth = 0
+  private _extendedHeight = 0
   private _extendedHeightIncreased: number | undefined = undefined
   private _extendedWidthIncreased: number | undefined = undefined
   private _linksGroup: TopLevelSelection<SVGGElement>
   private _nodesGroup: TopLevelSelection<SVGGElement>
   private _backgroundRect: TopLevelSelection<SVGRectElement>
   private _sankey = sankey<SankeyGraph<N, L>, SankeyNode<N, L>, SankeyLink<N, L>>()
-  private _highlightTimeoutId: ReturnType<typeof setTimeout> | null = null
+  private _highlightTimeoutId: ReturnType<typeof setTimeout> | undefined = undefined
   private _highlightActive = false
 
   // Zoom / Pan
@@ -119,7 +119,7 @@ export class Sankey<
     // Reuse the previously computed bleed when nothing relevant has changed: the probe layout
     // pass below is expensive, and the container may evaluate `bleed` several times per render cycle
     const bleedCacheKey = [nodes, links, config, this._width, this._height]
-    if (this._bleedCached && areArraysShallowEqual(bleedCacheKey, this._bleedCacheKey)) return this._bleedCached
+    if (this._bleedCached && this._bleedCacheKey && areArraysShallowEqual(bleedCacheKey, this._bleedCacheKey)) return this._bleedCached
 
     let bleed: Required<Spacing> = { top: 0, bottom: 0, left: 0, right: 0 }
 
@@ -148,14 +148,14 @@ export class Sankey<
 
       if (hasLabelsOnTheLeft) {
         const maxLeftLabelWidth = max(zeroLayerNodes, d => estimateRequiredLabelWidth(d, config, labelFontSize, subLabelFontSize, this.element as SVGElement))
-        left = min([labelMaxWidth, maxLeftLabelWidth]) + labelHorizontalPadding
+        left = (min([labelMaxWidth, maxLeftLabelWidth].filter(isNotNil)) ?? NaN) + labelHorizontalPadding
       }
 
       let right = 0
       const hasLabelsOnTheRight = maxLayerNodes.some(d => getLabelOrientation(d, sankeyProbeSize, config.labelPosition) === Position.Right)
       if (hasLabelsOnTheRight) {
         const maxRightLabelWidth = max(maxLayerNodes, d => estimateRequiredLabelWidth(d, config, labelFontSize, subLabelFontSize, this.element as SVGElement))
-        right = min([labelMaxWidth, maxRightLabelWidth]) + labelHorizontalPadding
+        right = (min([labelMaxWidth, maxRightLabelWidth].filter(isNotNil)) ?? NaN) + labelHorizontalPadding
       }
 
       const top = config.labelVerticalAlign === VerticalAlign.Top ? 0
@@ -336,7 +336,7 @@ export class Sankey<
     // If zoomScale is controlled by config, do nothing
     if (this.config.zoomScale !== undefined) return
     const [hCurrent, vCurrent] = this._zoomScale
-    const zoomScaleChange: [number, number] = [horizontalScale / hCurrent, verticalScale / vCurrent]
+    const zoomScaleChange: [number, number] = [Number(horizontalScale) / hCurrent, Number(verticalScale) / vCurrent]
 
     const [extMin, extMax] = this.config.zoomExtent
     if (isNumber(horizontalScale)) this._zoomScale[0] = Math.min(extMax, Math.max(extMin, horizontalScale))
@@ -369,7 +369,7 @@ export class Sankey<
     this._render(duration)
   }
 
-  public getZoomScale (): [number, number] {
+  public getZoomScale (): [number, number] | undefined {
     // If zoomPan is controlled by config, do nothing
     if (this.config.zoomPan !== undefined) return
 
@@ -449,11 +449,11 @@ export class Sankey<
       const layoutY = minY + (pos[1] - bleed.top - panY - minY) / vCurrent
 
       // Solve for new pan to keep pointer fixed after new scales
-      if (!isVerticalOnly && !isFinite(config.zoomPan?.[0]) && zoomMode !== SankeyZoomMode.Y) {
+      if (!isVerticalOnly && !isFiniteNumber(config.zoomPan?.[0]) && zoomMode !== SankeyZoomMode.Y) {
         this._pan[0] = pos[0] - bleed.left - (minX + (layoutX - minX) * hNext)
       }
 
-      if (!isHorizontalOnly && !isFinite(config.zoomPan?.[1]) && zoomMode !== SankeyZoomMode.X) {
+      if (!isHorizontalOnly && !isFiniteNumber(config.zoomPan?.[1]) && zoomMode !== SankeyZoomMode.X) {
         this._pan[1] = pos[1] - bleed.top - (minY + (layoutY - minY) * vNext)
       }
     } else { // Just Pan: apply translation delta directly
@@ -505,13 +505,13 @@ export class Sankey<
 
     const scaleExtent = extent(nodes, d => d.value || undefined)
     const scaleRange = [config.nodeMinHeight, config.nodeMaxHeight]
-    const scale = scaleLinear().domain(scaleExtent).range(scaleRange).clamp(true)
+    const scale = scaleLinear().domain(scaleExtent.map(Number)).range(scaleRange).clamp(true)
     nodes.forEach(n => { n._state.precalculatedHeight = scale(n.value) || config.nodeMinHeight })
 
     const groupedByColumn: { [key: string]: SankeyNode<N, L>[] } = groupBy(nodes, d => d.layer)
     const values = Object.values(groupedByColumn)
       .map((group) =>
-        sum(group.map(n => n._state.precalculatedHeight + config.nodePadding)) - config.nodePadding
+        sum(group.map(n => n._state.precalculatedHeight! + config.nodePadding)) - config.nodePadding
       )
 
     const height = max(values) || config.nodeMinHeight
@@ -656,6 +656,7 @@ export class Sankey<
         const prev = prevLinkY.get(l)
         const prevSrc = prevNodePos.get(l.source)
         const prevTrg = prevNodePos.get(l.target)
+        if (!prev || !prevSrc || !prevTrg) continue
         const deltaSrc = l.source.y0 - prevSrc.y0
         const deltaTrg = l.target.y0 - prevTrg.y0
         l.y0 = prev.y0 + deltaSrc
@@ -680,7 +681,7 @@ export class Sankey<
     return this.sizing === Sizing.Fit ? this._height : (this._extendedHeightIncreased || this._extendedHeight)
   }
 
-  public getSankeyDepth (): number {
+  public getSankeyDepth (): number | undefined {
     const { datamodel } = this
     return max(datamodel.nodes, d => d.layer)
   }
@@ -693,7 +694,7 @@ export class Sankey<
   public getLayerXCenters (): number[] {
     const { datamodel } = this
     const nodes = datamodel.nodes as SankeyNode<N, L>[]
-    const centers = nodes.reduce((pos, node) => {
+    const centers = nodes.reduce<number[]>((pos, node) => {
       const idx = node.layer
       if (!isFinite(pos[idx])) {
         pos[idx] = (node.x0 + node.x1) / 2
@@ -772,6 +773,7 @@ export class Sankey<
     if (!nodes?.length) return 0
 
     const firstLayerNode = nodes.find(d => d.layer === 0)
+    if (!firstLayerNode) return 0
     const nextLayerNode = nodes.find(d => d.layer === firstLayerNode.layer + 1)
     return nextLayerNode ? nextLayerNode.x0 - (firstLayerNode.x0 + config.nodeWidth) : this._width - firstLayerNode.x1
   }

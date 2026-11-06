@@ -94,8 +94,8 @@ export function updateLinks<N extends SankeyInputNode, L extends SankeyInputLink
   if (duration) {
     (selectionTransition as Transition<SVGPathElement, SankeyLink<N, L>, SVGGElement, unknown>)
       .attrTween('d', (d: SankeyLink<N, L>, i: number, el: ArrayLike<LinkElement>) => {
-        const previous = el[i]._animState
         const next = getLinkPathOptions(d)
+        const previous = el[i]._animState ?? next
 
         const interpolator = {
           x0: interpolateNumber(previous.x0, next.x0),

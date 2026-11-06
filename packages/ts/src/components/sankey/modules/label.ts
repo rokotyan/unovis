@@ -177,7 +177,7 @@ export function getLabelMaxWidth<N extends SankeyInputNode, L extends SankeyInpu
   config: SankeyResolvedConfig<N, L>,
   labelOrientation: Position.Left | Position.Right,
   layerSpacing: number,
-  sankeyMaxLayer: number,
+  sankeyMaxLayer: number | undefined,
   bleed: Required<Spacing>
 ): number {
   const labelHorizontalPadding = 2 * SANKEY_LABEL_SPACING + 2 * SANKEY_LABEL_BLOCK_PADDING
@@ -206,8 +206,8 @@ export function renderLabel<N extends SankeyInputNode, L extends SankeyInputLink
   config: SankeyResolvedConfig<N, L>,
   width: number,
   duration: number,
-  layerSpacing: number | undefined,
-  sankeyMaxLayer: number,
+  layerSpacing: number,
+  sankeyMaxLayer: number | undefined,
   bleed: Required<Spacing>,
   forceExpand = false
 ): { x: number; y: number; width: number; height: number; layer: number; selection: any; hidden?: boolean } {
@@ -224,14 +224,14 @@ export function renderLabel<N extends SankeyInputNode, L extends SankeyInputLink
   const sublabelText = getString(d, config.subLabel)
   let wasTrimmed = false
 
-  const labelFontSize = getLabelFontSize(config, labelGroup.node())
-  const subLabelFontSize = getSubLabelFontSize(config, labelGroup.node())
+  const labelFontSize = getLabelFontSize(config, labelGroup.node()!)
+  const subLabelFontSize = getSubLabelFontSize(config, labelGroup.node()!)
 
   // Render the main label, wrap / trim it and estimate its size
   const labelsFontSizeDifference = sublabelText ? labelFontSize - subLabelFontSize : 0
   const labelTranslateY = labelPadding + ((isSublabelInline && labelsFontSizeDifference < 0) ? -0.6 * labelsFontSizeDifference : 0)
   labelTextSelection
-    .text(labelText)
+    .text(labelText ?? null)
     .attr('font-size', labelFontSize)
     .style('text-decoration', getString(d, config.labelTextDecoration))
     .style('fill', getColor(d, config.labelColor))
@@ -254,7 +254,7 @@ export function renderLabel<N extends SankeyInputNode, L extends SankeyInputLink
     ? (labelsFontSizeDifference > 0 ? 0.6 * labelsFontSizeDifference : 0)
     : labelSize.height + sublabelMarginTop)
   sublabelTextSelection
-    .text(sublabelText)
+    .text(sublabelText ?? null)
     .attr('font-size', subLabelFontSize)
     .style('text-decoration', getString(d, config.subLabelTextDecoration))
     .style('fill', getColor(d, config.subLabelColor))
