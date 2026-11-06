@@ -59,13 +59,13 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
   private axisGroup: TopLevelSelection<SVGGElement>
   private gridGroup: TopLevelSelection<SVGGElement>
 
-  private _axisRawBBox: DOMRect
-  private _axisSizeBBox: SVGRect
-  private _requiredMargin: Spacing
+  private _axisRawBBox: DOMRect | undefined
+  private _axisSizeBBox!: SVGRect
+  private _requiredMargin!: Spacing
   private _preRenderCacheKey: unknown[] | undefined
   private _defaultNumTicks = 3
-  private _collideTickLabelsAnimFrameId: ReturnType<typeof requestAnimationFrame>
-  private _tickTextStyleCached: TickTextStyle
+  private _collideTickLabelsAnimFrameId: ReturnType<typeof requestAnimationFrame> = 0
+  private _tickTextStyleCached: TickTextStyle | undefined
 
   protected events = {}
 
@@ -111,7 +111,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     if (config.tickTextAlign) this._alignTickLabels(axisRenderHelperGroup)
 
     // Store axis raw BBox (without the label) for further label positioning (see _renderAxisLabel)
-    this._axisRawBBox = axisRenderHelperGroup.node().getBBox()
+    this._axisRawBBox = axisRenderHelperGroup.node()!.getBBox()
 
     // Render label and store total axis size and required margins
     this._renderAxisLabel(axisRenderHelperGroup)
@@ -128,7 +128,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
   }
 
   private _getAxisSize (selection: Selection<SVGGElement, unknown, BaseType, unknown>): SVGRect {
-    const bBox = selection.node().getBBox()
+    const bBox = selection.node()!.getBBox()
     return bBox
   }
 
@@ -148,7 +148,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
           case Position.Bottom: default: return { bottom: axisSize.height, left, right }
         }
       }
-      case AxisType.Y: {
+      case AxisType.Y: default: {
         const bleedY = axisSize.height > this._height ? (axisSize.height - this._height) / 2 : 0
         const top = bleedY
         const bottom = bleedY
@@ -272,12 +272,10 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
       return diff > tickValuesStep / 2 ? [...tickValues, domainMaxValue] as (number[] | Date[]) : tickValues
     }
 
-    const tickValues = tickValuesOverride ?? (
-      config.tickValues
-        ? this._getConfiguredTickValues()
-        : this._shouldRenderMinMaxTicksOnly()
-          ? getGridMinMaxTicksOnlyValues()
-          : gridScale.ticks(numTicks)
+    const tickValues = tickValuesOverride ?? this._getConfiguredTickValues() ?? (
+      this._shouldRenderMinMaxTicksOnly()
+        ? getGridMinMaxTicksOnlyValues()
+        : gridScale.ticks(numTicks)
     )
 
     gridGen.tickValues(tickValues)
@@ -295,12 +293,10 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
 
     const axisGen = this._buildAxis()
     const axisScale = axisGen.scale<ContinuousScale>()
-    const tickValues: TickValues = tickValuesOverride ?? (
-      config.tickValues
-        ? this._getConfiguredTickValues()
-        : this._shouldRenderMinMaxTicksOnly()
-          ? axisScale.domain()
-          : axisScale.ticks(this._getNumTicks())
+    const tickValues: TickValues = tickValuesOverride ?? this._getConfiguredTickValues() ?? (
+      this._shouldRenderMinMaxTicksOnly()
+        ? axisScale.domain()
+        : axisScale.ticks(this._getNumTicks())
     )
     const tickCount = tickValues.length
     axisGen.tickValues(tickValues)
@@ -432,13 +428,13 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
   private _getTickTextMaxWidth (labelCount: number): number {
     const { config } = this
     return config.tickTextWidth ||
-      (config.type === AxisType.X ? this._containerWidth / (labelCount + 1) : this._containerWidth / 5)
+      (config.type === AxisType.X ? (this._containerWidth ?? NaN) / (labelCount + 1) : (this._containerWidth ?? NaN) / 5)
   }
 
   /** Label rendering options shared between `_renderAxis` and the tick fitting predictions
    * (see `_getTickLabelRects`) — the two must stay identical for the predicted geometry
    * to match the render. Precise (cached) measurements are used for wrapping for the same reason */
-  private _getTickTextOptions (textMaxWidth: number): UnovisTextOptions {
+  private _getTickTextOptions (textMaxWidth: number): UnovisTextOptions & { width: number } {
     const { config } = this
     return {
       verticalAlign: config.type === AxisType.X ? VerticalAlign.Top : VerticalAlign.Middle,
@@ -517,7 +513,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     const helper = textElement ? undefined : this.g.append('g')
       .attr('class', s.tick)
       .style('font-size', this.config.tickTextFontSize)
-    const element = textElement ?? helper.append('text').attr('class', s.tickLabel).node()
+    const element = textElement ?? helper!.append('text').attr('class', s.tickLabel).node()!
     const styleDeclaration = getComputedStyle(element)
     this._tickTextStyleCached = {
       fontSize: Number.parseFloat(styleDeclaration.fontSize),
@@ -568,7 +564,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     return config.type === AxisType.X && this._width < config.minMaxTicksOnlyWhenWidthIsLess
   }
 
-  private _getFullDomainPath (tickSize = 0): string {
+  private _getFullDomainPath (tickSize = 0): string | undefined {
     const { config: { type } } = this
     switch (type) {
       case AxisType.X: return `M0.5, ${tickSize} V0.5 H${this._width + 0.5} V${tickSize}`
@@ -588,7 +584,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     const axisPosition = this.getPosition()
     // We always use this.axisRenderHelperGroup to calculate the size of the axis because
     //    this.axisGroup will give us incorrect values due to animation
-    const { width: axisWidth, height: axisHeight } = this._axisRawBBox ?? selection.node().getBBox()
+    const { width: axisWidth, height: axisHeight } = this._axisRawBBox ?? selection.node()!.getBBox()
 
     const rotation = type === AxisType.Y ? -90 : 0
 
@@ -607,7 +603,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     if (labelTextFitMode === FitMode.Wrap) {
       // For Y-axis, use the chart height as the maximum width before rotation
       const maxWidth = type === AxisType.Y ? this._height : this._width
-      const currentTextWidth = getCachedComputedTextLength(textElement.node())
+      const currentTextWidth = getCachedComputedTextLength(textElement.node()!)
 
       if (currentTextWidth > maxWidth) {
         wrapSVGText(textElement, maxWidth, labelTextSeparator)
@@ -619,14 +615,14 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     let labelWidth = axisWidth
     let labelHeight = axisHeight
     if (labelTextFitMode === FitMode.Wrap) {
-      const labelBBox = textElement.node().getBBox()
+      const labelBBox = textElement.node()!.getBBox()
       labelWidth = labelBBox.width
       labelHeight = labelBBox.height
     } else {
       const trimWidth = type === AxisType.X ? labelWidth : labelHeight
       trimSVGText(textElement, trimWidth, this.config.labelTextTrimType as TrimMode)
 
-      const trimmedBBox = textElement.node().getBBox()
+      const trimmedBBox = textElement.node()!.getBBox()
       labelWidth = trimmedBBox.width
       labelHeight = trimmedBBox.height
     }
@@ -656,7 +652,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
     textElement.attr('transform', `translate(${offsetX + marginX},${offsetY + marginY}) rotate(${rotation})`)
   }
 
-  private _getLabelDY (): number {
+  private _getLabelDY (): number | undefined {
     const { type, position } = this.config
     switch (type) {
       case AxisType.X:
