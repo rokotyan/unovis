@@ -94,7 +94,7 @@ export class ChordDiagram<
     this.labelGroup = this.g.append('g').attr('class', s.labels)
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     const { config } = this
     const padding = LABEL_PADDING * 2
     let top = 0; let bottom = 0; let right = 0; let left = 0

@@ -24,7 +24,7 @@ import { ScaleDimension } from '@/types/scale-dimension'
 import { Direction } from '@/types/direction'
 
 // Utils
-import { clamp, clean, flatten, isFunction } from '@/utils/data'
+import { clamp, clean, flatten, isFunction, isNumber } from '@/utils/data'
 import { guid } from '@/utils/misc'
 
 // Config
@@ -42,8 +42,8 @@ export class XYContainer<Datum> extends ContainerCore {
   public config: XYContainerResolvedConfig<Datum> = this._defaultConfig
   private _clipPath: Selection<SVGClipPathElement, unknown, null, undefined>
   private _clipPathId = guid()
-  private _axisMargin: Spacing = { top: 0, bottom: 0, left: 0, right: 0 }
-  private _componentsBleed: Spacing = { top: 0, bottom: 0, left: 0, right: 0 }
+  private _axisMargin: Required<Spacing> = { top: 0, bottom: 0, left: 0, right: 0 }
+  private _componentsBleed: Required<Spacing> = { top: 0, bottom: 0, left: 0, right: 0 }
   private _firstRender = true
   private _defaultTooltip: Tooltip | undefined
 
@@ -405,23 +405,23 @@ export class XYContainer<Datum> extends ContainerCore {
     //    That's needed for correct label placement.
     const numIterations = this._firstRender ? 2 : 1
     for (let i = 0; i < numIterations; i += 1) {
-      const axisMargin: Spacing = { top: 0, bottom: 0, left: 0, right: 0 }
+      const axisMargin: Required<Spacing> = { top: 0, bottom: 0, left: 0, right: 0 }
       this._updateScalesRange(...components)
       const axes = clean([xAxis, yAxis])
       axes.forEach(axis => {
         axis.preRender()
 
         const m = axis.getRequiredMargin()
-        if (axisMargin.top < m.top) axisMargin.top = m.top
-        if (axisMargin.bottom < m.bottom) axisMargin.bottom = m.bottom
-        if (axisMargin.left < m.left) axisMargin.left = m.left
-        if (axisMargin.right < m.right) axisMargin.right = m.right
+        if (isNumber(m.top) && axisMargin.top < m.top) axisMargin.top = m.top
+        if (isNumber(m.bottom) && axisMargin.bottom < m.bottom) axisMargin.bottom = m.bottom
+        if (isNumber(m.left) && axisMargin.left < m.left) axisMargin.left = m.left
+        if (isNumber(m.right) && axisMargin.right < m.right) axisMargin.right = m.right
       })
       this._axisMargin = axisMargin
     }
   }
 
-  private _getMargin (): Spacing {
+  private _getMargin (): Required<Spacing> {
     const { config: { margin } } = this
     const defaultMargin = { top: 0, bottom: 0, left: 0, right: 0 }
     const m = margin || defaultMargin
@@ -443,13 +443,13 @@ export class XYContainer<Datum> extends ContainerCore {
     config.crosshair?.hide()
   }
 
-  private _getBleed<T extends XYComponentCore<Datum>> (components: T[]): Spacing {
+  private _getBleed<T extends XYComponentCore<Datum>> (components: T[]): Required<Spacing> {
     // We request the components' bleed even when the configured `bleed` overrides the result,
     // because some components prepare their internal rendering state in the `bleed` getter
-    const calculatedBleed = components.map(c => c.bleed).reduce((bleed, b) => {
+    const calculatedBleed = components.map(c => c.bleed).reduce<Required<Spacing>>((bleed, b) => {
       for (const key of Object.keys(bleed)) {
         const k = key as keyof Spacing
-        if (bleed[k] < b[k]) bleed[k] = b[k]
+        if (isNumber(b[k]) && bleed[k] < b[k]) bleed[k] = b[k]
       }
       return bleed
     }, { top: 0, bottom: 0, left: 0, right: 0 })

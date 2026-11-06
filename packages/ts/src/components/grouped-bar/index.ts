@@ -46,7 +46,7 @@ export class GroupedBar<Datum> extends XYComponentCore<Datum, GroupedBarConfigIn
     this.setConfig(config)
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     this._barData = this._getVisibleData()
     if (this._barData.length === 0) return { top: 0, bottom: 0, left: 0, right: 0 }
 

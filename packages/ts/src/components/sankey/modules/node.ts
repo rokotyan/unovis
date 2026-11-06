@@ -36,7 +36,7 @@ export function createNodes<N extends SankeyInputNode, L extends SankeyInputLink
   sel: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
   config: SankeyResolvedConfig<N, L>,
   width: number,
-  bleed: Spacing
+  bleed: Required<Spacing>
 ): void {
   const { enterTransitionType } = config
 
@@ -79,7 +79,7 @@ function getNodeXPos<N extends SankeyInputNode, L extends SankeyInputLink> (
   d: SankeyNode<N, L>,
   config: SankeyResolvedConfig<N, L>,
   width: number,
-  bleed: Spacing,
+  bleed: Required<Spacing>,
   hasLinks: boolean
 ): number {
   if (hasLinks) return d.x0
@@ -123,7 +123,7 @@ export function updateNodes<N extends SankeyInputNode, L extends SankeyInputLink
   sel: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
   config: SankeyResolvedConfig<N, L>,
   width: number,
-  bleed: Spacing,
+  bleed: Required<Spacing>,
   hasLinks: boolean,
   duration: number,
   layerSpacing: number
@@ -187,7 +187,7 @@ export function renderNodeLabels<N extends SankeyInputNode, L extends SankeyInpu
   duration: number,
   layerSpacing: number,
   sankeyMaxLayer: number,
-  bleed: Spacing
+  bleed: Required<Spacing>
 ): void {
   // Label Rendering
   const labelGroupSelection: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown> = sel.select(`.${s.labelGroup}`)
@@ -272,7 +272,7 @@ export function onNodeMouseOver<N extends SankeyInputNode, L extends SankeyInput
   config: SankeyResolvedConfig<N, L>,
   width: number,
   layerSpacing: number,
-  bleed: Spacing
+  bleed: Required<Spacing>
 ): void {
   const labelGroup = nodeSelection.raise()
     .select<SVGGElement>(`.${s.labelGroup}`)
@@ -295,7 +295,7 @@ export function onNodeMouseOut<N extends SankeyInputNode, L extends SankeyInputL
   config: SankeyResolvedConfig<N, L>,
   width: number,
   layerSpacing: number,
-  bleed: Spacing
+  bleed: Required<Spacing>
 ): void {
   const labelGroup = nodeSelection.select<SVGGElement>(`.${s.labelGroup}`)
 

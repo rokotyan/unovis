@@ -74,7 +74,7 @@ export class Sankey<
   private _zoomBehavior: ZoomBehavior<SVGGElement, unknown>
   private _prevZoomTransform: { x: number; y: number; k: number } = { x: 0, y: 0, k: 1 }
   private _animationFrameId: number | null = null
-  private _bleedCached: Spacing | null = null
+  private _bleedCached: Required<Spacing> | null = null
   private _bleedCacheKey: unknown[] | null = null
 
   // Events
@@ -113,7 +113,7 @@ export class Sankey<
     if (this.config.enableZoom) this.g.call(this._zoomBehavior)
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     const { config, datamodel: { nodes, links } } = this
 
     // Reuse the previously computed bleed when nothing relevant has changed: the probe layout
@@ -121,7 +121,7 @@ export class Sankey<
     const bleedCacheKey = [nodes, links, config, this._width, this._height]
     if (this._bleedCached && areArraysShallowEqual(bleedCacheKey, this._bleedCacheKey)) return this._bleedCached
 
-    let bleed: Spacing = { top: 0, bottom: 0, left: 0, right: 0 }
+    let bleed: Required<Spacing> = { top: 0, bottom: 0, left: 0, right: 0 }
 
     if (nodes.length) {
       const labelFontSize = getLabelFontSize(config, this.element as SVGElement)
@@ -294,7 +294,7 @@ export class Sankey<
       .attr('opacity', 0)
   }
 
-  private _applyPanTransform (duration: number, bleed: Spacing): void {
+  private _applyPanTransform (duration: number, bleed: Required<Spacing>): void {
     const pan = this.config.zoomPan ?? this._pan
     const tx = bleed.left + pan[0]
     const ty = bleed.top + pan[1]

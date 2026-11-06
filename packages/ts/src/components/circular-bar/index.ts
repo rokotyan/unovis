@@ -62,7 +62,7 @@ export class CircularBar<Datum> extends ComponentCore<Datum[], CircularBarConfig
       .attr('class', s.iconGroup)
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     return { top: 0, bottom: 0, left: 0, right: 0 }
   }
 

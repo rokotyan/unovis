@@ -14,7 +14,7 @@ export function getHeatmapIntrinsicSize (
   columns: number,
   rows: number,
   gap: number,
-  bleed: Spacing
+  bleed: Required<Spacing>
 ): { width: number; height: number } {
   const [cellWidth, cellHeight] = getHeatmapFixedCellDimensions(cellSize) as [number, number]
   return {

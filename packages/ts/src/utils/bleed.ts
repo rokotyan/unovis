@@ -13,7 +13,7 @@ export function labelBboxToBleed (
   range: number[], // The pixel range of the scale the label is placed along.
   isVertical: boolean,
   maxRangeRatio = 1 / 3 //  Maximum bleed relative to the length of the scale range.
-): Spacing {
+): Required<Spacing> {
   const labelStart = isVertical ? labelBBox.y : labelBBox.x
   const labelEnd = labelStart + (isVertical ? labelBBox.height : labelBBox.width)
   const rangeStart = Math.min(...range)

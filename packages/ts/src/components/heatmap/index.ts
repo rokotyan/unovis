@@ -60,7 +60,7 @@ export class Heatmap<Datum> extends ComponentCore<Datum[], HeatmapConfigInterfac
     this.rowLabelsGroup = this.g.append('g')
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     const { config } = this
     const fontSize = this._getLabelFontSize()
     const { rows } = this._getGridSize()

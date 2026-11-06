@@ -81,7 +81,7 @@ export class Scatter<Datum> extends XYComponentCore<Datum, ScatterConfigInterfac
     }
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     this._updatePointData()
     const pointDataFlat: ScatterPoint<Datum>[] = flatten(this._pointData)
 

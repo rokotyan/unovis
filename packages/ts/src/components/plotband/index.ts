@@ -58,9 +58,9 @@ export class Plotband<Datum> extends XYComponentCore<Datum, PlotbandConfigInterf
 
   /** Extra space required to fit the plotband label, which is otherwise clipped
    * when the plotband is drawn close to the edge of the chart. */
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     const { config } = this
-    const noBleed: Spacing = { top: 0, bottom: 0, left: 0, right: 0 }
+    const noBleed: Required<Spacing> = { top: 0, bottom: 0, left: 0, right: 0 }
     const labelTextBlocks = this._getLabelTextBlocks()
     if (!labelTextBlocks.length || !isNumber(config.from) || !isNumber(config.to)) return noBleed
 

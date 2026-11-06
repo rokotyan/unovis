@@ -178,7 +178,7 @@ export function getLabelMaxWidth<N extends SankeyInputNode, L extends SankeyInpu
   labelOrientation: Position.Left | Position.Right,
   layerSpacing: number,
   sankeyMaxLayer: number,
-  bleed: Spacing
+  bleed: Required<Spacing>
 ): number {
   const labelHorizontalPadding = 2 * SANKEY_LABEL_SPACING + 2 * SANKEY_LABEL_BLOCK_PADDING
 
@@ -208,7 +208,7 @@ export function renderLabel<N extends SankeyInputNode, L extends SankeyInputLink
   duration: number,
   layerSpacing: number | undefined,
   sankeyMaxLayer: number,
-  bleed: Spacing,
+  bleed: Required<Spacing>,
   forceExpand = false
 ): { x: number; y: number; width: number; height: number; layer: number; selection: any; hidden?: boolean } {
   const labelTextSelection: Selection<SVGTextElement, SankeyNode<N, L>, SVGGElement, SankeyNode<N, L>> = labelGroup.select(`.${s.label}`)

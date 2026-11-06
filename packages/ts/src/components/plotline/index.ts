@@ -58,7 +58,7 @@ export class Plotline<Datum> extends XYComponentCore<Datum, PlotlineConfigInterf
 
   /** Extra space required to fit the plotline label, which is otherwise clipped
    * when the plotline is drawn close to the edge of the chart. */
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     const { config } = this
 
     // The plotline is clipped out completely when its value is outside of the domain, so there's nothing to fit in

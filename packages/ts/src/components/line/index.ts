@@ -46,7 +46,7 @@ export class Line<Datum> extends XYComponentCore<Datum, LineConfigInterface<Datu
     this.setConfig(config)
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     const { config: { lineWidth } } = this
     const yDomain = this.yScale.domain() as [number, number]
     const yDirection = this.yScale.range()[0] > this.yScale.range()[1]

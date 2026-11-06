@@ -36,7 +36,7 @@ export class Boxplot<Datum> extends XYComponentCore<Datum, BoxplotConfigInterfac
     this.setConfig(config)
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     this._boxData = this._getVisibleData()
     if (this._boxData.length === 0) return { top: 0, bottom: 0, left: 0, right: 0 }
 

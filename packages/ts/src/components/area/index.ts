@@ -62,7 +62,7 @@ export class Area<Datum> extends XYComponentCore<Datum, AreaConfigInterface<Datu
     return this.config.baseline
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     const { config: { line, lineWidth } } = this
     if (!line) return { top: 0, bottom: 0, left: 0, right: 0 }
 

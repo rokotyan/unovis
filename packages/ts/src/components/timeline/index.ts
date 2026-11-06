@@ -84,7 +84,7 @@ export class Timeline<Datum> extends XYComponentCore<Datum, TimelineConfigInterf
   private _scrollbarHeight = 0
   private _labelWidth = 0 // Will be overridden in `get bleed ()`
   private _lineIconBleed: [number, number] = [0, 0]
-  private _bleedCached: Spacing | undefined
+  private _bleedCached: Required<Spacing> | undefined
   private _bleedCacheKey: unknown[] | undefined
   private _lineBleed: [number, number] = [0, 0]
 
@@ -138,7 +138,7 @@ export class Timeline<Datum> extends XYComponentCore<Datum, TimelineConfigInterf
     super.setData(data)
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     const { config, datamodel: { data } } = this
 
     // Reuse the previously computed bleed when nothing relevant has changed: the label width

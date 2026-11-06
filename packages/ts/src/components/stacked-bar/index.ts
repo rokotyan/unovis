@@ -60,7 +60,7 @@ export class StackedBar<Datum> extends XYComponentCore<Datum, StackedBarConfigIn
     return this.config.baseline
   }
 
-  get bleed (): Spacing {
+  get bleed (): Required<Spacing> {
     this._barData = this._getVisibleData()
     if (this._barData.length === 0) return { top: 0, bottom: 0, left: 0, right: 0 }
 

@@ -166,7 +166,7 @@ export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datu
   }
 
   /** Calculates axis transform:translate offset based on passed container margins */
-  getOffset (containerMargin: Spacing): {left: number; top: number} {
+  getOffset (containerMargin: Required<Spacing>): {left: number; top: number} {
     const { config: { type, position } } = this
 
     switch (type) {
