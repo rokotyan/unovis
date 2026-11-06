@@ -1,8 +1,12 @@
 /* eslint-disable no-irregular-whitespace */
 import { ComponentCore } from '@/core/component'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { Position } from '@/types/position'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface TooltipConfigInterface {
   /** An array of visualization components to interact with. Default: `[]` */
@@ -68,7 +72,7 @@ export interface TooltipConfigInterface {
   showDelay?: number;
 }
 
-export const TooltipDefaultConfig: TooltipConfigInterface = {
+export const TooltipDefaultConfig = defineDefaults<TooltipConfigInterface>()({
   components: [],
   container: undefined,
   followCursor: true,
@@ -82,5 +86,7 @@ export const TooltipDefaultConfig: TooltipConfigInterface = {
   className: undefined,
   showDelay: undefined,
   hideDelay: undefined,
-}
+})
+
+export type TooltipResolvedConfig = ResolvedConfig<TooltipConfigInterface, typeof TooltipDefaultConfig>
 

@@ -6,13 +6,13 @@ import { getColor } from '@/utils/color'
 import { MapGraphDataModel } from '@/data-models/map-graph'
 // Local types & config
 import { FlowParticle, FlowUpdateContext } from '../types'
-import { TopoJSONMapConfigInterface } from '../config'
+import { TopoJSONMapResolvedConfig } from '../config'
 import { arc } from '../utils'
 
 import * as s from '../style'
 
 export interface FlowInitContext<AreaDatum, PointDatum, LinkDatum> {
-  config: TopoJSONMapConfigInterface<AreaDatum, PointDatum, LinkDatum>;
+  config: TopoJSONMapResolvedConfig<AreaDatum, PointDatum, LinkDatum>;
   datamodel: MapGraphDataModel<AreaDatum, PointDatum, LinkDatum>;
   _projection: GeoProjection;
   _flowParticles: FlowParticle[];

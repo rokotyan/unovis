@@ -9,15 +9,15 @@ import { ContinuousScale } from '@/types/scale'
 import { FreeBrushMode, FreeBrushSelection, FreeBrushSelectionInPixels } from './types'
 
 // Config
-import { FreeBrushDefaultConfig, FreeBrushConfigInterface } from './config'
+import { FreeBrushDefaultConfig, FreeBrushConfigInterface, FreeBrushResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
 
 export class FreeBrush<Datum> extends XYComponentCore<Datum, FreeBrushConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = FreeBrushDefaultConfig as FreeBrushConfigInterface<Datum>
-  public config: FreeBrushConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = FreeBrushDefaultConfig as FreeBrushResolvedConfig<Datum>
+  public config: FreeBrushResolvedConfig<Datum> = this._defaultConfig
 
   private brush: Selection<SVGGElement, unknown, SVGGElement, unknown>
   private brushBehaviour: BrushBehavior<unknown>

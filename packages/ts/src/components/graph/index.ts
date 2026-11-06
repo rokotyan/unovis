@@ -30,7 +30,7 @@ import {
 } from './types'
 
 // Config
-import { GraphDefaultConfig, GraphConfigInterface } from './config'
+import { GraphDefaultConfig, GraphConfigInterface, GraphResolvedConfig } from './config'
 
 // Styles
 import * as generalSelectors from './style'
@@ -89,8 +89,8 @@ export class Graph<
 
   static nodeSelectors = nodeSelectors
   declare g: Selection<SVGGElement, unknown, null, undefined>
-  protected _defaultConfig = GraphDefaultConfig as unknown as GraphConfigInterface<N, L>
-  public config: GraphConfigInterface<N, L> = this._defaultConfig
+  protected _defaultConfig = GraphDefaultConfig as unknown as GraphResolvedConfig<N, L>
+  public config: GraphResolvedConfig<N, L> = this._defaultConfig
   datamodel: GraphDataModel<N, L, GraphNode<N, L>, GraphLink<N, L>> = new GraphDataModel()
   private _selectedNodes: GraphNode<N, L>[]
   private _selectedLink: GraphLink<N, L>

@@ -7,7 +7,7 @@ import { feature } from 'topojson-client'
 import { GenericDataRecord } from '@/types/data'
 
 // Config
-import { LeafletMapConfigInterface } from '../config'
+import { LeafletMapResolvedConfig } from '../config'
 
 // Local Types
 
@@ -38,7 +38,7 @@ async function getMaplibreWorkerUrl (maplibre: typeof import('maplibre-gl')): Pr
   return maplibreWorkerUrl
 }
 
-export function updateTopoJson<T extends GenericDataRecord> (maplibreMap: Map, config: LeafletMapConfigInterface<T>): void {
+export function updateTopoJson<T extends GenericDataRecord> (maplibreMap: Map, config: LeafletMapResolvedConfig<T>): void {
   const { topoJSONLayer } = config
 
   if (topoJSONLayer.sources) {
@@ -101,7 +101,7 @@ export function updateTopoJson<T extends GenericDataRecord> (maplibreMap: Map, c
   } else if (strokeLayer) { maplibreMap.removeLayer(`${topoJSONLayer.featureName}-stroke`) }
 }
 
-export async function setupMap<T extends GenericDataRecord> (mapContainer: HTMLElement, config: LeafletMapConfigInterface<T>): Promise<{
+export async function setupMap<T extends GenericDataRecord> (mapContainer: HTMLElement, config: LeafletMapResolvedConfig<T>): Promise<{
   leaflet: L.Map;
   layer: L.Layer;
   svgOverlay: Selection<SVGSVGElement, unknown, null, undefined>;

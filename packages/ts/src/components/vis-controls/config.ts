@@ -1,3 +1,9 @@
+// Utils
+import { defineDefaults } from '@/utils/data'
+
+// Types
+import { ResolvedConfig } from '@/types/misc'
+
 // Local Types
 import { VisControlItemInterface, VisControlsOrientation } from './types'
 
@@ -8,8 +14,10 @@ export interface VisControlsConfigInterface {
   orientation?: VisControlsOrientation;
 }
 
-export const VisControlsDefaultConfig: VisControlsConfigInterface = {
+export const VisControlsDefaultConfig = defineDefaults<VisControlsConfigInterface>()({
   items: [],
   orientation: VisControlsOrientation.Horizontal,
-}
+})
+
+export type VisControlsResolvedConfig = ResolvedConfig<VisControlsConfigInterface, typeof VisControlsDefaultConfig>
 

@@ -23,7 +23,7 @@ import { Spacing } from '@/types/spacing'
 import { RadialBarArcDatum, RadialBarArcAnimState, RadialBarDatum } from './types'
 
 // Config
-import { RadialBarDefaultConfig, RadialBarConfigInterface } from './config'
+import { RadialBarDefaultConfig, RadialBarConfigInterface, RadialBarResolvedConfig } from './config'
 
 // Modules
 import { BarNode, createBar, updateBar, removeBar } from './modules/bar'
@@ -36,8 +36,8 @@ import * as s from './style'
 
 export class RadialBar<Datum> extends ComponentCore<Datum[], RadialBarConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = RadialBarDefaultConfig as RadialBarConfigInterface<Datum>
-  public config: RadialBarConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = RadialBarDefaultConfig as RadialBarResolvedConfig<Datum>
+  public config: RadialBarResolvedConfig<Datum> = this._defaultConfig
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 

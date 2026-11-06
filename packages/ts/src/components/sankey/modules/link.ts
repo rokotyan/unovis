@@ -12,7 +12,7 @@ import { smartTransition } from '@/utils/d3'
 import { SankeyInputLink, SankeyInputNode, SankeyLink } from '../types'
 
 // Config
-import { SankeyConfigInterface } from '../config'
+import { SankeyResolvedConfig } from '../config'
 
 // Styles
 import * as s from '../style'
@@ -78,7 +78,7 @@ export function createLinks<N extends SankeyInputNode, L extends SankeyInputLink
 
 export function updateLinks<N extends SankeyInputNode, L extends SankeyInputLink> (
   sel: Selection<SVGGElement, SankeyLink<N, L>, SVGGElement, unknown>,
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   duration: number
 ): void {
   smartTransition(sel, duration)

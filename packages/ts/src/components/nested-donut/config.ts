@@ -1,8 +1,12 @@
 // Core
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 import { FillPatternType } from '@/styles/patterns'
 import { NestedDonutDirection, NestedDonutLayerSettings, NestedDonutSegment } from './types'
 
@@ -73,7 +77,7 @@ export interface NestedDonutConfigInterface<Datum> extends ComponentConfigInterf
   showSegmentLabels?: boolean;
 }
 
-export const NestedDonutDefaultConfig: NestedDonutConfigInterface<unknown> = {
+export const NestedDonutDefaultConfig = defineDefaults<NestedDonutConfigInterface<unknown>>()({
   ...ComponentDefaultConfig,
   angleRange: [0, 2 * Math.PI],
   centralLabel: undefined,
@@ -95,4 +99,6 @@ export const NestedDonutDefaultConfig: NestedDonutConfigInterface<unknown> = {
   showSegmentLabels: true,
   sort: undefined,
   value: undefined,
-}
+})
+
+export type NestedDonutResolvedConfig<Datum> = ResolvedConfig<NestedDonutConfigInterface<Datum>, typeof NestedDonutDefaultConfig>

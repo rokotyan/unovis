@@ -22,7 +22,7 @@ import { ContinuousScale } from '@/types/scale'
 import { ScatterPointGroupNode, ScatterPoint } from './types'
 
 // Config
-import { ScatterDefaultConfig, ScatterConfigInterface } from './config'
+import { ScatterDefaultConfig, ScatterConfigInterface, ScatterResolvedConfig } from './config'
 
 // Modules
 import { createPoints, updatePoints, removePoints } from './modules/point'
@@ -34,8 +34,8 @@ import * as s from './style'
 
 export class Scatter<Datum> extends XYComponentCore<Datum, ScatterConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = ScatterDefaultConfig as ScatterConfigInterface<Datum>
-  public config: ScatterConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = ScatterDefaultConfig as ScatterResolvedConfig<Datum>
+  public config: ScatterResolvedConfig<Datum> = this._defaultConfig
 
   events: XYComponentCore<Datum>['events'] = {
     [Scatter.selectors.point]: {

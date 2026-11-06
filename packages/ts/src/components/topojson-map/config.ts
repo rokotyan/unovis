@@ -2,8 +2,12 @@ import { GeoProjection } from 'd3-geo'
 import type { Topology } from 'topojson-specification'
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 // Local Types
 import { MapPointLabelPosition, TopoJSONMapClusterDatum, TopoJSONMapPointShape, TopoJSONMapPointStyles } from './types'
 
@@ -177,7 +181,7 @@ export interface TopoJSONMapConfigInterface<
 
 }
 
-export const TopoJSONMapDefaultConfig: TopoJSONMapConfigInterface<unknown, unknown, unknown> = {
+export const TopoJSONMapDefaultConfig = defineDefaults<TopoJSONMapConfigInterface<unknown, unknown, unknown>>()({
   ...ComponentDefaultConfig,
   projection: undefined,
   duration: 1500,
@@ -251,5 +255,8 @@ export const TopoJSONMapDefaultConfig: TopoJSONMapConfigInterface<unknown, unkno
   heatmapModeZoomLevelThreshold: 2.5,
 
   colorMap: {},
-}
+})
+
+export type TopoJSONMapResolvedConfig<AreaDatum, PointDatum = unknown, LinkDatum = unknown> =
+  ResolvedConfig<TopoJSONMapConfigInterface<AreaDatum, PointDatum, LinkDatum>, typeof TopoJSONMapDefaultConfig>
 

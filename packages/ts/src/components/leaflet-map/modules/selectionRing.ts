@@ -12,7 +12,7 @@ import { getPointPos } from './utils'
 import { LeafletMapPoint, LeafletMapPointDatum } from '../types'
 
 // Config
-import { LeafletMapConfigInterface } from '../config'
+import { LeafletMapResolvedConfig } from '../config'
 
 import * as s from '../style'
 
@@ -28,7 +28,7 @@ export function updateNodeSelectionRing<D extends GenericDataRecord> (
   selection: Selection<SVGGElement, unknown, SVGElement, undefined>,
   selectedPoint: LeafletMapPoint<D>,
   pointData: LeafletMapPoint<D>[],
-  config: LeafletMapConfigInterface<D>,
+  config: LeafletMapResolvedConfig<D>,
   leafletMap: L.Map
 ): void {
   selection.attr('class', s.pointSelectionRing)

@@ -12,7 +12,7 @@ import { smartTransition } from '@/utils/d3'
 import { ChordInputNode, ChordInputLink, ChordNode } from '../types'
 
 // Config
-import { ChordDiagramConfigInterface } from '../config'
+import { ChordDiagramResolvedConfig } from '../config'
 
 type AnimState = { x0: number; x1: number; y0: number; y1: number }
 export interface ArcNode extends SVGElement {
@@ -39,7 +39,7 @@ export function createNode<N extends ChordInputNode, L extends ChordInputLink> (
 
 export function updateNode<N extends ChordInputNode, L extends ChordInputLink> (
   selection: Selection<SVGPathElement, ChordNode<N>, SVGGElement, unknown>,
-  config: ChordDiagramConfigInterface<N, L>,
+  config: ChordDiagramResolvedConfig<N, L>,
   arcGen: Arc<any, ChordNode<N>>,
   duration: number
 ): void {

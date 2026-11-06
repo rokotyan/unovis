@@ -8,7 +8,7 @@ import { ElkShape } from 'elkjs'
 import type { GraphDataModel } from '@/data-models/graph'
 
 // Utils
-import { isEqual } from '@/utils/data'
+import { isEqual, defineDefaults } from '@/utils/data'
 
 // Config
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
@@ -16,6 +16,7 @@ import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/compone
 // Types
 import { FitMode, TrimMode } from '@/types/text'
 import { Spacing } from '@/types/spacing'
+import { ResolvedConfig } from '@/types/misc'
 import { GraphInputLink, GraphInputNode, GraphInputData } from '@/types/graph'
 import { BooleanAccessor, ColorAccessor, NumericAccessor, StringAccessor, GenericAccessor } from '@/types/accessor'
 
@@ -326,7 +327,7 @@ export interface GraphConfigInterface<N extends GraphInputNode, L extends GraphI
   ) => boolean;
 }
 
-export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInputLink> = {
+export const GraphDefaultConfig = defineDefaults<GraphConfigInterface<GraphInputNode, GraphInputLink>>()({
   ...ComponentDefaultConfig,
   duration: 1000,
   zoomScaleExtent: [0.35, 1.25],
@@ -445,4 +446,6 @@ export const GraphDefaultConfig: GraphConfigInterface<GraphInputNode, GraphInput
   shouldDataUpdate: (prevData: GraphInputData<GraphInputNode, GraphInputLink>, nextData: GraphInputData<GraphInputNode, GraphInputLink>): boolean => {
     return !isEqual(prevData, nextData)
   },
-}
+})
+
+export type GraphResolvedConfig<N extends GraphInputNode, L extends GraphInputLink> = ResolvedConfig<GraphConfigInterface<N, L>, typeof GraphDefaultConfig>

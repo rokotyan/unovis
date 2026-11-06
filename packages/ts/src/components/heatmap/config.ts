@@ -1,8 +1,12 @@
 // Core
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 import { HeatmapLayoutType } from './types'
 
 export interface HeatmapConfigInterface<Datum> extends ComponentConfigInterface {
@@ -51,7 +55,7 @@ export interface HeatmapConfigInterface<Datum> extends ComponentConfigInterface 
   labelHideOverlapping?: boolean;
 }
 
-export const HeatmapDefaultConfig: HeatmapConfigInterface<unknown> = {
+export const HeatmapDefaultConfig = defineDefaults<HeatmapConfigInterface<unknown>>()({
   ...ComponentDefaultConfig,
   value: undefined,
   color: undefined,
@@ -68,4 +72,6 @@ export const HeatmapDefaultConfig: HeatmapConfigInterface<unknown> = {
   columnLabel: undefined,
   rowLabel: undefined,
   labelHideOverlapping: true,
-}
+})
+
+export type HeatmapResolvedConfig<Datum> = ResolvedConfig<HeatmapConfigInterface<Datum>, typeof HeatmapDefaultConfig>

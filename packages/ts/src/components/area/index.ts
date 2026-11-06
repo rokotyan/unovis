@@ -32,15 +32,15 @@ import { Direction } from '@/types/direction'
 import { AreaDatum } from './types'
 
 // Config
-import { AreaDefaultConfig, AreaConfigInterface } from './config'
+import { AreaDefaultConfig, AreaConfigInterface, AreaResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
 
 export class Area<Datum> extends XYComponentCore<Datum, AreaConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = AreaDefaultConfig as AreaConfigInterface<Datum>
-  public config: AreaConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = AreaDefaultConfig as AreaResolvedConfig<Datum>
+  public config: AreaResolvedConfig<Datum> = this._defaultConfig
   public stacked = true
   private _areaGen: AreaInterface<AreaDatum>
   private _lineGen: LineInterface<AreaDatum>

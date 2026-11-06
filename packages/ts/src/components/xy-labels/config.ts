@@ -1,8 +1,12 @@
 // Core
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 
 // Local Types
 import { XYLabel, XYLabelPositioning } from './types'
@@ -39,7 +43,7 @@ export interface XYLabelsConfigInterface<Datum> extends XYComponentConfigInterfa
   /** Cluster label color accessor function. Default: `null` */
   clusterLabelColor?: ColorAccessor<XYLabel<Datum>[]>;
 }
-export const XYLabelsDefaultConfig: XYLabelsConfigInterface<unknown> = {
+export const XYLabelsDefaultConfig = defineDefaults<XYLabelsConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   color: (d: unknown): string => (d as { color: string }).color,
   y: undefined,
@@ -57,5 +61,7 @@ export const XYLabelsDefaultConfig: XYLabelsConfigInterface<unknown> = {
   clusterBackgroundColor: undefined,
   clusterCursor: undefined,
   clusterLabelColor: null,
-}
+})
+
+export type XYLabelsResolvedConfig<Datum> = ResolvedConfig<XYLabelsConfigInterface<Datum>, typeof XYLabelsDefaultConfig>
 

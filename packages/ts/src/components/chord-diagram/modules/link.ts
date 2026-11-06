@@ -16,7 +16,7 @@ import { convertLineToArc } from '@/utils/path'
 
 // Local Types
 import { ChordInputLink, ChordInputNode, ChordRibbon, ChordRibbonPoint } from '../types'
-import { ChordDiagramConfigInterface } from '../config'
+import { ChordDiagramResolvedConfig } from '../config'
 
 // Generators
 export function emptyPath (): string {
@@ -65,7 +65,7 @@ export function createLink<N extends ChordInputNode, L extends ChordInputLink> (
 
 export function updateLink<N extends ChordInputNode, L extends ChordInputLink> (
   selection: Selection<SVGPathElement, ChordRibbon<N, L>, SVGGElement, unknown>,
-  config: ChordDiagramConfigInterface<N, L>,
+  config: ChordDiagramResolvedConfig<N, L>,
   radiusScale: ScalePower<number, number>,
   duration: number
 ): void {

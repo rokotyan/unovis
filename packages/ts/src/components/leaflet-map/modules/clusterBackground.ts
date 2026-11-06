@@ -12,7 +12,7 @@ import { getPointPos, getNodePathData } from './utils'
 import { LeafletMapPointShape, LeafletMapExpandedCluster } from '../types'
 
 // Config Interface
-import { LeafletMapConfigInterface } from '../config'
+import { LeafletMapResolvedConfig } from '../config'
 
 export function createBackgroundNode (selection: Selection<SVGGElement, unknown, SVGElement, undefined>): void {
   selection.datum({ _zIndex: 1 })
@@ -22,7 +22,7 @@ export function createBackgroundNode (selection: Selection<SVGGElement, unknown,
 export function updateBackgroundNode<D extends GenericDataRecord> (
   selection: Selection<SVGGElement, unknown, SVGElement, undefined>,
   expandedCluster: LeafletMapExpandedCluster<D>,
-  config: LeafletMapConfigInterface<D>,
+  config: LeafletMapResolvedConfig<D>,
   leafletMap: L.Map,
   clusterBackgroundRadius: number
 ): void {

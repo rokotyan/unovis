@@ -16,7 +16,7 @@ import { Bounds } from '@/components/leaflet-map/types'
 import { GenericDataRecord } from '@/types/data'
 
 // Config
-import { LeafletFlowMapDefaultConfig, LeafletFlowMapConfigInterface } from './config'
+import { LeafletFlowMapDefaultConfig, LeafletFlowMapConfigInterface, LeafletFlowMapResolvedConfig } from './config'
 
 // Local Types
 import { LatLon, Particle } from './types'
@@ -32,8 +32,8 @@ export class LeafletFlowMap<
   LeafletFlowMapConfigInterface<PointDatum, FlowDatum>
   > {
   static selectors = LeafletMap.selectors
-  protected _defaultConfig = LeafletFlowMapDefaultConfig as LeafletFlowMapConfigInterface<PointDatum, FlowDatum>
-  public config: LeafletFlowMapConfigInterface<PointDatum, FlowDatum> = this._defaultConfig
+  protected _defaultConfig = LeafletFlowMapDefaultConfig as LeafletFlowMapResolvedConfig<PointDatum, FlowDatum>
+  public config: LeafletFlowMapResolvedConfig<PointDatum, FlowDatum> = this._defaultConfig
 
   type = ComponentType.HTML
   private leafletMap: LeafletMap<PointDatum>

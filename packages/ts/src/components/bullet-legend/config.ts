@@ -1,5 +1,9 @@
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Local Types
 import { ColorFunction, GenericAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 import { BulletLegendItemInterface, BulletShape, BulletLegendOrientation } from './types'
 
 export interface BulletLegendConfigInterface {
@@ -41,7 +45,7 @@ export interface BulletLegendConfigInterface {
   colorFunction?: ColorFunction;
 }
 
-export const BulletLegendDefaultConfig: BulletLegendConfigInterface = {
+export const BulletLegendDefaultConfig = defineDefaults<BulletLegendConfigInterface>()({
   items: [],
   labelClassName: '',
   onLegendItemClick: undefined,
@@ -52,4 +56,6 @@ export const BulletLegendDefaultConfig: BulletLegendConfigInterface = {
   bulletShape: d => d.shape ?? BulletShape.Circle,
   orientation: BulletLegendOrientation.Horizontal,
   renderIntoProvidedDomNode: false,
-}
+})
+
+export type BulletLegendResolvedConfig = ResolvedConfig<BulletLegendConfigInterface, typeof BulletLegendDefaultConfig>

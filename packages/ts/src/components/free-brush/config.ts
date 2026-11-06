@@ -1,7 +1,11 @@
 import { D3BrushEvent } from 'd3-brush'
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
+import { ResolvedConfig } from '@/types/misc'
 import { FreeBrushMode, FreeBrushSelection } from './types'
 
 // We extend partial XY config interface because x and y properties are optional for FreeBrush
@@ -37,7 +41,7 @@ export interface FreeBrushConfigInterface<Datum> extends Partial<XYComponentConf
   autoHide?: boolean;
 }
 
-export const FreeBrushDefaultConfig: FreeBrushConfigInterface<unknown> = {
+export const FreeBrushDefaultConfig = defineDefaults<FreeBrushConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
   onBrush: (s: FreeBrushSelection | undefined, e: D3BrushEvent<unknown>, userDriven: boolean): void => {},
@@ -52,4 +56,6 @@ export const FreeBrushDefaultConfig: FreeBrushConfigInterface<unknown> = {
   selectionMinLength: undefined,
   mode: FreeBrushMode.X,
   autoHide: true,
-}
+})
+
+export type FreeBrushResolvedConfig<Datum> = ResolvedConfig<FreeBrushConfigInterface<Datum>, typeof FreeBrushDefaultConfig>

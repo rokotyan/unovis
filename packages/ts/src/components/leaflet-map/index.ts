@@ -45,7 +45,7 @@ import {
 } from './types'
 
 // Config
-import { LeafletMapDefaultConfig, LeafletMapConfigInterface } from './config'
+import { LeafletMapDefaultConfig, LeafletMapConfigInterface, LeafletMapResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
@@ -59,8 +59,8 @@ import { createBackgroundNode, updateBackgroundNode } from './modules/clusterBac
 export class LeafletMap<Datum extends GenericDataRecord> extends ComponentCore<Datum[], LeafletMapConfigInterface<Datum>> {
   static selectors = s
   static cssVariables = s.variables
-  protected _defaultConfig = LeafletMapDefaultConfig as LeafletMapConfigInterface<Datum>
-  public config: LeafletMapConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = LeafletMapDefaultConfig as LeafletMapResolvedConfig<Datum>
+  public config: LeafletMapResolvedConfig<Datum> = this._defaultConfig
 
   declare g: Selection<HTMLElement, unknown, null, undefined>
   type = ComponentType.HTML

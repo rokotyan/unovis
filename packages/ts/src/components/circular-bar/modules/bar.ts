@@ -10,7 +10,7 @@ import { smartTransition } from '@/utils/d3'
 import { CircularBarArcDatum, CircularBarArcAnimState } from '../types'
 
 // Config
-import { CircularBarConfigInterface } from '../config'
+import { CircularBarResolvedConfig } from '../config'
 
 export interface BarNode extends SVGElement {
   _animState?: CircularBarArcAnimState;
@@ -29,7 +29,7 @@ function getAnimState<Datum> (d: CircularBarArcDatum<Datum>, outerRadius = d.out
 
 export function createBar<Datum> (
   selection: Selection<SVGPathElement, CircularBarArcDatum<Datum>, SVGGElement, unknown>,
-  config: CircularBarConfigInterface<Datum>
+  config: CircularBarResolvedConfig<Datum>
 ): void {
   selection
     .style('fill', d => getColor(d.data, config.color, d.index))
@@ -43,7 +43,7 @@ export function createBar<Datum> (
 
 export function updateBar<Datum> (
   selection: Selection<SVGPathElement, CircularBarArcDatum<Datum>, SVGGElement, unknown>,
-  config: CircularBarConfigInterface<Datum>,
+  config: CircularBarResolvedConfig<Datum>,
   pathGen: CircularBarPathGenerator,
   duration: number
 ): void {

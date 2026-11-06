@@ -23,7 +23,7 @@ import { LeafletMapPointDatum, LeafletMapClusterDatum, LeafletMapPoint, LeafletM
 import { updateDonut } from './donut'
 
 // Config
-import { LeafletMapConfigInterface } from '../config'
+import { LeafletMapResolvedConfig } from '../config'
 
 import * as s from '../style'
 
@@ -54,7 +54,7 @@ export function createNodes<D extends GenericDataRecord> (
 
 export function updateNodes<D extends GenericDataRecord> (
   selection: Selection<SVGGElement, LeafletMapPoint<D>, SVGGElement, unknown>,
-  config: LeafletMapConfigInterface<D>,
+  config: LeafletMapResolvedConfig<D>,
   leafletMap: L.Map,
   mapMoveZoomUpdateOnly: boolean
 ): void {

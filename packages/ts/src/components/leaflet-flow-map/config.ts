@@ -3,9 +3,13 @@
 // Config
 import { LeafletMapDefaultConfig, LeafletMapConfigInterface } from '@/components/leaflet-map/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, NumericAccessor } from '@/types/accessor'
 import { GenericDataRecord } from '@/types/data'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface LeafletFlowMapConfigInterface<PointDatum extends GenericDataRecord, FlowDatum extends GenericDataRecord> extends LeafletMapConfigInterface<PointDatum> {
   /** Flow source point longitude accessor function or value. Default:.`f => f.sourceLongitude` */
@@ -38,7 +42,7 @@ export interface LeafletFlowMapConfigInterface<PointDatum extends GenericDataRec
   onSourcePointMouseLeave?: (f: FlowDatum, event: MouseEvent) => void;
 }
 
-export const LeafletFlowMapDefaultConfig: LeafletFlowMapConfigInterface<GenericDataRecord, GenericDataRecord> = {
+export const LeafletFlowMapDefaultConfig = defineDefaults<LeafletFlowMapConfigInterface<GenericDataRecord, GenericDataRecord>>()({
   ...LeafletMapDefaultConfig,
   sourceLongitude: (f: unknown): number => (f as { sourceLongitude: number }).sourceLongitude as number,
   sourceLatitude: (f: unknown): number => (f as { sourceLatitude: number }).sourceLatitude as number,
@@ -53,4 +57,7 @@ export const LeafletFlowMapDefaultConfig: LeafletFlowMapConfigInterface<GenericD
   onSourcePointClick: undefined,
   onSourcePointMouseEnter: undefined,
   onSourcePointMouseLeave: undefined,
-}
+})
+
+export type LeafletFlowMapResolvedConfig<PointDatum extends GenericDataRecord, FlowDatum extends GenericDataRecord> =
+  ResolvedConfig<LeafletFlowMapConfigInterface<PointDatum, FlowDatum>, typeof LeafletFlowMapDefaultConfig>

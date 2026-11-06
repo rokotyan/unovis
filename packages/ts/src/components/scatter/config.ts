@@ -3,12 +3,16 @@ import { scaleSqrt } from 'd3-scale'
 // Core
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ContinuousScale } from '@/types/scale'
 import { SymbolType } from '@/types/symbol'
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
 import { FillPatternType } from '@/styles/patterns'
 import { Position } from '@/types/position'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface ScatterConfigInterface<Datum> extends XYComponentConfigInterface<Datum> {
   /** Point color accessor function. Default: `d => d.color` */
@@ -53,7 +57,7 @@ export interface ScatterConfigInterface<Datum> extends XYComponentConfigInterfac
   cullOverlappingPoints?: boolean;
 }
 
-export const ScatterDefaultConfig: ScatterConfigInterface<unknown> = {
+export const ScatterDefaultConfig = defineDefaults<ScatterConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   color: (d: unknown): string => (d as { color: string }).color,
   pattern: undefined,
@@ -70,5 +74,7 @@ export const ScatterDefaultConfig: ScatterConfigInterface<unknown> = {
   labelTextBrightnessRatio: 0.65,
   strokeColor: undefined,
   strokeWidth: undefined,
-}
+})
+
+export type ScatterResolvedConfig<Datum> = ResolvedConfig<ScatterConfigInterface<Datum>, typeof ScatterDefaultConfig>
 

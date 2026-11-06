@@ -1,8 +1,12 @@
 import { D3BrushEvent } from 'd3-brush'
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { Arrangement } from '@/types/position'
+import { ResolvedConfig } from '@/types/misc'
 
 // We extend partial XY config interface because x and y properties are optional for Brush
 export interface BrushConfigInterface<Datum> extends Partial<XYComponentConfigInterface<Datum>> {
@@ -37,7 +41,7 @@ export interface BrushConfigInterface<Datum> extends Partial<XYComponentConfigIn
   brushHeightExtend?: number;
 }
 
-export const BrushDefaultConfig: BrushConfigInterface<unknown> = {
+export const BrushDefaultConfig = defineDefaults<BrushConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
   onBrush: <Datum>(s: [number, number] | undefined, e: D3BrushEvent<Datum>, userDriven: boolean): void => {},
@@ -53,4 +57,6 @@ export const BrushDefaultConfig: BrushConfigInterface<unknown> = {
   handlePosition: Arrangement.Inside,
   selectionMinLength: undefined,
   brushHeightExtend: 0,
-}
+})
+
+export type BrushResolvedConfig<Datum> = ResolvedConfig<BrushConfigInterface<Datum>, typeof BrushDefaultConfig>

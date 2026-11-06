@@ -24,7 +24,7 @@ import { ExtendedSizeComponent, Sizing } from '@/types/component'
 import { HeatmapCellDatum } from './types'
 
 // Config
-import { HeatmapDefaultConfig, HeatmapConfigInterface } from './config'
+import { HeatmapDefaultConfig, HeatmapConfigInterface, HeatmapResolvedConfig } from './config'
 
 // Utils
 import { getHeatmapGridSize, getHeatmapCellPosition, getHeatmapFixedCellDimensions, getHeatmapIntrinsicSize, resolveHeatmapCellSize } from './utils'
@@ -37,8 +37,8 @@ type RowLabelDatum = { row: number; label: string }
 
 export class Heatmap<Datum> extends ComponentCore<Datum[], HeatmapConfigInterface<Datum>> implements ExtendedSizeComponent {
   static selectors = s
-  protected _defaultConfig = HeatmapDefaultConfig as HeatmapConfigInterface<Datum>
-  public config: HeatmapConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = HeatmapDefaultConfig as HeatmapResolvedConfig<Datum>
+  public config: HeatmapResolvedConfig<Datum> = this._defaultConfig
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 

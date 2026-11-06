@@ -3,12 +3,16 @@ import { D3ZoomEvent } from 'd3-zoom'
 // Config
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
 import { FillPatternType } from '@/styles/patterns'
 import { TrimMode, VerticalAlign, FitMode } from '@/types/text'
 import { Position } from '@/types/position'
 import { Spacing } from '@/types/spacing'
+import { ResolvedConfig } from '@/types/misc'
 
 import {
   SankeyInputLink,
@@ -176,7 +180,7 @@ export interface SankeyConfigInterface<N extends SankeyInputNode, L extends Sank
   selectedNodeIds?: string[];
 }
 
-export const SankeyDefaultConfig: SankeyConfigInterface<SankeyInputNode, SankeyInputLink> = {
+export const SankeyDefaultConfig = defineDefaults<SankeyConfigInterface<SankeyInputNode, SankeyInputLink>>()({
   ...ComponentDefaultConfig,
   heightNormalizationCoeff: 1 / 16,
   zoomScale: undefined,
@@ -238,5 +242,7 @@ export const SankeyDefaultConfig: SankeyConfigInterface<SankeyInputNode, SankeyI
   onLayoutCalculated: undefined,
   selectedNodeIds: undefined,
   linkSort: (link2, link1) => link1.value - link2.value,
-}
+})
+
+export type SankeyResolvedConfig<N extends SankeyInputNode, L extends SankeyInputLink> = ResolvedConfig<SankeyConfigInterface<N, L>, typeof SankeyDefaultConfig>
 

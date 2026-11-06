@@ -24,7 +24,7 @@ import {
 } from '../types'
 
 // Config
-import { LeafletMapConfigInterface } from '../config'
+import { LeafletMapResolvedConfig } from '../config'
 
 export function bBoxMerge (
   bBoxArray: ({x1: number; x2: number; y1: number; y2: number})[]):
@@ -120,7 +120,7 @@ export function toGeoJSONPoint<D extends GenericDataRecord> (d: D, i: number, po
   }
 }
 
-export function calculateClusterIndex<D extends GenericDataRecord> (data: D[], config: LeafletMapConfigInterface<D>, maxClusterZoomLevel = 23): Supercluster<D> {
+export function calculateClusterIndex<D extends GenericDataRecord> (data: D[], config: LeafletMapResolvedConfig<D>, maxClusterZoomLevel = 23): Supercluster<D> {
   const { colorMap, pointShape, pointLatitude, pointLongitude, clusteringDistance } = config
   return new Supercluster<D, Supercluster.AnyProps>({
     radius: clusteringDistance,
@@ -175,7 +175,7 @@ export function geoJsonPointToScreenPoint<D extends GenericDataRecord> (
   geoPoint: ClusterFeature<LeafletMapClusterDatum<D>> | PointFeature<LeafletMapPointDatum<D>>,
   i: number,
   leafletMap: L.Map,
-  config: LeafletMapConfigInterface<D>
+  config: LeafletMapResolvedConfig<D>
 ): LeafletMapPoint<D> {
   const zoomLevel = leafletMap.getZoom()
   const isCluster = (geoPoint.properties as LeafletMapClusterDatum<D>).cluster

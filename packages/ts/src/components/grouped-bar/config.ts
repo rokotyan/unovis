@@ -1,10 +1,14 @@
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, StringAccessor } from '@/types/accessor'
 import { FillPatternType } from '@/styles/patterns'
 import { Orientation } from '@/types/position'
 import { StyleDeclaration } from '@/types/style'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface GroupedBarConfigInterface<Datum> extends XYComponentConfigInterface<Datum> {
   /** Bar color accessor function. Default: `d => d.color` */
@@ -39,7 +43,7 @@ export interface GroupedBarConfigInterface<Datum> extends XYComponentConfigInter
   orientation?: Orientation | string;
 }
 
-export const GroupedBarDefaultConfig: GroupedBarConfigInterface<unknown> = {
+export const GroupedBarDefaultConfig = defineDefaults<GroupedBarConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   color: undefined,
   pattern: undefined,
@@ -53,4 +57,6 @@ export const GroupedBarDefaultConfig: GroupedBarConfigInterface<unknown> = {
   barMinHeight: 2,
   cursor: null,
   orientation: Orientation.Vertical,
-}
+})
+
+export type GroupedBarResolvedConfig<Datum> = ResolvedConfig<GroupedBarConfigInterface<Datum>, typeof GroupedBarDefaultConfig>

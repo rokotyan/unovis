@@ -22,7 +22,7 @@ import { createIcon, updateIcon, removeIcon } from '@/components/circular-bar/mo
 import { DonutArcDatum, DonutArcAnimState, DonutDatum, DonutIconDatum } from './types'
 
 // Config
-import { DonutDefaultConfig, DonutConfigInterface } from './config'
+import { DonutDefaultConfig, DonutConfigInterface, DonutResolvedConfig } from './config'
 
 // Modules
 import { createArc, updateArc, removeArc, ArcNode } from './modules/arc'
@@ -44,8 +44,8 @@ import * as s from './style'
 
 export class Donut<Datum> extends ComponentCore<Datum[], DonutConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = DonutDefaultConfig as DonutConfigInterface<Datum>
-  public config: DonutConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = DonutDefaultConfig as DonutResolvedConfig<Datum>
+  public config: DonutResolvedConfig<Datum> = this._defaultConfig
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 

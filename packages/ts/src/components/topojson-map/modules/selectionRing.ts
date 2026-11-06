@@ -4,7 +4,7 @@ import { GeoProjection } from 'd3-geo'
 // Types
 import { getString } from '@/utils/data'
 import { TopoJSONMapPoint } from '../types'
-import { TopoJSONMapConfigInterface } from '../config'
+import { TopoJSONMapResolvedConfig } from '../config'
 
 // Styles
 import * as s from '../style'
@@ -13,7 +13,7 @@ export function updateSelectionRing<AreaDatum, PointDatum, LinkDatum> (
   pointSelectionRing: Selection<SVGGElement, unknown, null, undefined>,
   selectedPoint: TopoJSONMapPoint<PointDatum> | null,
   pointData: TopoJSONMapPoint<PointDatum>[],
-  config: TopoJSONMapConfigInterface<AreaDatum, PointDatum, LinkDatum>,
+  config: TopoJSONMapResolvedConfig<AreaDatum, PointDatum, LinkDatum>,
   projection: GeoProjection,
   currentZoomLevel: number
 ): void {

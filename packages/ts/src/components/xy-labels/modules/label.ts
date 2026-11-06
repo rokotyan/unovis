@@ -13,7 +13,7 @@ import { ColorFunction } from '@/types/accessor'
 import { ContinuousScale } from '@/types/scale'
 
 // Config
-import { XYLabelsConfigInterface } from '../config'
+import { XYLabelsResolvedConfig } from '../config'
 
 // Local Types
 import { XYLabel, XYLabelCluster, XYLabelPositioning, XYLabelRenderProps } from '../types'
@@ -34,7 +34,7 @@ export function createLabels<Datum> (
 
 export function updateLabels<Datum> (
   selection: Selection<SVGGElement, XYLabel<Datum> | XYLabelCluster<Datum>, any, any>,
-  config: XYLabelsConfigInterface<Datum>,
+  config: XYLabelsResolvedConfig<Datum>,
   duration: number
 ): void {
   selection.each((d, i, elements) => {
@@ -105,7 +105,7 @@ export function getLabelPosition (value: number, positioning: XYLabelPositioning
 export function getLabelRenderProps<Datum> (
   data: Datum | XYLabel<Datum>[],
   el: SVGGraphicsElement,
-  config: XYLabelsConfigInterface<Datum>,
+  config: XYLabelsResolvedConfig<Datum>,
   xScale: ContinuousScale,
   yScale: ContinuousScale,
   index?: number,

@@ -36,7 +36,7 @@ import {
 } from './tick-fit'
 
 // Config
-import { AxisDefaultConfig, AxisConfigInterface } from './config'
+import { AxisDefaultConfig, AxisConfigInterface, AxisResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
@@ -54,8 +54,8 @@ const TICK_LABEL_OVERLAP_TOLERANCE_PX = -5
 
 export class Axis<Datum> extends XYComponentCore<Datum, AxisConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig: AxisConfigInterface<Datum> = AxisDefaultConfig
-  public config: AxisConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = AxisDefaultConfig as AxisResolvedConfig<Datum>
+  public config: AxisResolvedConfig<Datum> = this._defaultConfig
   private axisGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
   private gridGroup: Selection<SVGGElement, unknown, SVGGElement, unknown>
 

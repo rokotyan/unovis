@@ -1,8 +1,12 @@
 // Core
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, NumericAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface RadialBarConfigInterface<Datum> extends ComponentConfigInterface {
   /** Accessor function for getting the unique data record id. Used for more persistent data updates. Default: `(d, i) => d.id ?? i` */
@@ -59,7 +63,7 @@ export interface RadialBarConfigInterface<Datum> extends ComponentConfigInterfac
   backgroundAngleRange?: [number, number];
 }
 
-export const RadialBarDefaultConfig: RadialBarConfigInterface<unknown> = {
+export const RadialBarDefaultConfig = defineDefaults<RadialBarConfigInterface<unknown>>()({
   ...ComponentDefaultConfig,
   // Optional chaining because a data record itself can be `null` when the data has gaps
   id: (d: unknown, i: number): string | number => (d as { id: string })?.id ?? i,
@@ -82,4 +86,6 @@ export const RadialBarDefaultConfig: RadialBarConfigInterface<unknown> = {
   centralLabelOffsetY: undefined,
   showBackground: true,
   backgroundAngleRange: undefined,
-}
+})
+
+export type RadialBarResolvedConfig<Datum> = ResolvedConfig<RadialBarConfigInterface<Datum>, typeof RadialBarDefaultConfig>

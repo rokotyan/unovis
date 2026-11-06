@@ -21,7 +21,7 @@ import { cssvar } from '@/utils/style'
 import { FitMode } from '@/types/text'
 
 // Config
-import { TreemapConfigInterface, TreemapDefaultConfig } from './config'
+import { TreemapConfigInterface, TreemapDefaultConfig, TreemapResolvedConfig } from './config'
 
 // Local Types
 import { TreemapDatum, TreemapNode } from './types'
@@ -31,8 +31,8 @@ import * as s from './style'
 
 export class Treemap<Datum> extends ComponentCore<Datum[], TreemapConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = TreemapDefaultConfig as TreemapConfigInterface<Datum>
-  public config: TreemapConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = TreemapDefaultConfig as TreemapResolvedConfig<Datum>
+  public config: TreemapResolvedConfig<Datum> = this._defaultConfig
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
   tiles: Selection<SVGGElement, unknown, SVGGElement, unknown>

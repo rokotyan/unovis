@@ -19,7 +19,7 @@ import { smartTransition } from '@/utils/d3'
 import { clamp, getNumber, getString, groupBy, isNumber, areArraysShallowEqual } from '@/utils/data'
 
 // Config
-import { SankeyDefaultConfig, SankeyConfigInterface } from './config'
+import { SankeyDefaultConfig, SankeyConfigInterface, SankeyResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
@@ -50,8 +50,8 @@ export class Sankey<
   SankeyConfigInterface<N, L>
   > implements ExtendedSizeComponent {
   static selectors = s
-  protected _defaultConfig = SankeyDefaultConfig as SankeyConfigInterface<N, L>
-  public config: SankeyConfigInterface<N, L> = this._defaultConfig
+  protected _defaultConfig = SankeyDefaultConfig as SankeyResolvedConfig<N, L>
+  public config: SankeyResolvedConfig<N, L> = this._defaultConfig
   datamodel: GraphDataModel<N, L, SankeyNode<N, L>, SankeyLink<N, L>> = new GraphDataModel()
   public declare g: Selection<SVGGElement, unknown, null, undefined>
   // eslint-disable-next-line @typescript-eslint/naming-convention

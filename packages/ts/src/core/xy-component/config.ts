@@ -1,5 +1,8 @@
 import { ContinuousScale } from '@/types/scale'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, NumericAccessor } from '@/types/accessor'
 
@@ -37,7 +40,7 @@ export interface XYComponentConfigInterface<Datum> extends ComponentConfigInterf
   excludeFromDomainCalculation?: boolean;
 }
 
-export const XYComponentDefaultConfig: XYComponentConfigInterface<unknown> = {
+export const XYComponentDefaultConfig = defineDefaults<XYComponentConfigInterface<unknown>>()({
   ...ComponentDefaultConfig,
   x: undefined,
   y: undefined,
@@ -46,4 +49,4 @@ export const XYComponentDefaultConfig: XYComponentConfigInterface<unknown> = {
   xScale: undefined,
   yScale: undefined,
   excludeFromDomainCalculation: false,
-}
+})

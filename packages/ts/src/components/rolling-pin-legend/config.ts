@@ -1,4 +1,6 @@
 import { RollingPinLegendItem } from '@/components/rolling-pin-legend/types'
+import { ResolvedConfig } from '@/types/misc'
+import { defineDefaults } from '@/utils/data'
 
 export interface RollingPinLegendConfigInterface {
   /** Rects forming a legend. Array of `string`, representing colors.
@@ -18,11 +20,13 @@ export interface RollingPinLegendConfigInterface {
   renderIntoProvidedDomNode?: boolean;
 }
 
-export const RollingPinLegendDefaultConfig: RollingPinLegendConfigInterface = {
+export const RollingPinLegendDefaultConfig = defineDefaults<RollingPinLegendConfigInterface>()({
   rects: [],
   leftLabelText: undefined,
   rightLabelText: undefined,
   labelClassName: '',
   labelFontSize: null,
   renderIntoProvidedDomNode: false,
-}
+})
+
+export type RollingPinLegendResolvedConfig = ResolvedConfig<RollingPinLegendConfigInterface, typeof RollingPinLegendDefaultConfig>

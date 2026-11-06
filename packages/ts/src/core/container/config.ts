@@ -1,9 +1,13 @@
 // Core
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorFunction } from '@/types/accessor'
 import { Sizing } from '@/types/component'
 import { Spacing } from '@/types/spacing'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface ContainerConfigInterface {
   /** Animation duration of all the components within the container. Default: `undefined` */
@@ -39,7 +43,7 @@ export interface ContainerConfigInterface {
   colorFunction?: ColorFunction;
 }
 
-export const ContainerDefaultConfig: ContainerConfigInterface = {
+export const ContainerDefaultConfig = defineDefaults<ContainerConfigInterface>()({
   duration: undefined,
   margin: {
     top: 0,
@@ -63,4 +67,6 @@ export const ContainerDefaultConfig: ContainerConfigInterface = {
   ariaLabel: undefined,
 
   colorFunction: undefined,
-}
+})
+
+export type ContainerResolvedConfig = ResolvedConfig<ContainerConfigInterface, typeof ContainerDefaultConfig>

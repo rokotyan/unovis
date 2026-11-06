@@ -5,7 +5,7 @@ import { smartTransition } from '@/utils/d3'
 import { mergeByReference } from '@/utils/data'
 
 // Config
-import { FlowLegendDefaultConfig, FlowLegendConfigInterface } from './config'
+import { FlowLegendDefaultConfig, FlowLegendConfigInterface, FlowLegendResolvedConfig } from './config'
 
 // Local Types
 import { FlowLegendItem, FlowLegendItemType } from './types'
@@ -18,8 +18,8 @@ export class FlowLegend {
   div: Selection<HTMLElement, unknown, null, undefined>
   element: HTMLElement
   labels: Selection<HTMLDivElement, unknown, null, undefined>
-  protected _defaultConfig = FlowLegendDefaultConfig as FlowLegendConfigInterface
-  public config: FlowLegendConfigInterface = this._defaultConfig
+  protected _defaultConfig = FlowLegendDefaultConfig as FlowLegendResolvedConfig
+  public config: FlowLegendResolvedConfig = this._defaultConfig
   prevConfig: FlowLegendConfigInterface
   protected _container: HTMLElement
 

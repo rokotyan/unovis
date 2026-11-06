@@ -11,7 +11,7 @@ import { smartTransition } from '@/utils/d3'
 import { RadialBarArcDatum, RadialBarArcAnimState } from '../types'
 
 // Config
-import { RadialBarConfigInterface } from '../config'
+import { RadialBarResolvedConfig } from '../config'
 
 export interface BarNode extends SVGElement {
   _animState?: RadialBarArcAnimState;
@@ -19,7 +19,7 @@ export interface BarNode extends SVGElement {
 
 export function createBar<Datum> (
   selection: Selection<SVGPathElement, RadialBarArcDatum<Datum>, SVGGElement, unknown>,
-  config: RadialBarConfigInterface<Datum>
+  config: RadialBarResolvedConfig<Datum>
 ): void {
   selection
     .style('fill', d => getColor(d.data, config.color, d.index))
@@ -38,7 +38,7 @@ export function createBar<Datum> (
 
 export function updateBar<Datum> (
   selection: Selection<SVGPathElement, RadialBarArcDatum<Datum>, SVGGElement, unknown>,
-  config: RadialBarConfigInterface<Datum>,
+  config: RadialBarResolvedConfig<Datum>,
   arcGen: Arc<any, RadialBarArcAnimState>,
   duration: number
 ): void {

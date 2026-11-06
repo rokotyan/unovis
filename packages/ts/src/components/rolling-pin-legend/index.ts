@@ -4,15 +4,15 @@ import { select, Selection } from 'd3-selection'
 import { mergeByReference } from '@/utils/data'
 
 // Config
-import { RollingPinLegendConfigInterface, RollingPinLegendDefaultConfig } from './config'
+import { RollingPinLegendConfigInterface, RollingPinLegendDefaultConfig, RollingPinLegendResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
 
 export class RollingPinLegend {
   static selectors = s
-  protected _defaultConfig = RollingPinLegendDefaultConfig as RollingPinLegendConfigInterface
-  public config: RollingPinLegendConfigInterface = this._defaultConfig
+  protected _defaultConfig = RollingPinLegendDefaultConfig as RollingPinLegendResolvedConfig
+  public config: RollingPinLegendResolvedConfig = this._defaultConfig
 
   div: Selection<HTMLElement, unknown, null, undefined>
   element: HTMLElement

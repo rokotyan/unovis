@@ -14,7 +14,7 @@ import { Rect } from '@/types/misc'
 import { ScatterPoint, ScatterPointGroupNode } from '../types'
 
 // Config
-import { ScatterConfigInterface } from '../config'
+import { ScatterResolvedConfig } from '../config'
 
 export function isLabelPositionCenter (labelPosition: Position | `${Position}`): boolean {
   return (labelPosition !== Position.Top) && (labelPosition !== Position.Bottom) &&
@@ -80,7 +80,7 @@ export function getEstimatedLabelBBox<Datum> (
 
 export function collideLabels<Datum> (
   selection: Selection<SVGGElement, ScatterPoint<Datum>, SVGGElement, ScatterPoint<Datum>[]>,
-  config: ScatterConfigInterface<Datum>,
+  config: ScatterResolvedConfig<Datum>,
   xScale: ContinuousScale,
   yScale: ContinuousScale
 ): void {

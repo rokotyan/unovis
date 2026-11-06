@@ -23,15 +23,15 @@ import { Direction } from '@/types/direction'
 import { LineData, LineDatum } from './types'
 
 // Config
-import { LineDefaultConfig, LineConfigInterface } from './config'
+import { LineDefaultConfig, LineConfigInterface, LineResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
 
 export class Line<Datum> extends XYComponentCore<Datum, LineConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = LineDefaultConfig as LineConfigInterface<Datum>
-  public config: LineConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = LineDefaultConfig as LineResolvedConfig<Datum>
+  public config: LineResolvedConfig<Datum> = this._defaultConfig
   lineGen: LineGenInterface<{ x: number; y: number; defined: boolean }>
   curve: CurveFactoryLineOnly = Curve[CurveType.MonotoneX]
   events: XYComponentCore<Datum>['events'] = {

@@ -1,8 +1,11 @@
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
-import { WithOptional } from '@/types/misc'
+import { ResolvedConfig, WithOptional } from '@/types/misc'
 
 export interface BoxplotConfigInterface<Datum> extends WithOptional<XYComponentConfigInterface<Datum>, 'y'> {
   /** Box fill color accessor function. Default: `d => d.color` */
@@ -32,7 +35,7 @@ export interface BoxplotConfigInterface<Datum> extends WithOptional<XYComponentC
   cursor?: StringAccessor<Datum>;
 }
 
-export const BoxplotDefaultConfig: BoxplotConfigInterface<unknown> = {
+export const BoxplotDefaultConfig = defineDefaults<BoxplotConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   color: undefined,
   median: undefined,
@@ -44,4 +47,6 @@ export const BoxplotDefaultConfig: BoxplotConfigInterface<unknown> = {
   barPadding: 0.25,
   roundedCorners: 2,
   cursor: null,
-}
+})
+
+export type BoxplotResolvedConfig<Datum> = ResolvedConfig<BoxplotConfigInterface<Datum>, typeof BoxplotDefaultConfig>

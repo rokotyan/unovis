@@ -22,7 +22,7 @@ import {
 } from '../types'
 
 // Config
-import { SankeyConfigInterface } from '../config'
+import { SankeyResolvedConfig } from '../config'
 
 // Helpers
 import { getLabelFontSize, getSubLabelFontSize, renderLabel } from './label'
@@ -34,7 +34,7 @@ export const NODE_SELECTION_RECT_DELTA = 3
 
 export function createNodes<N extends SankeyInputNode, L extends SankeyInputLink> (
   sel: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   width: number,
   bleed: Spacing
 ): void {
@@ -77,7 +77,7 @@ export function createNodes<N extends SankeyInputNode, L extends SankeyInputLink
 
 function getNodeXPos<N extends SankeyInputNode, L extends SankeyInputLink> (
   d: SankeyNode<N, L>,
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   width: number,
   bleed: Spacing,
   hasLinks: boolean
@@ -97,7 +97,7 @@ function getXDistanceToNextNode<N extends SankeyInputNode, L extends SankeyInput
   sel: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
   datum: SankeyNode<N, L>,
   data: SankeyNode<N, L>[], // Assuming that the nodes are sorted by the x position for performance reasons
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   width: number
 ): number {
   let yTolerance = config.labelMaxWidthTakeAvailableSpaceTolerance
@@ -121,7 +121,7 @@ function getXDistanceToNextNode<N extends SankeyInputNode, L extends SankeyInput
 
 export function updateNodes<N extends SankeyInputNode, L extends SankeyInputLink> (
   sel: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   width: number,
   bleed: Spacing,
   hasLinks: boolean,
@@ -182,7 +182,7 @@ export function updateNodes<N extends SankeyInputNode, L extends SankeyInputLink
 
 export function renderNodeLabels<N extends SankeyInputNode, L extends SankeyInputLink> (
   sel: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   width: number,
   duration: number,
   layerSpacing: number,
@@ -247,7 +247,7 @@ export function renderNodeLabels<N extends SankeyInputNode, L extends SankeyInpu
 
 export function removeNodes<N extends SankeyInputNode, L extends SankeyInputLink> (
   selection: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   duration: number
 ): void {
   const { exitTransitionType } = config
@@ -269,7 +269,7 @@ export function onNodeMouseOver<N extends SankeyInputNode, L extends SankeyInput
   d: SankeyNode<N, L>,
   data: SankeyNode<N, L>[],
   nodeSelection: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   width: number,
   layerSpacing: number,
   bleed: Spacing
@@ -292,7 +292,7 @@ export function onNodeMouseOut<N extends SankeyInputNode, L extends SankeyInputL
   d: SankeyNode<N, L>,
   data: SankeyNode<N, L>[],
   nodeSelection: Selection<SVGGElement, SankeyNode<N, L>, SVGGElement, unknown>,
-  config: SankeyConfigInterface<N, L>,
+  config: SankeyResolvedConfig<N, L>,
   width: number,
   layerSpacing: number,
   bleed: Spacing

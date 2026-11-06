@@ -30,7 +30,7 @@ import {
 } from './types'
 
 // Config
-import { TopoJSONMapConfigInterface } from './config'
+import { TopoJSONMapResolvedConfig } from './config'
 
 export function getLonLat<Datum> (d: Datum, pointLongitude: NumericAccessor<Datum>, pointLatitude: NumericAccessor<Datum>): [number, number] {
   const lat = getNumber(d, pointLatitude)
@@ -274,7 +274,7 @@ export function toGeoJSONPoint<D> (
 
 export function calculateClusterIndex<A, D, L> (
   data: D[],
-  config: TopoJSONMapConfigInterface<A, D, L>,
+  config: TopoJSONMapResolvedConfig<A, D, L>,
   maxClusterZoomLevel = 24
 ): Supercluster<D> {
   const { colorMap, pointShape, latitude, longitude, clusteringDistance } = config
@@ -337,7 +337,7 @@ export function geoJsonPointToScreenPoint<A, D, L> (
   geoPoint: ClusterFeature<TopoJSONMapClusterDatum<D>> | PointFeature<TopoJSONMapPointDatum<D>>,
   i: number,
   projection: (coordinates: [number, number]) => [number, number],
-  config: TopoJSONMapConfigInterface<A, D, L>,
+  config: TopoJSONMapResolvedConfig<A, D, L>,
   zoomLevel: number
 ): TopoJSONMapPoint<D> {
   const isCluster = (geoPoint.properties as TopoJSONMapClusterDatum<D>).cluster

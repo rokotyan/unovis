@@ -1,9 +1,13 @@
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { CurveType } from '@/types/curve'
 import { ColorAccessor, GenericAccessor, StringAccessor } from '@/types/accessor'
 import { LinePatternType } from '@/styles/patterns'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface LineConfigInterface<Datum> extends XYComponentConfigInterface<Datum> {
   /** Line color accessor function. The whole data array will be passed as the first argument. Default: `undefined` */
@@ -34,7 +38,7 @@ export interface LineConfigInterface<Datum> extends XYComponentConfigInterface<D
   interpolateMissingData?: boolean;
 }
 
-export const LineDefaultConfig: LineConfigInterface<unknown> = {
+export const LineDefaultConfig = defineDefaults<LineConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   curveType: CurveType.MonotoneX,
   lineWidth: 2,
@@ -43,4 +47,6 @@ export const LineDefaultConfig: LineConfigInterface<unknown> = {
   highlightOnHover: false,
   cursor: null,
   interpolateMissingData: false,
-}
+})
+
+export type LineResolvedConfig<Datum> = ResolvedConfig<LineConfigInterface<Datum>, typeof LineDefaultConfig>

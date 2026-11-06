@@ -7,7 +7,7 @@ import { mergeByReference } from '@/utils/data'
 import { VisControlItemInterface, VisControlsOrientation } from './types'
 
 // Config
-import { VisControlsDefaultConfig, VisControlsConfigInterface } from './config'
+import { VisControlsDefaultConfig, VisControlsConfigInterface, VisControlsResolvedConfig } from './config'
 
 // Style
 import * as s from './style'
@@ -15,8 +15,8 @@ import * as s from './style'
 export class VisControls {
   div: Selection<HTMLDivElement, unknown, null, undefined>
   element: HTMLDivElement
-  protected _defaultConfig = VisControlsDefaultConfig as VisControlsConfigInterface
-  public config: VisControlsConfigInterface = this._defaultConfig
+  protected _defaultConfig = VisControlsDefaultConfig as VisControlsResolvedConfig
+  public config: VisControlsResolvedConfig = this._defaultConfig
 
   protected _container: HTMLElement
   protected _items: Selection<HTMLDivElement, unknown, null, undefined>

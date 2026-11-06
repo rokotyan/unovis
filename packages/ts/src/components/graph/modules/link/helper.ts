@@ -10,7 +10,7 @@ import { GraphInputLink, GraphInputNode } from '@/types/graph'
 import { GraphLink, GraphLinkArrowStyle, GraphCircleLabel } from '../../types'
 
 // Config
-import { GraphConfigInterface } from '../../config'
+import { GraphResolvedConfig } from '../../config'
 
 // Helpers
 import { getX, getY } from '../node/helper'
@@ -37,7 +37,7 @@ export function getLinkShiftTransform (link: GraphLink, spacing: number): string
 export function getLinkStrokeWidth<N extends GraphInputNode, L extends GraphInputLink> (
   d: GraphLink<N, L>,
   scale: number,
-  config: GraphConfigInterface<N, L>
+  config: GraphResolvedConfig<N, L>
 ): number {
   const m = getNumber(d, config.linkWidth, d._indexGlobal)
   return m / Math.pow(scale, 0.5)
@@ -46,7 +46,7 @@ export function getLinkStrokeWidth<N extends GraphInputNode, L extends GraphInpu
 export function getLinkBandWidth<N extends GraphInputNode, L extends GraphInputLink> (
   d: GraphLink<N, L>,
   scale: number,
-  config: GraphConfigInterface<N, L>
+  config: GraphResolvedConfig<N, L>
 ): number {
   const { nodeSize, linkBandWidth } = config
   const sourceNodeSize = getNumber(d.source, nodeSize, d.source._index)
@@ -55,7 +55,7 @@ export function getLinkBandWidth<N extends GraphInputNode, L extends GraphInputL
   return Math.min(minNodeSize, getNumber(d, linkBandWidth, d._indexGlobal) / Math.pow(scale || 1, 0.5)) || 0
 }
 
-export function getLinkColor<N extends GraphInputNode, L extends GraphInputLink> (link: GraphLink<N, L>, config: GraphConfigInterface<N, L>): string {
+export function getLinkColor<N extends GraphInputNode, L extends GraphInputLink> (link: GraphLink<N, L>, config: GraphResolvedConfig<N, L>): string {
   const { linkStroke } = config
   const c = getColor(link, linkStroke, link._indexGlobal, undefined, { dontFallbackToCssVar: true }) ?? 'var(--vis-graph-link-stroke-color)'
   return c || null
@@ -63,7 +63,7 @@ export function getLinkColor<N extends GraphInputNode, L extends GraphInputLink>
 
 export function getLinkArrowStyle<N extends GraphInputNode, L extends GraphInputLink> (
   d: GraphLink<N, L>,
-  config: GraphConfigInterface<N, L>
+  config: GraphResolvedConfig<N, L>
 ): GraphLinkArrowStyle | undefined {
   const linkArrowValue = getValue<GraphLink<N, L>, GraphLinkArrowStyle | string | boolean>(d, config.linkArrow, d._indexGlobal)
 

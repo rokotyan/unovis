@@ -22,7 +22,7 @@ import { UNOVIS_TEXT_DEFAULT_FONT_SIZE } from '@/styles'
 
 // Config
 import { VERTICAL_X, HORIZONTAL_X, VERTICAL_Y, HORIZONTAL_Y } from './constants'
-import { PlotbandDefaultConfig, PlotbandConfigInterface } from './config'
+import { PlotbandDefaultConfig, PlotbandConfigInterface, PlotbandResolvedConfig } from './config'
 import { PlotbandLabelOrientation, PlotbandLabelPosition, PlotbandLabelLayout } from './types'
 
 // Styles
@@ -30,7 +30,8 @@ import * as s from './style'
 
 export class Plotband<Datum> extends XYComponentCore<Datum, PlotbandConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = PlotbandDefaultConfig as PlotbandConfigInterface<Datum>
+  protected _defaultConfig = PlotbandDefaultConfig as PlotbandResolvedConfig<Datum>
+  public config: PlotbandResolvedConfig<Datum> = this._defaultConfig
   from: number | null | undefined
   to: number | null | undefined
   plotband: Selection<SVGRectElement, unknown, null, undefined>

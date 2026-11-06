@@ -12,15 +12,15 @@ import { isEqual, clamp, mergeByReference } from '@/utils/data'
 import { getPixelValue } from '@/utils/misc'
 
 // Config
-import { ContainerDefaultConfig, ContainerConfigInterface } from './config'
+import { ContainerDefaultConfig, ContainerConfigInterface, ContainerResolvedConfig } from './config'
 
 export class ContainerCore {
   public svg: Selection<SVGSVGElement, unknown, null, undefined>
   public element: SVGSVGElement
   public prevConfig: ContainerConfigInterface
-  public config: ContainerConfigInterface
+  public config: ContainerResolvedConfig
 
-  protected _defaultConfig: ContainerConfigInterface = ContainerDefaultConfig
+  protected _defaultConfig: ContainerResolvedConfig = ContainerDefaultConfig
   protected _container: HTMLElement
   protected _renderAnimationFrameId: number
   protected _isFirstRender = true

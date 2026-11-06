@@ -16,7 +16,7 @@ import { GraphInputLink, GraphInputNode } from '@/types/graph'
 import { GraphCircleLabel, GraphLink, GraphLinkArrowStyle, GraphLinkStyle } from '../../types'
 
 // Config
-import { GraphConfigInterface } from '../../config'
+import { GraphResolvedConfig } from '../../config'
 
 // Helpers
 import { getX, getY, isInternalHref } from '../node/helper'
@@ -64,7 +64,7 @@ export function createLinks<N extends GraphInputNode, L extends GraphInputLink> 
 /** Updates the links partially according to their `_state` */
 export function updateLinksPartial<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   scale: number
 ): void {
   const isGreyedOut = (d: GraphLink<N, L>, i: number): boolean => getBoolean(d, config.linkDisabled, i) || d._state.greyout
@@ -90,7 +90,7 @@ export function updateLinksPartial<N extends GraphInputNode, L extends GraphInpu
 
 export function updateLinkLines<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   duration: number,
   scale = 1,
   getLinkArrowDefId: (arrow: GraphLinkArrowStyle | undefined) => string,
@@ -174,7 +174,7 @@ export function updateLinkLines<N extends GraphInputNode, L extends GraphInputLi
 
 export function updateLinks<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   duration: number,
   scale = 1,
   getLinkArrowDefId: (arrow: GraphLinkArrowStyle | undefined) => string,
@@ -344,7 +344,7 @@ export function updateLinks<N extends GraphInputNode, L extends GraphInputLink> 
 
 export function removeLinks<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   duration: number
 ): void {
   smartTransition(selection, duration / 2)
@@ -354,7 +354,7 @@ export function removeLinks<N extends GraphInputNode, L extends GraphInputLink> 
 
 export function animateLinkFlow<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   scale: number,
   linkPathLengthMap: Map<string, number>
 ): void {
@@ -385,7 +385,7 @@ export function animateLinkFlow<N extends GraphInputNode, L extends GraphInputLi
 
 export function zoomLinks<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphLink<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   scale: number
 ): void {
   selection.classed(generalSelectors.zoomOutLevel2, scale < ZoomLevel.Level2)

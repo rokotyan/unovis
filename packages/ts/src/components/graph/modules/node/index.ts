@@ -20,7 +20,7 @@ import { getCSSVariableValueInPixels } from '@/utils/misc'
 import { GraphNode, GraphCircleLabel, GraphNodeAnimationState, GraphNodeAnimatedElement, GraphNodeShape } from '../../types'
 
 // Config
-import { GraphConfigInterface } from '../../config'
+import { GraphResolvedConfig } from '../../config'
 
 // Helpers
 import {
@@ -52,7 +52,7 @@ export interface GraphNodeSVGGElement extends SVGGElement {
 
 export function createNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   duration: number,
   scale = 1
 ): void {
@@ -102,7 +102,7 @@ export function createNodes<N extends GraphInputNode, L extends GraphInputLink> 
 /** Updates the nodes partially according to their `_state` */
 export function updateNodesPartial<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   duration: number,
   scale = 1
 ): void {
@@ -184,7 +184,7 @@ function getNodeLabelTextBlock<N extends GraphInputNode, L extends GraphInputLin
 function renderNodeLabels<N extends GraphInputNode, L extends GraphInputLink> (
   label: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
   d: GraphNode<N, L>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   labelFontSize: number,
   subLabelFontSize: number,
   forceExpanded = false
@@ -220,7 +220,7 @@ function renderNodeLabels<N extends GraphInputNode, L extends GraphInputLink> (
 
 export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   duration: number,
   scale = 1
 ): Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> | Transition<SVGGElement, GraphNode<N, L>, SVGGElement, unknown> {
@@ -423,7 +423,7 @@ export function updateNodes<N extends GraphInputNode, L extends GraphInputLink> 
 
 export function removeNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   duration: number,
   scale = 1
 ): void {
@@ -461,7 +461,7 @@ const setLabelBackgroundRectThrottled = throttle(setLabelBackgroundRect, 1000) a
 
 export function zoomNodes<N extends GraphInputNode, L extends GraphInputLink> (
   selection: Selection<SVGGElement, GraphNode<N, L>, SVGGElement, unknown>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   scale: number
 ): void {
   if (config.nodeOnZoomCustomRenderFunction || config.nodeEnterCustomRenderFunction) {

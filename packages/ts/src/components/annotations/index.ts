@@ -14,7 +14,7 @@ import { UNOVIS_TEXT_DEFAULT } from '@/styles'
 import { AnnotationItem, AnnotationSubject } from './types'
 
 // Config
-import { AnnotationsDefaultConfig, AnnotationsConfigInterface } from './config'
+import { AnnotationsDefaultConfig, AnnotationsConfigInterface, AnnotationsResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
@@ -22,8 +22,8 @@ import * as s from './style'
 export class Annotations extends ComponentCore<unknown[], AnnotationsConfigInterface> {
   static selectors = s
   static cssVariables = s.variables
-  protected _defaultConfig = AnnotationsDefaultConfig as AnnotationsConfigInterface
-  public config: AnnotationsConfigInterface = this._defaultConfig
+  protected _defaultConfig = AnnotationsDefaultConfig as AnnotationsResolvedConfig
+  public config: AnnotationsResolvedConfig = this._defaultConfig
 
   declare g: Selection<SVGGElement, unknown, null, undefined>
 

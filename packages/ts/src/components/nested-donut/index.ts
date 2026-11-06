@@ -33,7 +33,7 @@ import {
 } from './types'
 
 // Config
-import { NestedDonutDefaultConfig, NestedDonutConfigInterface } from './config'
+import { NestedDonutDefaultConfig, NestedDonutConfigInterface, NestedDonutResolvedConfig } from './config'
 
 // Modules
 import { ArcNode, createArc, updateArc, removeArc } from './modules/arc'
@@ -48,8 +48,8 @@ NestedDonutConfigInterface<Datum>
 > {
   static selectors = s
   static cssVariables = s.variables
-  protected _defaultConfig = NestedDonutDefaultConfig as NestedDonutConfigInterface<Datum>
-  public config: NestedDonutConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = NestedDonutDefaultConfig as NestedDonutResolvedConfig<Datum>
+  public config: NestedDonutResolvedConfig<Datum> = this._defaultConfig
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 
   arcBackground: Selection<SVGGElement, unknown, SVGGElement, unknown>

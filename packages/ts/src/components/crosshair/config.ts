@@ -1,10 +1,13 @@
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 import { Tooltip } from '@/components/tooltip'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { NumericAccessor, ColorAccessor } from '@/types/accessor'
 import { ContinuousScale } from '@/types/scale'
-import { WithOptional } from '@/types/misc'
+import { ResolvedConfig, WithOptional } from '@/types/misc'
 import { CrosshairCircle } from './types'
 import { CrosshairSnapMode } from './constants'
 
@@ -87,7 +90,7 @@ export interface CrosshairConfigInterface<Datum> extends WithOptional<XYComponen
   visibilityThreshold?: number;
 }
 
-export const CrosshairDefaultConfig: CrosshairConfigInterface<unknown> = {
+export const CrosshairDefaultConfig = defineDefaults<CrosshairConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   yStacked: undefined,
   baseline: null,
@@ -108,5 +111,7 @@ export const CrosshairDefaultConfig: CrosshairConfigInterface<unknown> = {
   forceShowAt: undefined,
   skipRangeCheck: false,
   visibilityThreshold: 0.35,
-}
+})
+
+export type CrosshairResolvedConfig<Datum> = ResolvedConfig<CrosshairConfigInterface<Datum>, typeof CrosshairDefaultConfig>
 

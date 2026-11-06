@@ -21,7 +21,7 @@ import { CrosshairAccessors, CrosshairCircle } from './types'
 import { CrosshairSnapMode, CROSSHAIR_CIRCLE_OVERLAP_RADII, CROSSHAIR_CIRCLE_Y_RANGE_TOLERANCE_PX } from './constants'
 
 // Config
-import { CrosshairDefaultConfig, CrosshairConfigInterface } from './config'
+import { CrosshairDefaultConfig, CrosshairConfigInterface, CrosshairResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
@@ -30,8 +30,8 @@ import * as s from './style'
 export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInterface<Datum>> {
   static selectors = s
   clippable = false // The Crosshair is not clipped, so its circles can overflow into the container margins. See XYContainer
-  protected _defaultConfig = CrosshairDefaultConfig as CrosshairConfigInterface<Datum>
-  public config: CrosshairConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = CrosshairDefaultConfig as CrosshairResolvedConfig<Datum>
+  public config: CrosshairResolvedConfig<Datum> = this._defaultConfig
   container: Selection<SVGSVGElement, any, SVGSVGElement, any>
   line: Selection<SVGLineElement, any, SVGElement, any>
   lineHorizontal: Selection<SVGLineElement, any, SVGElement, any>

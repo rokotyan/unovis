@@ -18,15 +18,15 @@ import { Spacing } from '@/types/spacing'
 import { BoxplotDataRecord } from './types'
 
 // Config
-import { BoxplotDefaultConfig, BoxplotConfigInterface } from './config'
+import { BoxplotDefaultConfig, BoxplotConfigInterface, BoxplotResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
 
 export class Boxplot<Datum> extends XYComponentCore<Datum, BoxplotConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = BoxplotDefaultConfig as BoxplotConfigInterface<Datum>
-  public config: BoxplotConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = BoxplotDefaultConfig as BoxplotResolvedConfig<Datum>
+  public config: BoxplotResolvedConfig<Datum> = this._defaultConfig
 
   events = {}
   private _boxData: Datum[] = []

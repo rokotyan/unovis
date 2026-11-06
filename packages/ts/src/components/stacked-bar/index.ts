@@ -32,7 +32,7 @@ import { StyleDeclaration } from '@/types/style'
 import { StackedBarDataRecord } from './types'
 
 // Config
-import { StackedBarDefaultConfig, StackedBarConfigInterface } from './config'
+import { StackedBarDefaultConfig, StackedBarConfigInterface, StackedBarResolvedConfig } from './config'
 
 // Constants
 import { MANAGED_BAR_STYLES } from './constants'
@@ -42,8 +42,8 @@ import * as s from './style'
 
 export class StackedBar<Datum> extends XYComponentCore<Datum, StackedBarConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = StackedBarDefaultConfig as StackedBarConfigInterface<Datum>
-  public config: StackedBarConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = StackedBarDefaultConfig as StackedBarResolvedConfig<Datum>
+  public config: StackedBarResolvedConfig<Datum> = this._defaultConfig
 
   getAccessors = (): NumericAccessor<Datum>[] => (isArray(this.config.y) ? this.config.y : [this.config.y])
   stacked = true

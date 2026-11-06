@@ -6,7 +6,7 @@ import { mergeByReference } from '@/utils/data'
 import { getCSSVariableValueInPixels } from '@/utils/misc'
 
 // Config
-import { BulletLegendDefaultConfig, BulletLegendConfigInterface } from './config'
+import { BulletLegendDefaultConfig, BulletLegendConfigInterface, BulletLegendResolvedConfig } from './config'
 
 // Local Types
 import { BulletLegendItemInterface, BulletLegendOrientation } from './types'
@@ -19,8 +19,8 @@ import * as s from './style'
 
 export class BulletLegend {
   static selectors = s
-  protected _defaultConfig = BulletLegendDefaultConfig as BulletLegendConfigInterface
-  public config: BulletLegendConfigInterface = this._defaultConfig
+  protected _defaultConfig = BulletLegendDefaultConfig as BulletLegendResolvedConfig
+  public config: BulletLegendResolvedConfig = this._defaultConfig
 
   div: Selection<HTMLElement, unknown, null, undefined>
   element: HTMLElement

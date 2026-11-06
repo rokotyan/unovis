@@ -13,12 +13,12 @@ import { smartTransition } from '@/utils/d3'
 import { Sizing, isExtendedSizeComponent } from '@/types/component'
 
 // Config
-import { SingleContainerDefaultConfig, SingleContainerConfigInterface } from './config'
+import { SingleContainerDefaultConfig, SingleContainerConfigInterface, SingleContainerResolvedConfig } from './config'
 
 export class SingleContainer<Data> extends ContainerCore {
-  protected _defaultConfig = SingleContainerDefaultConfig as SingleContainerConfigInterface<Data>
+  protected _defaultConfig = SingleContainerDefaultConfig as SingleContainerResolvedConfig<Data>
   public component: ComponentCore<Data>
-  public config: SingleContainerConfigInterface<Data> = this._defaultConfig
+  public config: SingleContainerResolvedConfig<Data> = this._defaultConfig
 
   constructor (element: HTMLElement, config?: SingleContainerConfigInterface<Data>, data?: Data) {
     super(element)

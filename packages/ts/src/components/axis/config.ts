@@ -1,9 +1,13 @@
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { AxisType } from '@/components/axis/types'
 import { Position } from '@/types/position'
 import { FitMode, TrimMode, TextAlign } from '@/types/text'
+import { ResolvedConfig } from '@/types/misc'
 
 // We extend partial XY config interface because x and y properties are optional for Axis
 export interface AxisConfigInterface<Datum> extends Partial<XYComponentConfigInterface<Datum>> {
@@ -89,7 +93,7 @@ export interface AxisConfigInterface<Datum> extends Partial<XYComponentConfigInt
   tickSize?: number | [number, number];
 }
 
-export const AxisDefaultConfig: AxisConfigInterface<unknown> = {
+export const AxisDefaultConfig = defineDefaults<AxisConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   position: undefined,
   type: undefined,
@@ -124,4 +128,6 @@ export const AxisDefaultConfig: AxisConfigInterface<unknown> = {
   tickSize: 6,
   tickTextAdaptiveSets: undefined,
   tickTextHideOverlapping: undefined,
-}
+})
+
+export type AxisResolvedConfig<Datum> = ResolvedConfig<AxisConfigInterface<Datum>, typeof AxisDefaultConfig>

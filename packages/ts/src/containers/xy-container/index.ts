@@ -28,7 +28,7 @@ import { clamp, clean, flatten, isFunction } from '@/utils/data'
 import { guid } from '@/utils/misc'
 
 // Config
-import { XYContainerDefaultConfig, XYContainerConfigInterface } from './config'
+import { XYContainerDefaultConfig, XYContainerConfigInterface, XYContainerResolvedConfig } from './config'
 
 /** Configuration of any XY component. All fields are optional because `updateComponents` merges partial updates.
  * Concrete component config interfaces (e.g. `LineConfigInterface`) extend the base one,
@@ -36,10 +36,10 @@ import { XYContainerDefaultConfig, XYContainerConfigInterface } from './config'
 export type XYConfigInterface<Datum> = Partial<XYComponentConfigInterface<Datum>>
 
 export class XYContainer<Datum> extends ContainerCore {
-  protected _defaultConfig = XYContainerDefaultConfig as XYContainerConfigInterface<Datum>
+  protected _defaultConfig = XYContainerDefaultConfig as XYContainerResolvedConfig<Datum>
   protected declare _svgDefs: Selection<SVGDefsElement, unknown, null, undefined>
   public datamodel: CoreDataModel<Datum[]> = new CoreDataModel()
-  public config: XYContainerConfigInterface<Datum> = this._defaultConfig
+  public config: XYContainerResolvedConfig<Datum> = this._defaultConfig
   private _clipPath: Selection<SVGClipPathElement, unknown, null, undefined>
   private _clipPathId = guid()
   private _axisMargin: Spacing = { top: 0, bottom: 0, left: 0, right: 0 }

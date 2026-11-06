@@ -16,7 +16,7 @@ import { GraphInputLink, GraphInputNode } from '@/types/graph'
 import { GraphNode, GraphLink, GraphForceSimulationNode } from '../types'
 
 // Config
-import { GraphConfigInterface } from '../config'
+import { GraphResolvedConfig } from '../config'
 
 // Helpers
 import { getMaxNodeSize, configuredNodeSize, getNodeSize, getAverageNodeSize } from './node/helper'
@@ -30,7 +30,7 @@ import {
 
 export function applyLayoutCircular<N extends GraphInputNode, L extends GraphInputLink> (
   datamodel: GraphDataModel<N, L, GraphNode<N, L>, GraphLink<N, L>>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   width: number,
   height: number
 ): void {
@@ -70,7 +70,7 @@ export function applyLayoutCircular<N extends GraphInputNode, L extends GraphInp
 
 export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInputLink> (
   datamodel: GraphDataModel<N, L, GraphNode<N, L>, GraphLink<N, L>>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   width: number,
   height: number,
   orientation?: string
@@ -279,7 +279,7 @@ export function applyLayoutParallel<N extends GraphInputNode, L extends GraphInp
 
 export async function applyLayoutDagre<N extends GraphInputNode, L extends GraphInputLink> (
   datamodel: GraphDataModel<N, L, GraphNode<N, L>, GraphLink<N, L>>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   width: number
 ): Promise<void> {
   const { nonConnectedNodes, connectedNodes, nodes, links } = datamodel
@@ -348,7 +348,7 @@ export async function applyLayoutDagre<N extends GraphInputNode, L extends Graph
 
 export function applyLayoutConcentric<N extends GraphInputNode, L extends GraphInputLink> (
   datamodel: GraphDataModel<N, L, GraphNode<N, L>, GraphLink<N, L>>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   width: number,
   height: number
 ): void {
@@ -406,7 +406,7 @@ export function applyLayoutConcentric<N extends GraphInputNode, L extends GraphI
 
 export async function applyLayoutForce<N extends GraphInputNode, L extends GraphInputLink> (
   datamodel: GraphDataModel<N, L, GraphNode<N, L>, GraphLink<N, L>>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   width: number
 ): Promise<void> {
   const { layoutNonConnectedAside, forceLayoutSettings, nodeSize } = config
@@ -479,7 +479,7 @@ export async function applyLayoutForce<N extends GraphInputNode, L extends Graph
 
 export async function applyELKLayout<N extends GraphInputNode, L extends GraphInputLink> (
   datamodel: GraphDataModel<N, L, GraphNode<N, L>, GraphLink<N, L>>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   width: number
 ): Promise<void> {
   const ELK = (await import('elkjs/lib/elk.bundled.js')).default

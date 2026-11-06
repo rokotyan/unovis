@@ -1,8 +1,12 @@
 // Core
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface CircularBarConfigInterface<Datum> extends ComponentConfigInterface {
   /** Accessor function for getting the unique data record id. Used for more persistent data updates. Default: `(d, i) => d.id ?? i` */
@@ -72,7 +76,7 @@ export interface CircularBarConfigInterface<Datum> extends ComponentConfigInterf
   showBackground?: boolean;
 }
 
-export const CircularBarDefaultConfig: CircularBarConfigInterface<unknown> = {
+export const CircularBarDefaultConfig = defineDefaults<CircularBarConfigInterface<unknown>>()({
   ...ComponentDefaultConfig,
   // Optional chaining because a data record itself can be `null` when the data has gaps
   id: (d: unknown, i: number): string | number => (d as { id: string })?.id ?? i,
@@ -90,4 +94,6 @@ export const CircularBarDefaultConfig: CircularBarConfigInterface<unknown> = {
   showBackground: true,
   icon: undefined,
   iconSize: undefined,
-}
+})
+
+export type CircularBarResolvedConfig<Datum> = ResolvedConfig<CircularBarConfigInterface<Datum>, typeof CircularBarDefaultConfig>

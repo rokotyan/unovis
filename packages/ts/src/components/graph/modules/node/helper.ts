@@ -16,7 +16,7 @@ import { getColor, getHexValue, hexToBrightness } from '@/utils/color'
 import { GraphNode, GraphCircleLabel, GraphNodeAnimatedElement, GraphNodeAnimationState, GraphNodeShape } from '../../types'
 
 // Config
-import { GraphConfigInterface } from '../../config'
+import { GraphResolvedConfig } from '../../config'
 
 export const NODE_SIZE = 30
 export const LABEL_RECT_HORIZONTAL_PADDING = 10
@@ -37,7 +37,7 @@ function _setInitialAnimState (el: GraphNodeAnimatedElement<SVGElement>, index: 
 // the current anim state info
 export function arcTween<N extends GraphInputNode, L extends GraphInputLink> (
   d: GraphNode<N, L>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   arcConstructor: Arc<any, GraphNodeAnimationState>,
   el: GraphNodeAnimatedElement<SVGElement>
 ): (t: number) => string {
@@ -60,7 +60,7 @@ export function arcTween<N extends GraphInputNode, L extends GraphInputLink> (
 
 export function polyTween<N extends GraphInputNode, L extends GraphInputLink> (
   d: GraphNode<N, L>,
-  config: GraphConfigInterface<N, L>,
+  config: GraphResolvedConfig<N, L>,
   polygonConstructor: (nodeSize: number, nEdges?: number, endAngle?: number, isOpen?: boolean) => string,
   el: GraphNodeAnimatedElement<SVGElement>
 ): (t: number) => string {

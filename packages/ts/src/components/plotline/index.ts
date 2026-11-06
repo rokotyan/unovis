@@ -22,7 +22,7 @@ import { UNOVIS_TEXT_DEFAULT_FONT_SIZE } from '@/styles'
 
 // Config
 import { LINE_STYLE, VERTICAL_X, HORIZONTAL_X, VERTICAL_Y, HORIZONTAL_Y } from './constants'
-import { PlotlineDefaultConfig, PlotlineConfigInterface } from './config'
+import { PlotlineDefaultConfig, PlotlineConfigInterface, PlotlineResolvedConfig } from './config'
 import { PlotlineLabelPosition, PlotlineLabelOrientation, PlotlineLabelLayout, PlotlineLayoutValue } from './types'
 
 // Styles
@@ -30,7 +30,8 @@ import * as s from './style'
 
 export class Plotline<Datum> extends XYComponentCore<Datum, PlotlineConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = PlotlineDefaultConfig as PlotlineConfigInterface<Datum>
+  protected _defaultConfig = PlotlineDefaultConfig as PlotlineResolvedConfig<Datum>
+  public config: PlotlineResolvedConfig<Datum> = this._defaultConfig
   value: number | null | undefined
   plotline: Selection<SVGLineElement, unknown, null, undefined>
   labelGroup: Selection<SVGGElement, unknown, null, undefined>

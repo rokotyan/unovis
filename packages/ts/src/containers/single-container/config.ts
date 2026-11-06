@@ -4,8 +4,12 @@ import { ComponentCore } from '@/core/component'
 import { Tooltip } from '@/components/tooltip'
 import { Annotations } from '@/components/annotations'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { Spacing } from '@/types/spacing'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface SingleContainerConfigInterface<Datum> extends ContainerConfigInterface {
   /** Visualization component. Default: `undefined` */
@@ -25,8 +29,10 @@ export interface SingleContainerConfigInterface<Datum> extends ContainerConfigIn
   ) => void;
 }
 
-export const SingleContainerDefaultConfig: SingleContainerConfigInterface<unknown> = {
+export const SingleContainerDefaultConfig = defineDefaults<SingleContainerConfigInterface<unknown>>()({
   ...ContainerDefaultConfig,
   tooltip: undefined,
   annotations: undefined,
-}
+})
+
+export type SingleContainerResolvedConfig<Datum> = ResolvedConfig<SingleContainerConfigInterface<Datum>, typeof SingleContainerDefaultConfig>

@@ -1,7 +1,10 @@
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
-import { WithOptional } from '@/types/misc'
+import { ResolvedConfig, WithOptional } from '@/types/misc'
 import { ColorAccessor, NumericAccessor, StringAccessor, GenericAccessor } from '@/types/accessor'
 import { FillPatternType } from '@/styles/patterns'
 import { TextAlign, TrimMode } from '@/types/text'
@@ -113,7 +116,7 @@ export interface TimelineConfigInterface<Datum> extends WithOptional<XYComponent
   onScroll?: (scrollTop: number) => void;
 }
 
-export const TimelineDefaultConfig: TimelineConfigInterface<unknown> = {
+export const TimelineDefaultConfig = defineDefaults<TimelineConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   id: undefined,
 
@@ -167,4 +170,6 @@ export const TimelineDefaultConfig: TimelineConfigInterface<unknown> = {
 
   // Callbacks
   onScroll: undefined,
-}
+})
+
+export type TimelineResolvedConfig<Datum> = ResolvedConfig<TimelineConfigInterface<Datum>, typeof TimelineDefaultConfig>

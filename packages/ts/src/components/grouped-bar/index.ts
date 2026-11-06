@@ -20,7 +20,7 @@ import { ContinuousScale } from '@/types/scale'
 import { StyleDeclaration } from '@/types/style'
 
 // Config
-import { GroupedBarDefaultConfig, GroupedBarConfigInterface } from './config'
+import { GroupedBarDefaultConfig, GroupedBarConfigInterface, GroupedBarResolvedConfig } from './config'
 
 // Constants
 import { MANAGED_BAR_STYLES } from './constants'
@@ -30,8 +30,8 @@ import * as s from './style'
 
 export class GroupedBar<Datum> extends XYComponentCore<Datum, GroupedBarConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = GroupedBarDefaultConfig as GroupedBarConfigInterface<Datum>
-  public config: GroupedBarConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = GroupedBarDefaultConfig as GroupedBarResolvedConfig<Datum>
+  public config: GroupedBarResolvedConfig<Datum> = this._defaultConfig
 
   getAccessors = (): NumericAccessor<Datum>[] =>
     isArray(this.config.y) ? this.config.y : [this.config.y]

@@ -10,7 +10,7 @@ import { Position } from '@/types/position'
 import { mergeByReference, throttle } from '@/utils/data'
 
 // Config
-import { TooltipDefaultConfig, TooltipConfigInterface } from './config'
+import { TooltipDefaultConfig, TooltipConfigInterface, TooltipResolvedConfig } from './config'
 
 // Style
 import * as s from './style'
@@ -18,8 +18,8 @@ import * as s from './style'
 export class Tooltip {
   element: HTMLElement
   div: Selection<HTMLElement, unknown, null, undefined>
-  protected _defaultConfig = TooltipDefaultConfig as TooltipConfigInterface
-  public config: TooltipConfigInterface = this._defaultConfig
+  protected _defaultConfig = TooltipDefaultConfig as TooltipResolvedConfig
+  public config: TooltipResolvedConfig = this._defaultConfig
   prevConfig: TooltipConfigInterface
   components: ComponentCore<unknown>[]
   static selectors = s

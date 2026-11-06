@@ -1,6 +1,8 @@
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 import { ColorAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 import { FitMode, TrimMode } from '@/types/text'
+import { defineDefaults } from '@/utils/data'
 
 // Local Types
 import { TreemapDatum, TreemapNode, TreemapTileFunction } from './types'
@@ -91,7 +93,7 @@ export interface TreemapConfigInterface<Datum> extends ComponentConfigInterface 
   minTileSizeForLabel?: number;
 }
 
-export const TreemapDefaultConfig: TreemapConfigInterface<unknown> = {
+export const TreemapDefaultConfig = defineDefaults<TreemapConfigInterface<unknown>>()({
   ...ComponentDefaultConfig,
   id: (d: unknown, i: number): string | number => (d as { id: string }).id ?? i,
   value: undefined,
@@ -119,4 +121,6 @@ export const TreemapDefaultConfig: TreemapConfigInterface<unknown> = {
   minTileSizeForLabel: 20,
   numberFormat: (value: number) => `${value}`,
   tileLabel: function (d: TreemapNode<unknown>): string { return `${d.data.key}: ${this.numberFormat(d.value)}` },
-}
+})
+
+export type TreemapResolvedConfig<Datum> = ResolvedConfig<TreemapConfigInterface<Datum>, typeof TreemapDefaultConfig>

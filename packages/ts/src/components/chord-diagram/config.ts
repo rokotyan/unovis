@@ -1,8 +1,12 @@
 // Core
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 import { FillPatternType } from '@/styles/patterns'
 
 // Local Types
@@ -43,7 +47,7 @@ export interface ChordDiagramConfigInterface<N extends ChordInputNode, L extends
   radiusScaleExponent?: number;
 }
 
-export const ChordDiagramDefaultConfig: ChordDiagramConfigInterface<ChordInputNode, ChordInputLink> = {
+export const ChordDiagramDefaultConfig = defineDefaults<ChordDiagramConfigInterface<ChordInputNode, ChordInputLink>>()({
   ...ComponentDefaultConfig,
   duration: 800,
   highlightedNodeId: undefined,
@@ -62,4 +66,6 @@ export const ChordDiagramDefaultConfig: ChordDiagramConfigInterface<ChordInputNo
   cornerRadius: 2,
   angleRange: [0, 2 * Math.PI],
   radiusScaleExponent: 2,
-}
+})
+
+export type ChordDiagramResolvedConfig<N extends ChordInputNode, L extends ChordInputLink> = ResolvedConfig<ChordDiagramConfigInterface<N, L>, typeof ChordDiagramDefaultConfig>

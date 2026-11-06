@@ -4,9 +4,13 @@
 import { ComponentDefaultConfig, ComponentConfigInterface } from '@/core/component/config'
 import { Tooltip } from '@/components/tooltip'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
 import { GenericDataRecord } from '@/types/data'
+import { ResolvedConfig } from '@/types/misc'
 
 // Local Types
 import {
@@ -179,7 +183,7 @@ export interface LeafletMapConfigInterface<Datum extends GenericDataRecord> exte
   ariaLabel?: string | null | undefined;
 }
 
-export const LeafletMapDefaultConfig: LeafletMapConfigInterface<GenericDataRecord> = {
+export const LeafletMapDefaultConfig = defineDefaults<LeafletMapConfigInterface<GenericDataRecord>>()({
   ...ComponentDefaultConfig,
   // General
   width: undefined,
@@ -248,4 +252,6 @@ export const LeafletMapDefaultConfig: LeafletMapConfigInterface<GenericDataRecor
   // Misc
   tooltip: undefined,
   ariaLabel: undefined,
-}
+})
+
+export type LeafletMapResolvedConfig<Datum extends GenericDataRecord> = ResolvedConfig<LeafletMapConfigInterface<Datum>, typeof LeafletMapDefaultConfig>

@@ -30,7 +30,7 @@ import {
 } from './types'
 
 // Config
-import { ChordDiagramDefaultConfig, ChordDiagramConfigInterface } from './config'
+import { ChordDiagramDefaultConfig, ChordDiagramConfigInterface, ChordDiagramResolvedConfig } from './config'
 
 // Modules
 import { createNode, updateNode, removeNode } from './modules/node'
@@ -49,8 +49,8 @@ export class ChordDiagram<
   ChordDiagramConfigInterface<N, L>
   > {
   static selectors = s
-  protected _defaultConfig = ChordDiagramDefaultConfig as ChordDiagramConfigInterface<N, L>
-  public config: ChordDiagramConfigInterface<N, L> = this._defaultConfig
+  protected _defaultConfig = ChordDiagramDefaultConfig as ChordDiagramResolvedConfig<N, L>
+  public config: ChordDiagramResolvedConfig<N, L> = this._defaultConfig
   datamodel: GraphDataModel<N, L> = new GraphDataModel()
 
   background: Selection<SVGRectElement, unknown, SVGGElement, unknown>

@@ -8,10 +8,14 @@ import { Tooltip } from '@/components/tooltip'
 import { Axis } from '@/components/axis'
 import { Crosshair } from '@/components/crosshair'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ContinuousScale } from '@/types/scale'
 import { Direction } from '@/types/direction'
 import { Spacing } from '@/types/spacing'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface XYContainerConfigInterface<Datum> extends ContainerConfigInterface {
   /** An array of visualization components. Default: `[]` */
@@ -114,7 +118,7 @@ export interface XYContainerConfigInterface<Datum> extends ContainerConfigInterf
 }
 
 
-export const XYContainerDefaultConfig: XYContainerConfigInterface<unknown> = {
+export const XYContainerDefaultConfig = defineDefaults<XYContainerConfigInterface<unknown>>()({
   ...ContainerDefaultConfig,
   components: [],
   tooltip: undefined,
@@ -142,5 +146,7 @@ export const XYContainerDefaultConfig: XYContainerConfigInterface<unknown> = {
 
   clipPathExtend: 2,
   bleed: undefined,
-}
+})
+
+export type XYContainerResolvedConfig<Datum> = ResolvedConfig<XYContainerConfigInterface<Datum>, typeof XYContainerDefaultConfig>
 

@@ -1,9 +1,13 @@
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { CurveType } from '@/types/curve'
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
 import { FillPatternType, LinePatternType } from '@/styles/patterns'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface AreaConfigInterface<Datum> extends XYComponentConfigInterface<Datum> {
   /** Area color accessor function. The whole data array will be passed as the first argument. Default: `undefined` */
@@ -41,7 +45,7 @@ export interface AreaConfigInterface<Datum> extends XYComponentConfigInterface<D
   stackMinHeight?: boolean;
 }
 
-export const AreaDefaultConfig: AreaConfigInterface<unknown> = {
+export const AreaDefaultConfig = defineDefaults<AreaConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   color: undefined,
   curveType: CurveType.MonotoneX,
@@ -55,4 +59,6 @@ export const AreaDefaultConfig: AreaConfigInterface<unknown> = {
   minHeight1Px: false,
   minHeight: undefined,
   stackMinHeight: false,
-}
+})
+
+export type AreaResolvedConfig<Datum> = ResolvedConfig<AreaConfigInterface<Datum>, typeof AreaDefaultConfig>

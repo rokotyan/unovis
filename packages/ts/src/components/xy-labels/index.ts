@@ -9,7 +9,7 @@ import { rectIntersect } from '@/utils/misc'
 import { XYLabelCluster, XYLabel, XYLabelPositioning } from './types'
 
 // Config
-import { XYLabelsDefaultConfig, XYLabelsConfigInterface } from './config'
+import { XYLabelsDefaultConfig, XYLabelsConfigInterface, XYLabelsResolvedConfig } from './config'
 
 // Modules
 import { createLabels, updateLabels, removeLabels, getLabelRenderProps } from './modules/label'
@@ -20,8 +20,8 @@ import * as s from './style'
 export class XYLabels<Datum> extends XYComponentCore<Datum, XYLabelsConfigInterface<Datum>> {
   static selectors = s
   clippable = false
-  protected _defaultConfig = XYLabelsDefaultConfig as XYLabelsConfigInterface<Datum>
-  public config: XYLabelsConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = XYLabelsDefaultConfig as XYLabelsResolvedConfig<Datum>
+  public config: XYLabelsResolvedConfig<Datum> = this._defaultConfig
 
   events: XYComponentCore<Datum>['events'] = {
     [XYLabels.selectors.label]: {},

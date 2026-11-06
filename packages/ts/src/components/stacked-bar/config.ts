@@ -1,10 +1,14 @@
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
 import { FillPatternType } from '@/styles/patterns'
 import { Orientation } from '@/types/position'
 import { StyleDeclaration } from '@/types/style'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface StackedBarConfigInterface<Datum> extends XYComponentConfigInterface<Datum> {
   /** Bar color accessor function. Default: `d => d.color` */
@@ -45,7 +49,7 @@ export interface StackedBarConfigInterface<Datum> extends XYComponentConfigInter
   orientation?: Orientation | string;
 }
 
-export const StackedBarDefaultConfig: StackedBarConfigInterface<unknown> = {
+export const StackedBarDefaultConfig = defineDefaults<StackedBarConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   color: undefined,
   pattern: undefined,
@@ -60,5 +64,7 @@ export const StackedBarDefaultConfig: StackedBarConfigInterface<unknown> = {
   barMinHeight1Px: false,
   barMinHeightZeroValue: null,
   orientation: Orientation.Vertical,
-}
+})
+
+export type StackedBarResolvedConfig<Datum> = ResolvedConfig<StackedBarConfigInterface<Datum>, typeof StackedBarDefaultConfig>
 

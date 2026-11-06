@@ -44,7 +44,7 @@ import {
 } from './types'
 
 // Config
-import { TopoJSONMapDefaultConfig, TopoJSONMapConfigInterface } from './config'
+import { TopoJSONMapDefaultConfig, TopoJSONMapConfigInterface, TopoJSONMapResolvedConfig } from './config'
 
 // Modules
 import {
@@ -84,8 +84,8 @@ export class TopoJSONMap<
   TopoJSONMapConfigInterface<AreaDatum, PointDatum, LinkDatum>
   > {
   static selectors = s
-  protected _defaultConfig = TopoJSONMapDefaultConfig as TopoJSONMapConfigInterface<AreaDatum, PointDatum, LinkDatum>
-  public config: TopoJSONMapConfigInterface<AreaDatum, PointDatum, LinkDatum> = this._defaultConfig
+  protected _defaultConfig = TopoJSONMapDefaultConfig as TopoJSONMapResolvedConfig<AreaDatum, PointDatum, LinkDatum>
+  public config: TopoJSONMapResolvedConfig<AreaDatum, PointDatum, LinkDatum> = this._defaultConfig
 
   datamodel: MapGraphDataModel<AreaDatum, PointDatum, LinkDatum> = new MapGraphDataModel()
   declare g: Selection<SVGGElement, unknown, null, undefined>

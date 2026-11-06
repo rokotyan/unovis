@@ -14,7 +14,7 @@ import { hexToBrightness } from '@/utils/color'
 import { ContinuousScale } from '@/types/scale'
 
 // Config
-import { ScatterConfigInterface } from '../config'
+import { ScatterResolvedConfig } from '../config'
 
 // Local Types
 import { ScatterPoint } from '../types'
@@ -38,7 +38,7 @@ export function createPoints<Datum> (
 
 export function updatePoints<Datum> (
   selection: Selection<SVGGElement, ScatterPoint<Datum>, SVGGElement, ScatterPoint<Datum>[]>,
-  config: ScatterConfigInterface<Datum>,
+  config: ScatterResolvedConfig<Datum>,
   xScale: ContinuousScale,
   yScale: ContinuousScale,
   duration: number

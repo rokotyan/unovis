@@ -1,9 +1,13 @@
 // Config
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { AxisType } from '@/components/axis/types'
 import { UnovisText } from '@/types/text'
+import { ResolvedConfig } from '@/types/misc'
 import { PlotbandLabelOrientation, PlotbandLabelPosition } from './types'
 
 export interface PlotbandConfigInterface<Datum> extends Partial<XYComponentConfigInterface<Datum>> {
@@ -80,7 +84,7 @@ export interface PlotbandConfigInterface<Datum> extends Partial<XYComponentConfi
   labelSize?: number;
 }
 
-export const PlotbandDefaultConfig: PlotbandConfigInterface<unknown> = {
+export const PlotbandDefaultConfig = defineDefaults<PlotbandConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   axis: AxisType.Y,
   from: 0,
@@ -91,4 +95,6 @@ export const PlotbandDefaultConfig: PlotbandConfigInterface<unknown> = {
   labelOffsetX: 14,
   labelOffsetY: 14,
   labelOrientation: PlotbandLabelOrientation.Horizontal,
-}
+})
+
+export type PlotbandResolvedConfig<Datum> = ResolvedConfig<PlotbandConfigInterface<Datum>, typeof PlotbandDefaultConfig>

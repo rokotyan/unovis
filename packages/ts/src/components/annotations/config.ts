@@ -1,6 +1,10 @@
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
+import { ResolvedConfig } from '@/types/misc'
 import { AnnotationItem } from './types'
 
 export interface AnnotationsConfigInterface extends ComponentConfigInterface {
@@ -22,8 +26,10 @@ export interface AnnotationsConfigInterface extends ComponentConfigInterface {
   renderTextBoundingBoxes?: boolean;
 }
 
-export const AnnotationsDefaultConfig: AnnotationsConfigInterface = {
+export const AnnotationsDefaultConfig = defineDefaults<AnnotationsConfigInterface>()({
   ...ComponentDefaultConfig,
   items: [],
   renderTextBoundingBoxes: false,
-}
+})
+
+export type AnnotationsResolvedConfig = ResolvedConfig<AnnotationsConfigInterface, typeof AnnotationsDefaultConfig>

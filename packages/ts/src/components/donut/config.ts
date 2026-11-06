@@ -1,8 +1,12 @@
 // Core
 import { ComponentConfigInterface, ComponentDefaultConfig } from '@/core/component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { ColorAccessor, GenericAccessor, NumericAccessor, StringAccessor } from '@/types/accessor'
+import { ResolvedConfig } from '@/types/misc'
 import { FillPatternType } from '@/styles/patterns'
 
 export interface DonutConfigInterface<Datum> extends ComponentConfigInterface {
@@ -71,7 +75,7 @@ export interface DonutConfigInterface<Datum> extends ComponentConfigInterface {
   centralLabelOffsetY?: number;
 }
 
-export const DonutDefaultConfig: DonutConfigInterface<unknown> = {
+export const DonutDefaultConfig = defineDefaults<DonutConfigInterface<unknown>>()({
   ...ComponentDefaultConfig,
   id: (d: unknown, i: number): string | number => (d as { id: string }).id ?? i,
   value: undefined,
@@ -95,4 +99,6 @@ export const DonutDefaultConfig: DonutConfigInterface<unknown> = {
   backgroundAngleRange: undefined,
   centralLabelOffsetX: undefined,
   centralLabelOffsetY: undefined,
-}
+})
+
+export type DonutResolvedConfig<Datum> = ResolvedConfig<DonutConfigInterface<Datum>, typeof DonutDefaultConfig>

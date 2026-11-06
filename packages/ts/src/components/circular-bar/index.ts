@@ -18,7 +18,7 @@ import { Spacing } from '@/types/spacing'
 import { CircularBarArcDatum, CircularBarArcAnimState, CircularBarDatum, CircularBarIconDatum } from './types'
 
 // Config
-import { CircularBarDefaultConfig, CircularBarConfigInterface } from './config'
+import { CircularBarDefaultConfig, CircularBarConfigInterface, CircularBarResolvedConfig } from './config'
 
 // Modules
 import { createBar, updateBar, removeBar, createBackground, updateBackground } from './modules/bar'
@@ -41,8 +41,8 @@ import * as s from './style'
 
 export class CircularBar<Datum> extends ComponentCore<Datum[], CircularBarConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = CircularBarDefaultConfig as CircularBarConfigInterface<Datum>
-  public config: CircularBarConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = CircularBarDefaultConfig as CircularBarResolvedConfig<Datum>
+  public config: CircularBarResolvedConfig<Datum> = this._defaultConfig
 
   datamodel: SeriesDataModel<Datum> = new SeriesDataModel()
 

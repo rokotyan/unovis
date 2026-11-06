@@ -16,7 +16,7 @@ import { toPx } from '@/utils/to-px'
 import { PATTERN_SIZE_PX } from '@/styles/patterns'
 
 // Local types
-import { BulletLegendConfigInterface } from '../config'
+import { BulletLegendResolvedConfig } from '../config'
 import { BulletShape, BulletLegendItemInterface } from '../types'
 
 // Size with respect to the viewBox. We use this to compute path data which is independent of the
@@ -52,7 +52,7 @@ export function createBullets (
 
 export function updateBullets (
   container: Selection<SVGElement, BulletLegendItemInterface, HTMLElement, unknown>,
-  config: BulletLegendConfigInterface,
+  config: BulletLegendResolvedConfig,
   colorAccessor: ColorAccessor<BulletLegendItemInterface>,
   colorFunction?: ColorFunction
 ): void {

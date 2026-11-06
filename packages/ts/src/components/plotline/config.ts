@@ -1,9 +1,13 @@
 // Config
 import { XYComponentConfigInterface, XYComponentDefaultConfig } from '@/core/xy-component/config'
 
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { AxisType } from '@/components/axis/types'
 import { UnovisText } from '@/types/text'
+import { ResolvedConfig } from '@/types/misc'
 import { PlotlineLabelPosition, PlotlineLabelOrientation, PlotlineLineStylePresets } from './types'
 
 export interface PlotlineConfigInterface<Datum> extends Partial<XYComponentConfigInterface<Datum>> {
@@ -109,7 +113,7 @@ export interface PlotlineConfigInterface<Datum> extends Partial<XYComponentConfi
   labelSize?: number;
 }
 
-export const PlotlineDefaultConfig: PlotlineConfigInterface<unknown> = {
+export const PlotlineDefaultConfig = defineDefaults<PlotlineConfigInterface<unknown>>()({
   ...XYComponentDefaultConfig,
   lineWidth: 2,
   axis: AxisType.Y,
@@ -121,4 +125,6 @@ export const PlotlineDefaultConfig: PlotlineConfigInterface<unknown> = {
   labelOffsetX: 14,
   labelOffsetY: 14,
   labelOrientation: PlotlineLabelOrientation.Horizontal,
-}
+})
+
+export type PlotlineResolvedConfig<Datum> = ResolvedConfig<PlotlineConfigInterface<Datum>, typeof PlotlineDefaultConfig>

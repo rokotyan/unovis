@@ -11,7 +11,7 @@ import { cssvar } from '@/utils/style'
 import { wrapSVGText } from '@/utils/text'
 
 // Config
-import { NestedDonutConfigInterface } from '../config'
+import { NestedDonutResolvedConfig } from '../config'
 
 // Local Types
 import { NestedDonutArcAnimState, NestedDonutSegment, NestedDonutSegmentLabelAlignment } from '../types'
@@ -82,7 +82,7 @@ export function createLabel<Datum> (
 
 export function updateLabel<Datum> (
   selection: Selection<SVGTextElement, NestedDonutSegment<Datum>, SVGGElement, unknown>,
-  config: NestedDonutConfigInterface<Datum>,
+  config: NestedDonutResolvedConfig<Datum>,
   arcGen: Arc<unknown, NestedDonutArcAnimState>,
   duration: number
 ): void {

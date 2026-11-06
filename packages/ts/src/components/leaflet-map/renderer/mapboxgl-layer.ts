@@ -10,7 +10,7 @@ import { isObject } from '@/utils/data'
 import { GenericDataRecord } from '@/types/data'
 
 // Config
-import { LeafletMapConfigInterface } from '../config'
+import { LeafletMapResolvedConfig } from '../config'
 import { MapLibreStyleSpecs } from './map-style'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -31,7 +31,7 @@ export type MaplibreModule = {
 }
 
 export function getMaplibreGLLayer<Datum extends GenericDataRecord> (
-  config: LeafletMapConfigInterface<Datum>,
+  config: LeafletMapResolvedConfig<Datum>,
   leaflet: typeof L,
   maplibre: MaplibreModule
 ): L.Layer & { getMaplibreMap(): Map } {

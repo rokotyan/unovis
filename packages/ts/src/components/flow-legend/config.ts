@@ -1,5 +1,9 @@
+// Utils
+import { defineDefaults } from '@/utils/data'
+
 // Types
 import { Spacing } from '@/types/spacing'
+import { ResolvedConfig } from '@/types/misc'
 
 export interface FlowLegendConfigInterface {
   /** Margin around the legend. Default: `undefined` */
@@ -29,7 +33,7 @@ export interface FlowLegendConfigInterface {
   renderIntoProvidedDomNode?: boolean;
 }
 
-export const FlowLegendDefaultConfig: FlowLegendConfigInterface = {
+export const FlowLegendDefaultConfig = defineDefaults<FlowLegendConfigInterface>()({
   margin: undefined,
   customWidth: undefined,
   items: [],
@@ -42,4 +46,6 @@ export const FlowLegendDefaultConfig: FlowLegendConfigInterface = {
   arrowSymbolYOffset: -1,
   onLegendItemClick: undefined,
   renderIntoProvidedDomNode: false,
-}
+})
+
+export type FlowLegendResolvedConfig = ResolvedConfig<FlowLegendConfigInterface, typeof FlowLegendDefaultConfig>

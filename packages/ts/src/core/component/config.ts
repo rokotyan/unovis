@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { VisEventCallback, VisEventType } from '@/core/component/types'
+import { defineDefaults } from '@/utils/data'
 
 export interface ComponentConfigInterface {
   /** Animation duration of the data update transitions in milliseconds. Default: `600` */
@@ -53,8 +54,8 @@ export interface ComponentConfigInterface {
   };
 }
 
-export const ComponentDefaultConfig: ComponentConfigInterface = {
+export const ComponentDefaultConfig = defineDefaults<ComponentConfigInterface>()({
   duration: 600,
   events: {},
   attributes: {},
-}
+})

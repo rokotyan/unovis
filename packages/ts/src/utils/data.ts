@@ -5,6 +5,7 @@ import { throttle as _throttle } from 'throttle-debounce'
 import { NumericAccessor, StringAccessor, BooleanAccessor, ColorAccessor, GenericAccessor } from '@/types/accessor'
 import { FindNearestDirection, StackValuesRecord } from '@/types/data'
 import { ContinuousScale } from '@/types/scale'
+import { DefaultedKeysOf, NoExtraKeys, WithDefaults } from '@/types/misc'
 
 export const isNumber = <T>(a: T): a is T extends number ? T : never => typeof a === 'number'
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -169,6 +170,14 @@ export const mergeByReference = <T, K>(obj1: T, obj2: K): T & K => {
   }
 
   return result as T & K
+}
+
+/** Types a default config object as `T` with the defaulted properties (the ones that aren't `undefined`) marked as
+ * required, e.g. `defineDefaults<LineConfigInterface<unknown>>()({ ... })`. Rejects unknown keys, including nested ones.
+ * Curried because TypeScript can't infer the object's type when `T` is set explicitly. The return type is spelled out
+ * (instead of `ResolvedConfig`) so that the emitted declarations contain the list of keys rather than the whole object type */
+export function defineDefaults<T> (): <Defaults extends T>(defaults: Defaults & NoExtraKeys<T, Defaults>) => WithDefaults<T, DefaultedKeysOf<Defaults, T>> {
+  return defaults => defaults as never
 }
 
 export const omit = <T extends Record<string | number | symbol, unknown>>(obj: T, props: Array<keyof T>): Partial<T> => {

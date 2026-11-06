@@ -31,7 +31,7 @@ import { guid } from '@/utils/misc'
 import { TextAlign, TrimMode, Spacing, Arrangement } from '@/types'
 
 // Config
-import { TimelineDefaultConfig, TimelineConfigInterface } from './config'
+import { TimelineDefaultConfig, TimelineConfigInterface, TimelineResolvedConfig } from './config'
 
 // Styles
 import * as s from './style'
@@ -47,8 +47,8 @@ import { getIconBleed } from './utils'
 
 export class Timeline<Datum> extends XYComponentCore<Datum, TimelineConfigInterface<Datum>> {
   static selectors = s
-  protected _defaultConfig = TimelineDefaultConfig as TimelineConfigInterface<Datum>
-  public config: TimelineConfigInterface<Datum> = this._defaultConfig
+  protected _defaultConfig = TimelineDefaultConfig as TimelineResolvedConfig<Datum>
+  public config: TimelineResolvedConfig<Datum> = this._defaultConfig
 
   events: XYComponentCore<Datum>['events'] = {
     [Timeline.selectors.background]: {
