@@ -284,7 +284,7 @@ The `Sankey` component includes an `onLayoutCalculated` callback that runs after
 The callback receives:
 - `nodes: SankeyNode[]`
 - `links: SankeyLink[]`
-- `depth: number` — number of layout levels
+- `depth: number | undefined` — number of layout levels (`undefined` when there are no nodes)
 - `width: number`, `height: number` — computed layout size
 - `bleed: Spacing` — calculated outer spacing including labels `{ top, right, bottom, left }`
 
@@ -295,7 +295,7 @@ import type { SankeyNode, SankeyLink, Spacing } from '@unovis/ts'
 const onLayoutCalculated = <N, L>(
   nodes: SankeyNode<N, L>[],
   links: SankeyLink<N, L>[],
-  depth: number,
+  depth: number | undefined,
   width: number,
   height: number,
   bleed: Spacing
