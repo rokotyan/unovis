@@ -1,0 +1,1 @@
+export const MAX_CALC_NESTING_DEPTH = 99
